@@ -1,0 +1,3126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">HARITECH EXCLUSIVE SERVICES – Premium Tech Solutions</title>
+<meta name="description" id="page-desc" content="Leading provider of tech accessories, importation consultancy, 3D epoxy design, interior design and printing services in Lagos, Nigeria.">
+<!-- Open Graph / Social Media -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="">
+<meta property="og:title" id="og-title" content="HARITECH EXCLUSIVE SERVICES – Premium Tech Solutions">
+<meta property="og:description" content="Premium tech accessories, 3D epoxy design, interior design, printing and importation services in Lagos, Nigeria.">
+<meta property="og:image" content="">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HARITECH EXCLUSIVE SERVICES">
+<meta name="twitter:description" content="Smart tech, smart living. Premium technology services in Lagos, Nigeria.">
+<meta name="theme-color" id="theme-color-meta" content="#0d2240">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link id="favicon-link" rel="icon" href="" type="image/x-icon">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════
+   HARITECH EXCLUSIVE SERVICES — Design System v4
+   Deep Navy · Teal Accent · Warm Gold
+   Fonts: Syne (headings) + DM Sans (body)
+═══════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0d2240;
+  --navy-mid:#1a3a6b;
+  --navy-light:#2756a8;
+  --accent:#00e5b4;
+  --accent-dark:#00b894;
+  --accent-warm:#f59e0b;
+  --accent-glow:rgba(0,229,180,.15);
+  --white:#ffffff;
+  --off-white:#f7fafd;
+  --light:#eef2f9;
+  --medium:#dce4ef;
+  --text:#0d1b2a;
+  --muted:#5a6e85;
+  --muted-light:#8fa3b8;
+  --r-sm:10px;--r:16px;--r-lg:24px;
+  --sh-sm:0 2px 12px rgba(13,34,64,.07);
+  --sh:0 8px 32px rgba(13,34,64,.1);
+  --sh-lg:0 20px 60px rgba(13,34,64,.14);
+  --sh-xl:0 32px 80px rgba(13,34,64,.18);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+/* ── DARK MODE ── */
+[data-theme="dark"]{
+  --navy:#4f8ef7;
+  --navy-mid:#6ba3ff;
+  --navy-light:#8fb8ff;
+  --accent:#00e5b4;
+  --white:#0d1117;
+  --off-white:#111827;
+  --light:#1e2a3a;
+  --medium:#2a3a50;
+  --text:#e8edf5;
+  --muted:#8fa3b8;
+  --muted-light:#5a6e85;
+}
+[data-theme="dark"] nav{background:rgba(13,17,23,.96);border-bottom-color:rgba(255,255,255,.07)}
+[data-theme="dark"] .logo-name{color:var(--text)}
+[data-theme="dark"] .stat-card,[data-theme="dark"] .svc-card,[data-theme="dark"] .prod-card,
+[data-theme="dark"] .blog-card,[data-theme="dark"] .tm-card{background:#1e2a3a;border-color:#2a3a50}
+[data-theme="dark"] .prod-img{background:linear-gradient(135deg,#1a2535,#253348)}
+[data-theme="dark"] .contact-info-box,[data-theme="dark"] .contact-form-box{background:rgba(255,255,255,.05)}
+[data-theme="dark"] footer{background:#080e17}
+[data-theme="dark"] .wave-div{background:#111827}
+[data-theme="dark"] .wave-div path,[data-theme="dark"] .stats-sec{background:#111827}
+[data-theme="dark"] .wave-div svg path{fill:#111827}
+[data-theme="dark"] .stats-sec{background:#111827}
+[data-theme="dark"] .products-sec{background:#111827}
+[data-theme="dark"] #blog,[data-theme="dark"] #services{background:#0d1117}
+[data-theme="dark"] .testimonials-sec{background:#0d1117}
+[data-theme="dark"] .tm-summary{background:#1e2a3a;border-color:#2a3a50}
+[data-theme="dark"] .form-group input,[data-theme="dark"] .form-group textarea,[data-theme="dark"] .form-group select{border-color:rgba(255,255,255,.1)}
+[data-theme="dark"] .trust-strip-inner > div{color:var(--text)}
+[data-theme="dark"] .trust-strip-wrap{background:var(--off-white);border-color:var(--medium)}
+/* About section */
+[data-theme="dark"] .about-sec{background:var(--white)}
+[data-theme="dark"] .about-val{background:var(--off-white);border-color:var(--medium)}
+[data-theme="dark"] .about-headline{color:var(--text)}
+[data-theme="dark"] .tl-dot{border-color:var(--off-white)}
+/* Booking */
+[data-theme="dark"] .booking-sec{background:var(--off-white)}
+/* FAQ */
+[data-theme="dark"] #faq{background:var(--off-white)}
+/* Hero cards */
+[data-theme="dark"] .hcard{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+/* Checkout modal */
+[data-theme="dark"] #checkout-box{background:#1e2a3a;color:var(--text)}
+[data-theme="dark"] #co-name,[data-theme="dark"] #co-phone,
+[data-theme="dark"] #co-email,[data-theme="dark"] #co-address,
+[data-theme="dark"] #co-notes{background:#111827;border-color:#2a3a50;color:var(--text)}
+/* Wishlist panel */
+[data-theme="dark"] #wishlist-panel{background:#1e2a3a}
+[data-theme="dark"] .wl-item{background:#111827;border-color:#2a3a50}
+[data-theme="dark"] .wl-header,[data-theme="dark"] .wl-footer{border-color:#2a3a50}
+/* Blog search */
+[data-theme="dark"] #blog-search{background:#1e2a3a;border-color:#2a3a50;color:var(--text)}
+/* Stats */
+[data-theme="dark"] .stat-card{background:#1e2a3a;border-color:#2a3a50}
+/* Theme toggle button */
+[data-theme="dark"] #theme-toggle{border-color:#2a3a50;color:var(--muted)}
+/* Back to top */
+[data-theme="dark"] #back-to-top{background:#1e2a3a;border:1px solid #2a3a50}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--light)}
+::-webkit-scrollbar-thumb{background:var(--navy-mid);border-radius:3px}
+::selection{background:var(--accent);color:var(--navy)}
+img{max-width:100%;display:block}
+
+/* ── NAVBAR ─────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:1rem 0;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border-bottom:1px solid rgba(13,34,64,.06);
+  transition:all .4s var(--ease);
+}
+nav.scrolled{
+  padding:.55rem 0;
+  box-shadow:0 4px 28px rgba(13,34,64,.09);
+  border-bottom-color:rgba(13,34,64,.09);
+}
+.nav-inner{
+  max-width:1400px;margin:0 auto;
+  padding:0 2.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.site-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.logo-icon{
+  width:42px;height:42px;border-radius:11px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 14px rgba(13,34,64,.22);
+  font-family:'Syne',sans-serif;font-weight:800;color:white;font-size:1.1rem;
+}
+.site-logo:hover .logo-icon{transform:rotate(-8deg) scale(1.08)}
+.logo-icon img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.logo-name{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.15rem;color:var(--navy);letter-spacing:-.02em;
+}
+.nav-links{display:flex;align-items:center;gap:1.4rem;list-style:none}
+.nav-links a{
+  text-decoration:none;color:var(--muted);
+  font-weight:500;font-size:.83rem;
+  position:relative;padding:.35rem 0;
+  transition:color .25s;letter-spacing:.01em;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-2px;left:0;
+  width:0;height:2px;
+  background:linear-gradient(90deg,var(--navy),var(--accent));
+  transition:width .3s var(--ease);border-radius:2px;
+}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid))!important;
+  color:white!important;padding:.6rem 1.5rem!important;
+  border-radius:50px;box-shadow:0 4px 16px rgba(13,34,64,.2);
+  font-weight:600!important;transition:all .3s!important;white-space:nowrap;
+}
+.nav-cta:hover{box-shadow:0 8px 28px rgba(13,34,64,.32)!important;transform:translateY(-2px)}
+.nav-cta::after{display:none!important}
+.hamburger{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;background:none;border:none;padding:6px;
+}
+.hamburger span{width:22px;height:2px;background:var(--navy);display:block;border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0;transform:translateX(-8px)}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* ── MOBILE MENU ─────────────────────────────── */
+.mobile-menu{
+  display:none;position:fixed;inset:0;
+  background:linear-gradient(145deg,#060f1e 0%,var(--navy) 100%);
+  z-index:9999;
+  flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;
+}
+.mobile-menu.open{display:flex;animation:mMenuIn .35s var(--ease)}
+@keyframes mMenuIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.mobile-menu a{
+  font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:700;
+  color:white;text-decoration:none;transition:color .2s,transform .2s;letter-spacing:-.02em;
+}
+.mobile-menu a:hover{color:var(--accent);transform:translateX(8px)}
+.mobile-close{
+  position:absolute;top:1.5rem;right:1.5rem;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  width:44px;height:44px;border-radius:11px;
+  font-size:1.25rem;cursor:pointer;color:white;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.mobile-close:hover{background:rgba(255,255,255,.2)}
+
+/* ── HERO ────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  background:linear-gradient(145deg,#060f1e 0%,var(--navy) 50%,#183567 100%);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;padding-top:90px;
+}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .8s}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(145deg,rgba(6,15,30,.9) 0%,rgba(13,34,64,.75) 60%,rgba(26,58,107,.55) 100%)}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(88px);pointer-events:none}
+.orb1{width:520px;height:520px;background:rgba(0,229,180,.06);top:-10%;right:-5%;animation:orbF 13s ease-in-out infinite}
+.orb2{width:420px;height:420px;background:rgba(39,86,168,.11);bottom:-10%;left:3%;animation:orbF 17s ease-in-out infinite reverse}
+.orb3{width:300px;height:300px;background:rgba(245,158,11,.05);top:38%;right:22%;animation:orbF 11s ease-in-out infinite 3s}
+@keyframes orbF{0%,100%{transform:translate(0,0)}33%{transform:translate(28px,-18px)}66%{transform:translate(-18px,14px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+
+.hero-inner{
+  max-width:1400px;margin:0 auto;padding:4rem 2.5rem;
+  display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;
+  align-items:center;position:relative;z-index:2;width:100%;
+}
+.hero-text{color:white}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:rgba(0,229,180,.1);color:var(--accent);
+  padding:.5rem 1.2rem;border-radius:50px;
+  font-size:.75rem;font-weight:700;margin-bottom:1.8rem;
+  border:1px solid rgba(0,229,180,.2);
+  letter-spacing:.1em;text-transform:uppercase;
+  animation:fadeUp .8s var(--ease) both;
+}
+.hero-badge i{font-size:.7rem;animation:spinSlow 4s linear infinite}
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.6rem,4.8vw,4.4rem);
+  font-weight:800;line-height:1.08;
+  margin-bottom:1.2rem;letter-spacing:-.03em;
+  animation:fadeUp .8s var(--ease) .1s both;
+}
+.hero-title-accent{
+  background:linear-gradient(135deg,#ffffff 15%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:1.1rem;opacity:.75;margin-bottom:.8rem;
+  font-weight:400;letter-spacing:.01em;
+  animation:fadeUp .8s var(--ease) .2s both;
+}
+.hero-desc{
+  font-size:.95rem;opacity:.58;line-height:1.88;
+  max-width:490px;margin-bottom:2.4rem;
+  animation:fadeUp .8s var(--ease) .3s both;
+}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .8s var(--ease) .4s both}
+.btn-white{
+  background:white;color:var(--navy);
+  padding:1rem 2rem;border-radius:50px;
+  text-decoration:none;font-weight:700;
+  display:inline-flex;align-items:center;gap:.65rem;
+  transition:all .3s var(--ease);
+  box-shadow:0 8px 28px rgba(0,0,0,.2);font-size:.88rem;
+}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.3)}
+.btn-outline{
+  background:rgba(255,255,255,.08);color:white;
+  padding:1rem 2rem;border-radius:50px;
+  text-decoration:none;font-weight:700;
+  display:inline-flex;align-items:center;gap:.65rem;
+  transition:all .3s var(--ease);
+  border:1.5px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(10px);font-size:.88rem;
+}
+.btn-outline:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.42);transform:translateY(-3px)}
+
+/* Hero feature cards */
+.hero-cards{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;
+  animation:fadeUp .8s var(--ease) .25s both;
+}
+.hcard{
+  background:rgba(255,255,255,.045);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:20px;padding:1.8rem 1.5rem;
+  border:1px solid rgba(255,255,255,.07);
+  transition:all .4s var(--ease);cursor:default;
+}
+.hcard:hover{
+  transform:translateY(-10px);
+  background:rgba(255,255,255,.085);
+  border-color:rgba(0,229,180,.2);
+  box-shadow:0 22px 50px rgba(0,0,0,.3),0 0 0 1px rgba(0,229,180,.08);
+}
+.hcard-icon{
+  width:46px;height:46px;
+  background:linear-gradient(135deg,var(--accent),#00c8a0);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;color:var(--navy);margin-bottom:.95rem;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.hcard:hover .hcard-icon{transform:scale(1.1) rotate(-6deg)}
+.hcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:white;margin-bottom:.3rem}
+.hcard-desc{font-size:.76rem;color:rgba(255,255,255,.48);line-height:1.55}
+
+/* ── WAVE DIVIDER ──────────────────────────── */
+.wave-div{height:72px;overflow:hidden;background:var(--off-white);margin-top:-1px;line-height:0}
+.wave-div svg{width:100%;height:100%;display:block}
+
+/* ── STATS ─────────────────────────────────── */
+.stats-sec{background:var(--off-white);padding:5rem 2.5rem}
+.stats-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.stat-card{
+  background:white;border-radius:var(--r-lg);
+  padding:2.2rem 1.6rem;text-align:center;
+  border:1px solid var(--medium);
+  transition:all .35s var(--ease);position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--navy),var(--accent));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.stat-card:hover{transform:translateY(-8px);box-shadow:var(--sh-lg);border-color:transparent}
+.stat-card:hover::after{transform:scaleX(1)}
+.stat-ico{
+  width:56px;height:56px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.1rem;color:white;font-size:1.35rem;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 6px 20px rgba(13,34,64,.18);
+}
+.stat-card:hover .stat-ico{transform:scale(1.12) rotate(8deg)}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:.45rem;
+}
+.stat-lbl{color:var(--muted);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.1em}
+
+/* ── SHARED SECTION STYLES ─────────────────── */
+section{padding:7rem 2.5rem}
+.sec-inner{max-width:1400px;margin:0 auto}
+.sec-label{
+  display:inline-flex;align-items:center;gap:.5rem;
+  color:var(--navy-mid);font-weight:700;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.18em;
+  padding:.42rem 1.1rem;
+  background:rgba(26,58,107,.07);
+  border-radius:50px;margin-bottom:1rem;
+  border:1px solid rgba(26,58,107,.1);
+}
+.sec-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:800;color:var(--navy);
+  margin-bottom:1rem;letter-spacing:-.025em;line-height:1.15;
+}
+.sec-title-grad{
+  background:linear-gradient(135deg,var(--navy-mid),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sec-sub{font-size:.97rem;color:var(--muted);max-width:580px;line-height:1.82}
+.sec-header{text-align:center;margin-bottom:4rem}
+.sec-header .sec-sub{margin:0 auto}
+
+/* ── SERVICES ──────────────────────────────── */
+#services{background:var(--white)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.6rem}
+.svc-card{
+  background:white;border-radius:var(--r-lg);
+  padding:2.4rem;border:1px solid var(--medium);
+  transition:all .4s var(--ease);position:relative;overflow:hidden;
+}
+.svc-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--navy),var(--accent));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.svc-card:hover{transform:translateY(-10px);box-shadow:var(--sh-lg);border-color:rgba(13,34,64,.06)}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-img-wrap{
+  width:66px;height:66px;border-radius:15px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.55rem;overflow:hidden;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 22px rgba(13,34,64,.16);
+}
+.svc-card:hover .svc-img-wrap{transform:scale(1.05) rotate(-5deg)}
+.svc-img-wrap img{width:100%;height:100%;object-fit:cover}
+.svc-img-wrap i{font-size:1.65rem;color:white}
+.svc-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:.6rem}
+.svc-desc{color:var(--muted);line-height:1.78;margin-bottom:1.55rem;font-size:.88rem}
+.svc-link{
+  display:inline-flex;align-items:center;gap:.5rem;
+  color:var(--navy-mid);font-weight:700;text-decoration:none;
+  font-size:.85rem;transition:all .25s;
+}
+.svc-link i{transition:transform .25s}
+.svc-link:hover{color:var(--navy);gap:.85rem}
+.svc-link:hover i{transform:translateX(4px)}
+
+/* ── PRODUCTS ──────────────────────────────── */
+.products-sec{background:var(--off-white)}
+.filters{display:flex;justify-content:center;gap:.6rem;margin-bottom:3rem;flex-wrap:wrap}
+.filter-btn{
+  padding:.6rem 1.4rem;
+  border:1.5px solid var(--medium);background:white;
+  color:var(--muted);border-radius:50px;cursor:pointer;
+  transition:all .3s;font-weight:600;font-size:.82rem;
+  font-family:'DM Sans',sans-serif;
+}
+.filter-btn.active,.filter-btn:hover{
+  background:var(--navy);color:white;border-color:var(--navy);
+  box-shadow:0 6px 20px rgba(13,34,64,.18);transform:translateY(-2px);
+}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.6rem}
+.prod-card{
+  background:white;border-radius:var(--r-lg);
+  overflow:hidden;border:1px solid var(--medium);
+  transition:all .4s var(--ease);
+  display:flex;flex-direction:column;
+}
+.prod-card:hover{transform:translateY(-10px);box-shadow:var(--sh-xl);border-color:transparent}
+.prod-img{
+  height:215px;
+  background:linear-gradient(135deg,var(--light),var(--medium));
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.2rem;color:var(--navy-mid);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;position:absolute;inset:0}
+.prod-card:hover .prod-img img{transform:scale(1.07)}
+.prod-badge-wrap{position:absolute;top:.85rem;right:.85rem;display:flex;flex-direction:column;gap:.3rem;z-index:1}
+.prod-badge{
+  padding:.25rem .8rem;border-radius:20px;
+  font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+}
+.pb-new{background:linear-gradient(135deg,var(--accent),#00c8a0);color:var(--navy)}
+.pb-feat{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
+.prod-body{padding:1.5rem;display:flex;flex-direction:column;flex:1}
+.prod-cat{color:var(--navy-mid);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.4rem}
+.prod-name{font-family:'Syne',sans-serif;font-size:1.08rem;font-weight:700;margin-bottom:.4rem;color:var(--text);line-height:1.3}
+.prod-price{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:.55rem}
+.prod-status{
+  display:inline-block;padding:.22rem .75rem;border-radius:20px;
+  font-size:.68rem;font-weight:700;margin-bottom:.85rem;
+}
+.ps-in{background:rgba(0,229,180,.1);color:#00a87a;border:1px solid rgba(0,229,180,.2)}
+.ps-out{background:rgba(239,68,68,.08);color:#dc2626;border:1px solid rgba(239,68,68,.14)}
+.ps-soon{background:rgba(245,158,11,.1);color:#d97706;border:1px solid rgba(245,158,11,.16)}
+.prod-desc{color:var(--muted);font-size:.83rem;line-height:1.68;margin-bottom:1.2rem;flex:1}
+.order-btn{
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  width:100%;padding:.92rem;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  color:white;border:none;border-radius:var(--r-sm);
+  font-weight:700;cursor:pointer;font-size:.85rem;
+  transition:all .3s var(--ease);
+  font-family:'DM Sans',sans-serif;letter-spacing:.02em;
+  margin-top:auto;
+}
+.order-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(13,34,64,.28);background:linear-gradient(135deg,var(--navy-mid),var(--navy-light))}
+
+/* ── BLOG ───────────────────────────────────── */
+#blog{background:var(--white)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.6rem}
+.blog-card{
+  background:white;border-radius:var(--r-lg);
+  overflow:hidden;border:1px solid var(--medium);
+  transition:all .4s var(--ease);display:flex;flex-direction:column;
+}
+.blog-card:hover{transform:translateY(-10px);box-shadow:var(--sh-xl);border-color:transparent}
+.blog-img{
+  height:215px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:2.8rem;position:relative;overflow:hidden;flex-shrink:0;
+}
+.blog-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .5s}
+.blog-card:hover .blog-img img{transform:scale(1.06)}
+.blog-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(13,34,64,.42) 0%,transparent 55%)}
+.blog-body{padding:1.7rem;display:flex;flex-direction:column;flex:1}
+.blog-meta{display:flex;gap:1.1rem;color:var(--muted-light);font-size:.75rem;margin-bottom:.85rem}
+.blog-meta-item{display:flex;align-items:center;gap:.38rem}
+.blog-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);line-height:1.4;margin-bottom:.65rem}
+.blog-excerpt{color:var(--muted);line-height:1.74;margin-bottom:1.4rem;font-size:.87rem;flex:1}
+.read-more{
+  display:inline-flex;align-items:center;gap:.5rem;
+  color:var(--navy-mid);text-decoration:none;font-weight:700;
+  transition:all .25s;font-size:.85rem;margin-top:auto;
+}
+.read-more i{transition:transform .25s}
+.read-more:hover{color:var(--navy);gap:.88rem}
+.read-more:hover i{transform:translateX(4px)}
+
+/* ── CONTACT ────────────────────────────────── */
+.contact-sec{
+  background:linear-gradient(145deg,#060f1e 0%,var(--navy) 55%,#183567 100%);
+  color:white;position:relative;overflow:hidden;
+}
+.contact-sec::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 15% 60%,rgba(0,229,180,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 30%,rgba(39,86,168,.1) 0%,transparent 45%);
+}
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2.5rem;position:relative;z-index:2;
+}
+.contact-info-box,.contact-form-box{
+  background:rgba(255,255,255,.045);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:var(--r-lg);padding:2.8rem;
+  border:1px solid rgba(255,255,255,.08);
+}
+.contact-title{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:.6rem;line-height:1.2}
+.contact-sub{opacity:.65;margin-bottom:1.8rem;font-size:.9rem;line-height:1.78}
+.citem{
+  display:flex;align-items:flex-start;gap:1rem;
+  padding:.9rem 1rem;border-radius:var(--r-sm);margin-bottom:.6rem;
+  transition:all .3s;background:rgba(255,255,255,.03);border:1px solid transparent;
+}
+.citem:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.07);transform:translateX(5px)}
+.citem-icon{
+  width:42px;height:42px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),#00c8a0);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;color:var(--navy);
+}
+.citem-detail h4{font-weight:700;margin-bottom:.18rem;font-size:.86rem}
+.citem-detail p,.citem-detail a{opacity:.65;font-size:.82rem;line-height:1.5;color:inherit;text-decoration:none;transition:opacity .2s}
+.citem-detail a:hover{opacity:1}
+.social-row{display:flex;gap:.55rem;margin-top:1.5rem;flex-wrap:wrap}
+.social-btn{
+  width:42px;height:42px;
+  background:rgba(255,255,255,.07);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;color:white;
+  transition:all .3s;border:1px solid rgba(255,255,255,.1);font-size:.95rem;
+}
+.social-btn:hover{
+  background:linear-gradient(135deg,var(--accent),#00c8a0);
+  color:var(--navy);transform:translateY(-4px);
+  box-shadow:0 8px 22px rgba(0,229,180,.28);border-color:transparent;
+}
+.form-title{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:700;margin-bottom:1.6rem}
+.form-group{margin-bottom:1.1rem}
+.form-group label{display:block;font-size:.76rem;font-weight:600;margin-bottom:.45rem;opacity:.78;letter-spacing:.04em;text-transform:uppercase}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;padding:.88rem 1rem;
+  border:1.5px solid rgba(255,255,255,.11);border-radius:var(--r-sm);
+  background:rgba(255,255,255,.055);color:white;
+  font-family:'DM Sans',sans-serif;font-size:.85rem;
+  transition:all .3s;outline:none;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{
+  border-color:var(--accent);background:rgba(255,255,255,.09);
+  box-shadow:0 0 0 3px rgba(0,229,180,.08);
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.28)}
+.form-group textarea{resize:vertical;min-height:110px}
+.form-group select option{background:#0d2240;color:white}
+.submit-btn{
+  width:100%;padding:1.05rem;
+  background:linear-gradient(135deg,var(--accent),#00c8a0);
+  color:var(--navy);border:none;border-radius:50px;
+  font-weight:700;font-size:.88rem;cursor:pointer;
+  transition:all .3s var(--ease);
+  display:flex;align-items:center;justify-content:center;gap:.65rem;
+  font-family:'DM Sans',sans-serif;letter-spacing:.02em;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,229,180,.3)}
+
+/* ── FOOTER ─────────────────────────────────── */
+footer{background:#060f1e;color:white;padding:5rem 2.5rem 2.5rem}
+.footer-inner{max-width:1400px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:3rem;margin-bottom:3rem}
+.footer-section h3{
+  font-family:'Syne',sans-serif;font-size:.88rem;
+  color:var(--accent);font-weight:700;margin-bottom:1.2rem;
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.footer-about p{color:rgba(255,255,255,.5);line-height:1.82;font-size:.85rem;margin-top:.6rem}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:.65rem}
+.footer-links a{
+  color:rgba(255,255,255,.5);text-decoration:none;
+  transition:all .25s;font-size:.84rem;
+  display:inline-flex;align-items:center;gap:.42rem;
+}
+.footer-links a:hover{color:var(--accent);transform:translateX(5px)}
+.newsletter-form{display:flex;gap:.5rem;margin-top:.85rem}
+.newsletter-form input{
+  flex:1;padding:.8rem 1rem;
+  border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r-sm);
+  background:rgba(255,255,255,.055);color:white;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;
+}
+.newsletter-form input::placeholder{color:rgba(255,255,255,.3)}
+.newsletter-form input:focus{border-color:var(--accent)}
+.newsletter-form button{
+  padding:.8rem 1.05rem;
+  background:linear-gradient(135deg,var(--accent),#00c8a0);
+  border:none;border-radius:var(--r-sm);
+  color:var(--navy);cursor:pointer;font-weight:700;
+  transition:all .2s;flex-shrink:0;
+}
+.newsletter-form button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,229,180,.28)}
+.footer-divider{height:1px;background:rgba(255,255,255,.07);margin-bottom:1.8rem}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:1rem;
+  color:rgba(255,255,255,.36);font-size:.79rem;
+}
+.footer-bottom-links{display:flex;gap:1.5rem}
+.footer-bottom-links a{color:rgba(255,255,255,.36);text-decoration:none;transition:color .2s}
+.footer-bottom-links a:hover{color:var(--accent)}
+
+/* ── WHATSAPP FLOAT ────────────────────────── */
+.wa-btn{
+  position:fixed;bottom:28px;right:28px;
+  width:56px;height:56px;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:white;font-size:1.65rem;text-decoration:none;
+  box-shadow:0 8px 28px rgba(37,211,102,.38);z-index:998;transition:all .3s;
+}
+.wa-btn:hover{transform:scale(1.1);box-shadow:0 14px 40px rgba(37,211,102,.52)}
+.wa-btn::before{
+  content:'';position:absolute;width:100%;height:100%;
+  border-radius:50%;border:2px solid rgba(37,211,102,.5);
+  animation:waPulse 2.2s ease-out infinite;
+}
+@keyframes waPulse{0%{transform:scale(1);opacity:.85}100%{transform:scale(1.7);opacity:0}}
+
+/* ── EMPTY STATES ──────────────────────────── */
+.empty-state{text-align:center;padding:5rem 2rem;color:var(--muted)}
+.empty-state i{font-size:4rem;opacity:.11;display:block;margin-bottom:1.2rem}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.5rem;color:var(--navy)}
+.empty-state p{font-size:.9rem}
+
+/* ── SCROLL REVEAL ─────────────────────────── */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ────────────────────────────── */
+@media(max-width:1100px){
+  .hero-inner{grid-template-columns:1fr;gap:3rem;text-align:center}
+  .hero-btns{justify-content:center}
+  .hero-desc{margin:0 auto 2.4rem}
+  .hero-cards{grid-template-columns:repeat(2,1fr);max-width:500px;margin:0 auto}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:2.5rem}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero-title{font-size:2.5rem}
+  .hero-inner{padding:2.8rem 1.4rem}
+  .hero-cards{grid-template-columns:1fr 1fr}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .sec-title{font-size:2rem}
+  .svc-grid{grid-template-columns:1fr}
+  .prod-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .blog-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr;gap:1.8rem}
+  .contact-info-box,.contact-form-box{padding:2rem 1.6rem}
+  section{padding:5rem 1.4rem}
+  .stats-sec{padding:3.5rem 1.4rem}
+  .nav-inner{padding:0 1.4rem}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:2rem}
+  footer{padding:4rem 1.4rem 2rem}
+  .wa-btn{width:50px;height:50px;bottom:20px;right:20px;font-size:1.45rem}
+}
+@media(max-width:540px){
+  .hero-cards{grid-template-columns:1fr 1fr}
+  .hero-btns{flex-direction:column;align-items:stretch}
+  .btn-white,.btn-outline{justify-content:center;padding:.9rem 1.6rem}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .prod-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .contact-grid{gap:1.4rem}
+  .contact-info-box,.contact-form-box{padding:1.7rem 1.3rem}
+  .sec-header{margin-bottom:3rem}
+}
+@media(max-width:400px){
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .hero-title{font-size:2.1rem}
+  .hero-cards{grid-template-columns:1fr}
+  .stat-card{padding:1.6rem 1.2rem}
+  .stat-num{font-size:2.2rem}
+}
+@keyframes scrollDot{0%,100%{transform:translateY(0);opacity:.8}50%{transform:translateY(8px);opacity:.2}}
+
+/* ══════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════ */
+.testimonials-sec{
+  background:linear-gradient(160deg,var(--off-white) 0%,white 100%);
+  position:relative;overflow:hidden;
+}
+.testimonials-sec::before{
+  content:'';position:absolute;
+  top:-120px;right:-120px;
+  width:500px;height:500px;
+  background:radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);
+  pointer-events:none;
+}
+/* Grid layout */
+.tm-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:1.6rem;
+}
+/* Slider layout */
+.tm-slider{
+  display:flex;gap:1.6rem;
+  overflow-x:auto;scroll-snap-type:x mandatory;
+  padding-bottom:1rem;scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.tm-slider::-webkit-scrollbar{display:none}
+.tm-slider .tm-card{
+  flex:0 0 340px;scroll-snap-align:start;
+}
+/* Masonry layout */
+.tm-masonry{
+  columns:3;column-gap:1.6rem;
+}
+.tm-masonry .tm-card{
+  break-inside:avoid;margin-bottom:1.6rem;
+}
+/* Card */
+.tm-card{
+  background:white;border-radius:var(--r-lg);
+  padding:2rem;border:1px solid var(--medium);
+  transition:all .4s var(--ease);
+  position:relative;overflow:hidden;
+}
+.tm-card::before{
+  content:'"';
+  position:absolute;top:.5rem;right:1.4rem;
+  font-family:'Syne',sans-serif;font-size:6rem;font-weight:800;
+  color:var(--accent);opacity:.09;line-height:1;
+  pointer-events:none;
+}
+.tm-card:hover{
+  transform:translateY(-8px);
+  box-shadow:var(--sh-lg);
+  border-color:rgba(0,229,180,.2);
+}
+.tm-stars{
+  display:flex;gap:2px;margin-bottom:1rem;
+}
+.tm-star{
+  color:#f5c518;font-size:1rem;
+}
+.tm-star.empty{color:var(--medium)}
+.tm-review{
+  color:var(--muted);line-height:1.78;
+  font-size:.92rem;margin-bottom:1.4rem;
+  font-style:italic;
+}
+.tm-author{
+  display:flex;align-items:center;gap:.9rem;
+  padding-top:1.2rem;
+  border-top:1px solid var(--light);
+}
+.tm-avatar{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;
+  color:white;font-size:1.1rem;
+  overflow:hidden;flex-shrink:0;
+}
+.tm-avatar img{width:100%;height:100%;object-fit:cover}
+.tm-name{
+  font-family:'Syne',sans-serif;font-weight:700;
+  color:var(--navy);font-size:.92rem;
+}
+.tm-role{
+  color:var(--muted-light);font-size:.78rem;margin-top:.15rem;
+}
+.tm-badge{
+  margin-left:auto;font-size:.68rem;font-weight:700;
+  color:var(--navy-mid);background:rgba(26,58,107,.07);
+  padding:.2rem .7rem;border-radius:20px;
+  border:1px solid rgba(26,58,107,.1);
+  white-space:nowrap;
+}
+/* Slider nav dots */
+.tm-dots{
+  display:flex;justify-content:center;gap:.5rem;
+  margin-top:1.8rem;
+}
+.tm-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--medium);cursor:pointer;
+  transition:all .3s;border:none;padding:0;
+}
+.tm-dot.active{background:var(--navy);width:22px;border-radius:4px}
+/* Summary bar */
+.tm-summary{
+  display:flex;align-items:center;justify-content:center;
+  gap:2.5rem;flex-wrap:wrap;
+  margin-bottom:3.5rem;
+  padding:1.6rem 2rem;
+  background:white;border-radius:var(--r-lg);
+  border:1px solid var(--medium);
+  box-shadow:var(--sh-sm);
+}
+.tm-sum-item{text-align:center}
+.tm-sum-num{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:2rem;color:var(--navy);line-height:1;
+}
+.tm-sum-stars{color:#f5c518;font-size:1.1rem;margin:.3rem 0}
+.tm-sum-lbl{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.tm-sum-divider{width:1px;height:48px;background:var(--medium)}
+
+@media(max-width:900px){
+  .tm-masonry{columns:2}
+}
+@media(max-width:600px){
+  .tm-masonry{columns:1}
+  .tm-slider .tm-card{flex:0 0 290px}
+}
+
+/* ══════════════════════════════════════════
+   ABOUT SECTION
+══════════════════════════════════════════ */
+.about-sec{background:var(--white);overflow:hidden;position:relative}
+.about-sec::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--navy),var(--accent),var(--accent-warm));
+}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.about-label{
+  display:inline-flex;align-items:center;gap:.5rem;
+  color:var(--accent);font-weight:700;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.18em;
+  padding:.42rem 1.1rem;border-radius:50px;margin-bottom:1rem;
+  background:rgba(0,229,180,.08);border:1px solid rgba(0,229,180,.18);
+}
+.about-headline{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,3.5vw,2.8rem);
+  font-weight:800;color:var(--navy);
+  line-height:1.15;letter-spacing:-.025em;margin-bottom:1.2rem;
+}
+.about-body{color:var(--muted);line-height:1.85;font-size:.97rem;margin-bottom:2rem}
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.2rem}
+.about-val{
+  display:flex;align-items:flex-start;gap:.85rem;
+  padding:1.1rem;border-radius:var(--r);
+  background:var(--off-white);border:1px solid var(--medium);
+  transition:all .3s var(--ease);
+}
+.about-val:hover{transform:translateY(-4px);box-shadow:var(--sh);border-color:rgba(0,229,180,.2)}
+.about-val-icon{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:.88rem;
+}
+.about-val-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:.2rem}
+.about-val-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+/* Timeline */
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{
+  content:'';position:absolute;left:.5rem;top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--navy),var(--accent),transparent);
+  border-radius:2px;
+}
+.tl-item{position:relative;margin-bottom:2.2rem}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-1.58rem;top:.3rem;
+  width:16px;height:16px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--accent));
+  border:3px solid var(--white);
+  box-shadow:0 0 0 3px rgba(0,229,180,.2);
+  transition:transform .3s var(--ease);
+}
+.tl-item:hover .tl-dot{transform:scale(1.3)}
+.tl-year{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.75rem;
+  color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;
+}
+.tl-title{font-family:'Syne',sans-serif;font-weight:700;color:var(--navy);font-size:1.05rem;margin-bottom:.3rem}
+.tl-desc{color:var(--muted);font-size:.86rem;line-height:1.65}
+
+@media(max-width:900px){
+  .about-grid{grid-template-columns:1fr;gap:3rem}
+  .about-values{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){.about-values{grid-template-columns:1fr}}
+
+
+/* ══════════════════════════════════════════
+   BOOKING SECTION
+══════════════════════════════════════════ */
+.booking-sec{background:var(--off-white);position:relative;overflow:hidden}
+.booking-sec::before{
+  content:'';position:absolute;
+  bottom:-150px;left:-150px;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(79,142,247,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.booking-wrap{
+  display:grid;grid-template-columns:1fr 1.5fr;
+  gap:3.5rem;align-items:start;
+}
+.booking-info h3{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.8rem;color:var(--navy);
+  margin-bottom:.9rem;letter-spacing:-.02em;
+}
+.booking-info p{color:var(--muted);line-height:1.8;margin-bottom:2rem;font-size:.95rem}
+.booking-perks{display:flex;flex-direction:column;gap:.85rem}
+.booking-perk{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.9rem 1.1rem;border-radius:var(--r);
+  background:white;border:1px solid var(--medium);
+  transition:all .3s var(--ease);
+}
+.booking-perk:hover{transform:translateX(6px);border-color:rgba(0,229,180,.25);box-shadow:var(--sh-sm)}
+.booking-perk-icon{
+  width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.88rem;
+}
+.booking-perk span{font-size:.88rem;color:var(--text);font-weight:500}
+
+/* Step form */
+.booking-form-card{
+  background:white;border-radius:var(--r-lg);
+  padding:2.5rem;border:1px solid var(--medium);
+  box-shadow:var(--sh);
+}
+.booking-steps{display:flex;align-items:center;gap:0;margin-bottom:2.5rem}
+.bk-step{
+  display:flex;flex-direction:column;align-items:center;gap:.35rem;
+  flex:1;position:relative;
+}
+.bk-step:not(:last-child)::after{
+  content:'';position:absolute;
+  top:18px;left:calc(50% + 18px);
+  right:calc(-50% + 18px);
+  height:2px;background:var(--medium);
+  transition:background .4s;z-index:0;
+}
+.bk-step.done:not(:last-child)::after{background:var(--accent)}
+.bk-step-num{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;
+  border:2px solid var(--medium);color:var(--muted);
+  background:white;z-index:1;transition:all .35s var(--ease);
+}
+.bk-step.active .bk-step-num{
+  background:var(--navy);color:white;border-color:var(--navy);
+  box-shadow:0 4px 14px rgba(13,34,64,.25);transform:scale(1.1);
+}
+.bk-step.done .bk-step-num{background:var(--accent);color:var(--navy);border-color:var(--accent)}
+.bk-step-label{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.bk-step.active .bk-step-label{color:var(--navy);font-weight:700}
+
+/* Step panels */
+.bk-panel{display:none;animation:fadeUp .35s var(--ease) both}
+.bk-panel.active{display:block}
+.bk-field-group{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.1rem}
+.bk-field{margin-bottom:1.1rem}
+.bk-field label{display:block;font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.45rem;letter-spacing:.02em}
+.bk-field input,.bk-field select,.bk-field textarea{
+  width:100%;padding:.88rem 1rem;
+  border:1.5px solid var(--medium);border-radius:var(--r-sm);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;
+  color:var(--text);background:var(--off-white);
+  transition:all .25s;outline:none;
+}
+.bk-field input:focus,.bk-field select:focus,.bk-field textarea:focus{
+  border-color:var(--accent);background:white;
+  box-shadow:0 0 0 3px rgba(0,229,180,.1);
+}
+.bk-field textarea{resize:vertical;min-height:90px}
+.bk-service-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;margin-bottom:1.5rem}
+.bk-service-btn{
+  padding:1rem;border-radius:var(--r);
+  border:2px solid var(--medium);background:var(--off-white);
+  cursor:pointer;text-align:left;transition:all .25s var(--ease);font-family:'DM Sans',sans-serif;
+}
+.bk-service-btn:hover,.bk-service-btn.selected{
+  border-color:var(--navy);background:rgba(13,34,64,.04);
+}
+.bk-service-btn.selected{border-color:var(--accent);background:rgba(0,229,180,.06)}
+.bk-service-btn i{font-size:1.2rem;color:var(--navy);display:block;margin-bottom:.5rem}
+.bk-service-btn span{font-weight:700;font-size:.88rem;color:var(--navy);display:block}
+.bk-service-btn small{font-size:.74rem;color:var(--muted)}
+.bk-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.8rem;padding-top:1.5rem;border-top:1px solid var(--light)}
+.bk-btn-next{
+  padding:.88rem 2rem;border-radius:50px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  color:white;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;
+  display:flex;align-items:center;gap:.55rem;
+  transition:all .3s var(--ease);
+}
+.bk-btn-next:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(13,34,64,.28)}
+.bk-btn-back{
+  padding:.88rem 1.6rem;border-radius:50px;
+  background:transparent;color:var(--muted);
+  border:1.5px solid var(--medium);cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;
+  transition:all .25s;
+}
+.bk-btn-back:hover{color:var(--navy);border-color:var(--navy)}
+.bk-summary{background:var(--off-white);border-radius:var(--r);padding:1.4rem;border:1px solid var(--medium);margin-bottom:1.5rem}
+.bk-summary-row{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--light);font-size:.88rem}
+.bk-summary-row:last-child{border-bottom:none;font-weight:700;color:var(--navy)}
+.bk-summary-row span:first-child{color:var(--muted)}
+.bk-success{text-align:center;padding:2rem 1rem;display:none}
+.bk-success i{font-size:3.5rem;color:var(--accent);margin-bottom:1rem;display:block}
+.bk-success h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--navy);margin-bottom:.6rem}
+.bk-success p{color:var(--muted);font-size:.9rem;line-height:1.7}
+[data-theme="dark"] .booking-form-card{background:#1e2a3a;border-color:#2a3a50}
+[data-theme="dark"] .booking-perk{background:#1e2a3a;border-color:#2a3a50}
+[data-theme="dark"] .bk-field input,[data-theme="dark"] .bk-field select,[data-theme="dark"] .bk-field textarea{background:#111827;border-color:#2a3a50;color:var(--text)}
+[data-theme="dark"] .bk-service-btn{background:#111827;border-color:#2a3a50}
+[data-theme="dark"] .bk-summary{background:#111827;border-color:#2a3a50}
+[data-theme="dark"] .bk-step-num{background:#1e2a3a;border-color:#2a3a50}
+@media(max-width:900px){.booking-wrap{grid-template-columns:1fr;gap:2.5rem}}
+@media(max-width:540px){.bk-field-group,.bk-service-grid{grid-template-columns:1fr}}
+
+
+/* ══════════════════════════════════════════
+   WISHLIST
+══════════════════════════════════════════ */
+.wishlist-btn{
+  background:none;border:none;cursor:pointer;
+  position:absolute;top:.85rem;left:.85rem;z-index:2;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+  transition:all .25s var(--ease);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.wishlist-btn:hover{transform:scale(1.15)}
+.wishlist-btn i{font-size:.85rem;color:var(--muted);transition:color .2s}
+.wishlist-btn.active i{color:#e53e3e}
+.wishlist-btn.active{background:rgba(255,255,255,.95)}
+/* Wishlist panel */
+#wishlist-panel{
+  position:fixed;top:0;right:-400px;width:380px;max-width:95vw;
+  height:100vh;background:white;z-index:2000;
+  box-shadow:-8px 0 40px rgba(0,0,0,.15);
+  transition:right .4s var(--ease);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#wishlist-panel.open{right:0}
+.wl-header{
+  padding:1.4rem 1.6rem;
+  border-bottom:1px solid var(--medium);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.wl-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:var(--navy);display:flex;align-items:center;gap:.55rem}
+.wl-count-badge{
+  background:var(--navy);color:white;
+  font-size:.68rem;font-weight:700;
+  padding:.15rem .55rem;border-radius:20px;
+}
+.wl-close{background:var(--light);border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:.95rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.wl-close:hover{background:var(--medium);color:var(--navy)}
+.wl-list{flex:1;overflow-y:auto;padding:1rem 1.6rem}
+.wl-empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.wl-empty i{font-size:3rem;opacity:.15;display:block;margin-bottom:1rem}
+.wl-empty p{font-size:.9rem}
+.wl-item{
+  display:flex;gap:1rem;padding:1rem;
+  border:1px solid var(--medium);border-radius:var(--r);
+  margin-bottom:.85rem;transition:all .25s;
+}
+.wl-item:hover{border-color:rgba(0,229,180,.25);box-shadow:var(--sh-sm)}
+.wl-item-img{
+  width:68px;height:68px;border-radius:var(--r-sm);flex-shrink:0;
+  background:var(--light);display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:var(--navy-mid);overflow:hidden;
+}
+.wl-item-img img{width:100%;height:100%;object-fit:cover}
+.wl-item-body{flex:1;min-width:0}
+.wl-item-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-item-price{font-size:.9rem;color:var(--navy-mid);font-weight:700;margin-bottom:.4rem}
+.wl-item-actions{display:flex;gap:.5rem}
+.wl-item-order{padding:.38rem .9rem;border-radius:20px;background:var(--navy);color:white;border:none;font-size:.74rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.wl-item-order:hover{background:var(--navy-mid)}
+.wl-item-remove{padding:.38rem .7rem;border-radius:20px;background:rgba(229,62,62,.08);color:#e53e3e;border:1px solid rgba(229,62,62,.18);font-size:.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.wl-item-remove:hover{background:rgba(229,62,62,.15)}
+.wl-footer{
+  padding:1.2rem 1.6rem;border-top:1px solid var(--medium);flex-shrink:0;
+}
+#wishlist-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1999;
+  display:none;backdrop-filter:blur(2px);
+}
+#wishlist-overlay.open{display:block}
+/* Wishlist float button */
+#wl-float{
+  position:fixed;bottom:28px;left:28px;z-index:997;
+  width:52px;height:52px;border-radius:50%;
+  background:white;border:2px solid var(--medium);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.2rem;color:var(--navy);
+  box-shadow:0 6px 24px rgba(0,0,0,.12);
+  transition:all .3s var(--ease);
+}
+#wl-float:hover{transform:scale(1.1);box-shadow:0 10px 32px rgba(0,0,0,.18);border-color:var(--accent)}
+#wl-float-count{
+  position:absolute;top:-4px;right:-4px;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent);color:var(--navy);
+  font-size:.65rem;font-weight:800;font-family:'Syne',sans-serif;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,229,180,.4);
+}
+
+
+/* ── FAQ ──────────────────────────────────────────────────────── */
+.faq-item{
+  background:white;border-radius:var(--r);
+  border:1px solid var(--medium);margin-bottom:.75rem;
+  overflow:hidden;transition:border-color .25s,box-shadow .25s;
+}
+.faq-item:hover{border-color:rgba(0,229,180,.25);box-shadow:var(--sh-sm)}
+.faq-item.open{border-color:rgba(0,229,180,.3);box-shadow:var(--sh)}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 1.4rem;cursor:pointer;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--navy);
+  gap:1rem;user-select:none;
+}
+.faq-q:hover{color:var(--navy-mid)}
+.faq-icon{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:var(--light);display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;color:var(--muted);transition:all .3s var(--ease);
+}
+.faq-item.open .faq-icon{background:var(--accent);color:var(--navy);transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s var(--ease),padding .3s;
+}
+.faq-item.open .faq-a{max-height:400px}
+.faq-a-inner{padding:0 1.4rem 1.3rem;color:var(--muted);font-size:.9rem;line-height:1.78}
+[data-theme="dark"] .faq-item{background:#1e2a3a;border-color:#2a3a50}
+[data-theme="dark"] .faq-q{color:var(--text)}
+[data-theme="dark"] .faq-icon{background:#2a3a50;color:var(--muted)}
+
+/* ── PROMO BANNER dark mode ─────────────────────────────────── */
+[data-theme="dark"] #promo-banner{opacity:.92}
+/* ── BLOG SEARCH dark mode ──────────────────────────────────── */
+
+/* ── PAGE TRANSITIONS ─────────────────────────────────────────── */
+.page-fade{animation:pageFadeIn .45s var(--ease) both}
+@keyframes pageFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="site-logo">
+      <div class="logo-icon" id="nav-logo-icon"><i class="fas fa-bolt"></i></div>
+      <span class="logo-name" id="nav-logo-name">HARITECH</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#booking">Booking</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#contact" class="nav-cta">Get Started</a></li>
+    </ul>
+    <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode"
+      style="width:36px;height:36px;border-radius:9px;border:1.5px solid var(--medium);
+      background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      color:var(--muted);font-size:.88rem;transition:all .3s var(--ease);flex-shrink:0;margin-right:.25rem">
+      <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-close" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></button>
+  <a href="#home" onclick="toggleMobileMenu()">Home</a>
+  <a href="#about" onclick="toggleMobileMenu()">About</a>
+  <a href="#services" onclick="toggleMobileMenu()">Services</a>
+  <a href="#products" onclick="toggleMobileMenu()">Products</a>
+  <a href="#booking" onclick="toggleMobileMenu()">Booking</a>
+  <a href="#blog" onclick="toggleMobileMenu()">Blog</a>
+  <a href="#testimonials" onclick="toggleMobileMenu()">Reviews</a>
+  <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+  <button onclick="toggleTheme();toggleMobileMenu();" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;padding:.6rem 1.4rem;border-radius:50px;font-family:Syne,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;margin-top:.5rem">
+    <i id="mobile-theme-icon" class="fas fa-moon"></i> <span id="mobile-theme-label">Dark Mode</span>
+  </button>
+  <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+</div>
+
+
+<!-- PROMO BANNER -->
+<div id="promo-banner" style="display:none;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:white;padding:.6rem 2.5rem;text-align:center;position:relative;z-index:999">
+  <span id="promo-text" style="font-size:.84rem;font-weight:500"></span>
+  <button onclick="this.parentElement.style.display='none'" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:.9rem;padding:4px"><i class="fas fa-times"></i></button>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg" id="hero-bg-img"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge"><i class="fas fa-star"></i><span id="h-badge">Your Premium Tech Partner</span></div>
+      <h1 class="hero-title"><span class="hero-title-accent" id="h-title">EXCLUSIVE TECH SOLUTIONS</span></h1>
+      <p class="hero-sub" id="h-sub">Premium Technology Services &amp; Products</p>
+      <p class="hero-desc" id="h-desc">Elevate your digital experience with comprehensive tech accessories, professional services, and cutting-edge solutions for the modern world.</p>
+      <div class="hero-btns">
+        <a href="#products" class="btn-white"><i class="fas fa-shopping-cart"></i><span id="h-btn1">Explore Products</span></a>
+        <a href="#services" class="btn-outline"><i class="fas fa-rocket"></i><span id="h-btn2">Our Services</span></a>
+      </div>
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-top:2.5rem;animation:fadeUp .8s var(--ease) .55s both">
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;opacity:.5;color:white">
+          <i class="fas fa-shield-alt" style="color:var(--accent)"></i> Trusted in Lagos & beyond
+        </div>
+        <div style="width:1px;height:16px;background:rgba(255,255,255,.18)"></div>
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;opacity:.5;color:white">
+          <i class="fas fa-headset" style="color:var(--accent)"></i> 24/7 Support
+        </div>
+        <div style="width:1px;height:16px;background:rgba(255,255,255,.18)"></div>
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;opacity:.5;color:white">
+          <i class="fas fa-truck" style="color:var(--accent)"></i> Fast Delivery
+        </div>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hcard"><div class="hcard-icon"><i class="fas fa-laptop-code"></i></div><h3 class="hcard-title">Tech Accessories</h3><p class="hcard-desc">Premium computer products &amp; accessories</p></div>
+      <div class="hcard"><div class="hcard-icon"><i class="fas fa-cube"></i></div><h3 class="hcard-title">3D Epoxy Design</h3><p class="hcard-desc">Stunning custom floor &amp; wall designs</p></div>
+      <div class="hcard"><div class="hcard-icon"><i class="fas fa-globe-americas"></i></div><h3 class="hcard-title">Import Services</h3><p class="hcard-desc">Expert importation consultancy</p></div>
+      <div class="hcard"><div class="hcard-icon"><i class="fas fa-print"></i></div><h3 class="hcard-title">Printing</h3><p class="hcard-desc">Professional printing solutions</p></div>
+    </div>
+  </div>
+  <!-- Scroll indicator -->
+  <a href="#services" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:.4rem;text-decoration:none;animation:fadeUp 1s var(--ease) .8s both;opacity:.45" aria-label="Scroll down">
+    <span style="font-size:.65rem;color:white;letter-spacing:.18em;text-transform:uppercase">Scroll</span>
+    <div style="width:22px;height:36px;border:1.5px solid rgba(255,255,255,.35);border-radius:20px;display:flex;justify-content:center;padding-top:6px">
+      <div style="width:4px;height:8px;background:white;border-radius:2px;animation:scrollDot 2s ease-in-out infinite"></div>
+    </div>
+  </a>
+</section>
+
+<!-- WAVE DIVIDER -->
+<div class="wave-div">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,32 C180,70 360,8 540,38 C720,68 900,10 1080,40 C1260,70 1380,22 1440,36 L1440,80 L0,80 Z" fill="#f7fafd"/>
+  </svg>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip-wrap" style="background:white;border-bottom:1px solid var(--medium);padding:1.4rem 2.5rem;overflow:hidden;transition:background .3s,border-color .3s">
+  <div class="trust-strip-inner" style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;opacity:.55">
+    <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">
+      <i class="fas fa-shield-check" style="color:var(--accent);font-size:1rem"></i> Verified Business
+    </div>
+    <div style="width:1px;height:18px;background:var(--medium)"></div>
+    <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">
+      <i class="fas fa-map-marker-alt" style="color:var(--accent);font-size:1rem"></i> Based in Lagos, Nigeria
+    </div>
+    <div style="width:1px;height:18px;background:var(--medium)"></div>
+    <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">
+      <i class="fas fa-truck-fast" style="color:var(--accent);font-size:1rem"></i> Fast Nationwide Delivery
+    </div>
+    <div style="width:1px;height:18px;background:var(--medium)"></div>
+    <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">
+      <i class="fas fa-headset" style="color:var(--accent);font-size:1rem"></i> 24/7 Customer Support
+    </div>
+    <div style="width:1px;height:18px;background:var(--medium)"></div>
+    <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">
+      <i class="fas fa-lock" style="color:var(--accent);font-size:1rem"></i> Secure Payments
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-sec">
+  <div class="stats-inner">
+    <div class="stat-card reveal"><div class="stat-ico"><i class="fas fa-users"></i></div><div class="stat-num" id="st-clients">500+</div><div class="stat-lbl">Happy Clients</div></div>
+    <div class="stat-card reveal" style="transition-delay:.08s"><div class="stat-ico"><i class="fas fa-box"></i></div><div class="stat-num" id="st-products">0+</div><div class="stat-lbl">Products</div></div>
+    <div class="stat-card reveal" style="transition-delay:.16s"><div class="stat-ico"><i class="fas fa-trophy"></i></div><div class="stat-num" id="st-projects">50+</div><div class="stat-lbl">Projects Done</div></div>
+    <div class="stat-card reveal" style="transition-delay:.24s"><div class="stat-ico"><i class="fas fa-headset"></i></div><div class="stat-num" id="st-support">24/7</div><div class="stat-lbl">Support</div></div>
+  </div>
+</div>
+
+
+<!-- ABOUT -->
+<section class="about-sec" id="about">
+  <div class="sec-inner">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="about-label"><i class="fas fa-info-circle" style="font-size:.7rem"></i> Our Story</div>
+        <h2 class="about-headline">Built on passion for <span style="background:linear-gradient(135deg,var(--navy-mid),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">smart technology</span></h2>
+        <p class="about-body">HARITECH EXCLUSIVE SERVICES started with a simple vision — to make premium technology accessible to every Nigerian. From importation and tech accessories to 3D epoxy design and interior solutions, we deliver world-class products and services with a local heart.</p>
+        <div class="about-values">
+          <div class="about-val">
+            <div class="about-val-icon"><i class="fas fa-shield-alt"></i></div>
+            <div><div class="about-val-title">Trust & Quality</div><div class="about-val-desc">Only verified, premium products and services</div></div>
+          </div>
+          <div class="about-val">
+            <div class="about-val-icon"><i class="fas fa-bolt"></i></div>
+            <div><div class="about-val-title">Speed & Efficiency</div><div class="about-val-desc">Fast delivery and rapid service turnaround</div></div>
+          </div>
+          <div class="about-val">
+            <div class="about-val-icon"><i class="fas fa-users"></i></div>
+            <div><div class="about-val-title">Customer First</div><div class="about-val-desc">Every decision starts with your satisfaction</div></div>
+          </div>
+          <div class="about-val">
+            <div class="about-val-icon"><i class="fas fa-lightbulb"></i></div>
+            <div><div class="about-val-title">Innovation</div><div class="about-val-desc">Always evolving to bring you what's next</div></div>
+          </div>
+        </div>
+        <a href="#contact" class="btn-white" style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:white;padding:.9rem 2rem;border-radius:50px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:.65rem;box-shadow:0 8px 28px rgba(13,34,64,.22)">
+          <i class="fas fa-handshake"></i> Work With Us
+        </a>
+      </div>
+      <div class="reveal" style="transition-delay:.15s">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Founded</div>
+            <div class="tl-title">HARITECH was born in Lagos</div>
+            <div class="tl-desc">Started as a tech accessories import business, serving customers across Lagos with premium products sourced globally.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Expansion</div>
+            <div class="tl-title">Services portfolio grew</div>
+            <div class="tl-desc">Added 3D epoxy design, interior design, and professional printing services — becoming a one-stop tech and lifestyle brand.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Digital</div>
+            <div class="tl-title">Online store launched</div>
+            <div class="tl-desc">Brought the full product catalog online, enabling customers across Nigeria to order with confidence and get fast delivery.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Today</div>
+            <div class="tl-title">500+ happy clients & growing</div>
+            <div class="tl-desc">Serving individuals, businesses, and institutions across Nigeria with premium tech solutions and creative services.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- BOOKING -->
+<section class="booking-sec" id="booking">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-calendar-check" style="font-size:.7rem"></i> BOOK A SERVICE</div>
+      <h2 class="sec-title">Schedule an <span class="sec-title-grad">Appointment</span></h2>
+      <p class="sec-sub">Book any of our services in minutes. We'll confirm within 24 hours.</p>
+    </div>
+    <div class="booking-wrap">
+      <!-- Left info panel -->
+      <div class="reveal">
+        <div class="booking-info">
+          <h3>Why book with HARITECH?</h3>
+          <p>From tech repairs to 3D epoxy installations, our team of professionals is ready to serve you on your schedule.</p>
+        </div>
+        <div class="booking-perks">
+          <div class="booking-perk">
+            <div class="booking-perk-icon" style="background:rgba(0,229,180,.1);color:var(--accent)"><i class="fas fa-clock"></i></div>
+            <span>Flexible scheduling — morning, afternoon, or evening</span>
+          </div>
+          <div class="booking-perk">
+            <div class="booking-perk-icon" style="background:rgba(13,34,64,.08);color:var(--navy)"><i class="fas fa-shield-alt"></i></div>
+            <span>Confirmed bookings with WhatsApp notifications</span>
+          </div>
+          <div class="booking-perk">
+            <div class="booking-perk-icon" style="background:rgba(245,158,11,.1);color:var(--accent-warm)"><i class="fas fa-star"></i></div>
+            <span>Professional, certified technicians & designers</span>
+          </div>
+          <div class="booking-perk">
+            <div class="booking-perk-icon" style="background:rgba(79,142,247,.1);color:#4f8ef7"><i class="fas fa-map-marker-alt"></i></div>
+            <span>On-site or in-store service available across Lagos</span>
+          </div>
+        </div>
+      </div>
+      <!-- Right: multi-step form -->
+      <div class="booking-form-card reveal" style="transition-delay:.12s">
+        <!-- Progress steps -->
+        <div class="booking-steps">
+          <div class="bk-step active" id="bk-step-1">
+            <div class="bk-step-num">1</div>
+            <div class="bk-step-label">Service</div>
+          </div>
+          <div class="bk-step" id="bk-step-2">
+            <div class="bk-step-num">2</div>
+            <div class="bk-step-label">Schedule</div>
+          </div>
+          <div class="bk-step" id="bk-step-3">
+            <div class="bk-step-num">3</div>
+            <div class="bk-step-label">Details</div>
+          </div>
+          <div class="bk-step" id="bk-step-4">
+            <div class="bk-step-num">4</div>
+            <div class="bk-step-label">Confirm</div>
+          </div>
+        </div>
+
+        <!-- Step 1: Choose Service -->
+        <div class="bk-panel active" id="bk-panel-1">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin-bottom:1.2rem">What service do you need?</div>
+          <div class="bk-service-grid" id="bk-service-grid">
+            <button class="bk-service-btn" onclick="selectService(this,'Tech Accessories')"><i class="fas fa-laptop"></i><span>Tech Accessories</span><small>Products & gadgets</small></button>
+            <button class="bk-service-btn" onclick="selectService(this,'3D Epoxy Design')"><i class="fas fa-cube"></i><span>3D Epoxy Design</span><small>Floor & wall design</small></button>
+            <button class="bk-service-btn" onclick="selectService(this,'Interior Design')"><i class="fas fa-couch"></i><span>Interior Design</span><small>Space transformation</small></button>
+            <button class="bk-service-btn" onclick="selectService(this,'Printing Services')"><i class="fas fa-print"></i><span>Printing</span><small>Banners, cards, more</small></button>
+            <button class="bk-service-btn" onclick="selectService(this,'Importation')"><i class="fas fa-globe-americas"></i><span>Importation</span><small>Source globally</small></button>
+            <button class="bk-service-btn" onclick="selectService(this,'Tech Support')"><i class="fas fa-tools"></i><span>Tech Support</span><small>Repairs & setup</small></button>
+          </div>
+          <div class="bk-nav">
+            <div></div>
+            <button class="bk-btn-next" onclick="bkNext(1)">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 2: Date & Time -->
+        <div class="bk-panel" id="bk-panel-2">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin-bottom:1.2rem">When works for you?</div>
+          <div class="bk-field-group">
+            <div class="bk-field">
+              <label>Preferred Date</label>
+              <input type="date" id="bk-date" min="">
+            </div>
+            <div class="bk-field">
+              <label>Preferred Time</label>
+              <select id="bk-time">
+                <option value="">Select time slot</option>
+                <option>8:00 AM – 10:00 AM</option>
+                <option>10:00 AM – 12:00 PM</option>
+                <option>12:00 PM – 2:00 PM</option>
+                <option>2:00 PM – 4:00 PM</option>
+                <option>4:00 PM – 6:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <div class="bk-field">
+            <label>Location Preference</label>
+            <select id="bk-location">
+              <option value="">Select location</option>
+              <option>In-store (our office)</option>
+              <option>On-site (your location)</option>
+              <option>Virtual / Online</option>
+            </select>
+          </div>
+          <div class="bk-nav">
+            <button class="bk-btn-back" onclick="bkBack(2)"><i class="fas fa-arrow-left"></i> Back</button>
+            <button class="bk-btn-next" onclick="bkNext(2)">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3: Personal Details -->
+        <div class="bk-panel" id="bk-panel-3">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin-bottom:1.2rem">Your contact details</div>
+          <div class="bk-field-group">
+            <div class="bk-field">
+              <label>Full Name *</label>
+              <input type="text" id="bk-name" placeholder="Emeka Okafor">
+            </div>
+            <div class="bk-field">
+              <label>Phone Number *</label>
+              <input type="tel" id="bk-phone" placeholder="+234 XXX XXX XXXX">
+            </div>
+          </div>
+          <div class="bk-field">
+            <label>Email Address</label>
+            <input type="email" id="bk-email" placeholder="you@email.com">
+          </div>
+          <div class="bk-field">
+            <label>Additional Notes</label>
+            <textarea id="bk-notes" placeholder="Describe your project or any special requirements..."></textarea>
+          </div>
+          <div class="bk-nav">
+            <button class="bk-btn-back" onclick="bkBack(3)"><i class="fas fa-arrow-left"></i> Back</button>
+            <button class="bk-btn-next" onclick="bkNext(3)">Review Booking <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirm -->
+        <div class="bk-panel" id="bk-panel-4">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin-bottom:1.2rem">Review your booking</div>
+          <div class="bk-summary" id="bk-summary"></div>
+          <div class="bk-nav">
+            <button class="bk-btn-back" onclick="bkBack(4)"><i class="fas fa-arrow-left"></i> Edit</button>
+            <button class="bk-btn-next" onclick="bkSubmit()" style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:var(--navy)">
+              <i class="fas fa-check-circle"></i> Confirm Booking
+            </button>
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div class="bk-success" id="bk-success">
+          <i class="fas fa-calendar-check"></i>
+          <h3>Booking Received!</h3>
+          <p>Thank you! We've received your booking and will confirm via WhatsApp or phone within 24 hours.<br><br>
+          <strong id="bk-ref-display" style="color:var(--navy)"></strong></p>
+          <button onclick="bkReset()" style="margin-top:1.5rem;padding:.85rem 2rem;border-radius:50px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:white;border:none;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Book Another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-tools" style="font-size:.7rem"></i> WHAT WE OFFER</div>
+      <h2 class="sec-title">Our <span class="sec-title-grad">Premium Services</span></h2>
+      <p class="sec-sub">Comprehensive solutions tailored to meet your technology and design needs with excellence and innovation</p>
+    </div>
+    <div class="svc-grid" id="svc-grid"></div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-sec" id="products">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-shopping-bag" style="font-size:.7rem"></i> SHOP NOW</div>
+      <h2 class="sec-title">Featured <span class="sec-title-grad">Products</span></h2>
+      <p class="sec-sub">Premium tech accessories and computer products curated for professionals and everyday use</p>
+    </div>
+    <div class="filters" id="prod-filters">
+      <button class="filter-btn active" data-cat="all">All Products</button>
+    </div>
+    <div class="prod-grid" id="prod-grid"></div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-newspaper" style="font-size:.7rem"></i> INSIGHTS</div>
+      <h2 class="sec-title">Latest <span class="sec-title-grad">Tech Tips &amp; News</span></h2>
+      <p class="sec-sub">Stay updated with technology trends, helpful guides, and industry insights from our team</p>
+    </div>
+    <!-- Blog search -->
+    <div style="max-width:480px;margin:0 auto 2.8rem;position:relative">
+      <input type="text" id="blog-search" placeholder="Search articles…" oninput="filterBlog(this.value)"
+        style="width:100%;padding:.85rem 1rem .85rem 3rem;border:1.5px solid var(--medium);border-radius:50px;
+        font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:white;
+        outline:none;transition:all .3s;box-shadow:var(--sh-sm)">
+      <i class="fas fa-search" style="position:absolute;left:1.1rem;top:50%;transform:translateY(-50%);color:var(--muted-light);font-size:.85rem;pointer-events:none"></i>
+      <button onclick="filterBlog('');document.getElementById('blog-search').value=''"
+        id="blog-clear" style="display:none;position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.85rem">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="blog-no-results" style="display:none;text-align:center;padding:3rem;color:var(--muted)">
+      <i class="fas fa-search" style="font-size:2.5rem;opacity:.15;display:block;margin-bottom:.8rem"></i>
+      <p>No articles match your search. <a href="#" onclick="filterBlog('');document.getElementById('blog-search').value='';return false" style="color:var(--navy-mid);font-weight:600">Clear search</a></p>
+    </div>
+    <div class="blog-grid" id="blog-grid"></div>
+  </div>
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-sec" id="testimonials">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-star" style="font-size:.7rem"></i> <span id="tm-sec-label">TESTIMONIALS</span></div>
+      <h2 class="sec-title" id="tm-sec-title-el">What Our <span class="sec-title-grad">Clients Say</span></h2>
+      <p class="sec-sub" id="tm-sec-sub-el">Real feedback from real customers who trust HARITECH for their tech needs</p>
+    </div>
+    <!-- Rating summary bar -->
+    <div class="tm-summary reveal" id="tm-summary" style="display:none">
+      <div class="tm-sum-item">
+        <div class="tm-sum-num" id="tm-avg-rating">5.0</div>
+        <div class="tm-sum-stars" id="tm-avg-stars">★★★★★</div>
+        <div class="tm-sum-lbl">Average Rating</div>
+      </div>
+      <div class="tm-sum-divider"></div>
+      <div class="tm-sum-item">
+        <div class="tm-sum-num" id="tm-count">0</div>
+        <div style="margin:.3rem 0;font-size:1.1rem">💬</div>
+        <div class="tm-sum-lbl">Reviews</div>
+      </div>
+      <div class="tm-sum-divider"></div>
+      <div class="tm-sum-item">
+        <div class="tm-sum-num" id="tm-five-star">0%</div>
+        <div style="margin:.3rem 0;font-size:1.1rem">⭐</div>
+        <div class="tm-sum-lbl">5-Star Reviews</div>
+      </div>
+    </div>
+    <!-- Cards container — class swapped by layout setting -->
+    <div id="tm-container" class="tm-grid"></div>
+    <!-- Slider dots (only shown in slider layout) -->
+    <div class="tm-dots" id="tm-dots" style="display:none"></div>
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--off-white)">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label"><i class="fas fa-question-circle" style="font-size:.7rem"></i> FAQ</div>
+      <h2 class="sec-title">Frequently Asked <span class="sec-title-grad">Questions</span></h2>
+      <p class="sec-sub">Everything you need to know about our services, delivery, and payments</p>
+    </div>
+    <div style="max-width:780px;margin:0 auto" id="faq-list">
+      <!-- FAQs rendered by JS from haritechFaqs, with static fallback -->
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-sec" id="contact">
+  <div class="sec-inner">
+    <div class="sec-header reveal">
+      <div class="sec-label" style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.15)"><i class="fas fa-envelope" style="font-size:.7rem"></i> CONNECT WITH US</div>
+      <h2 class="sec-title" style="color:white">Get In <span style="color:var(--accent)">Touch</span></h2>
+      <p class="sec-sub" style="color:rgba(255,255,255,.68)">We're here to help with all your tech needs. Reach out and let's create something amazing together</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info-box reveal">
+        <h3 class="contact-title">Contact Information</h3>
+        <p class="contact-sub">Reach out through any of these channels and we'll respond promptly</p>
+        <div class="citem"><div class="citem-icon"><i class="fas fa-map-marker-alt"></i></div><div class="citem-detail"><h4>Our Location</h4><p id="c-location">Lagos, Nigeria</p></div></div>
+        <div class="citem"><div class="citem-icon"><i class="fas fa-phone"></i></div><div class="citem-detail"><h4>Phone Number</h4><p id="c-phone">+234 XXX XXX XXXX</p></div></div>
+        <div class="citem"><div class="citem-icon"><i class="fas fa-envelope"></i></div><div class="citem-detail"><h4>Email Address</h4><p id="c-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6d04030b022d050c1f0419080e0508150e01181e041b08430e0200">[email&#160;protected]</a></p></div></div>
+        <div class="citem" id="c-hours-wrap" style="display:none"><div class="citem-icon"><i class="fas fa-clock"></i></div><div class="citem-detail"><h4>Business Hours</h4><p id="c-hours-text"></p></div></div>
+        <div class="citem" onclick="document.getElementById('wa-btn').click()" style="cursor:pointer"><div class="citem-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fab fa-whatsapp"></i></div><div class="citem-detail"><h4>WhatsApp</h4><p>Tap to chat with us instantly</p></div></div>
+        <div class="social-row" id="social-btns"></div>
+      </div>
+      <div class="contact-form-box reveal" style="transition-delay:.1s">
+        <h3 class="form-title">Send Us a Message</h3>
+        <form id="contact-form">
+          <div class="form-group"><label>Full Name</label><input type="text" name="name" placeholder="John Doe" required></div>
+          <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="john@example.com" required></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" name="phone" placeholder="+234 XXX XXX XXXX"></div>
+          <div class="form-group"><label>Service Interested In</label>
+            <select name="service" required>
+              <option value="">Select a service</option>
+              <option value="Importation">Importation Consultancy</option>
+              <option value="Tech Café">Tech Café Services</option>
+              <option value="3D Epoxy">3D Epoxy Design</option>
+              <option value="Interior Design">Interior Design</option>
+              <option value="Printing">Printing Services</option>
+              <option value="Products">Tech Products</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Your Message</label><textarea name="message" placeholder="Tell us about your needs..." required></textarea></div>
+          <button type="submit" class="submit-btn" id="contact-submit-btn"><i class="fas fa-paper-plane"></i><span>Send Message</span></button>
+<div id="form-success" style="display:none;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(0,229,180,.1);border:1px solid rgba(0,229,180,.3);border-radius:var(--r-sm);color:var(--accent);font-weight:600;font-size:.88rem;display:none;align-items:center;gap:.6rem">
+  <i class="fas fa-check-circle"></i><span>Message sent! We'll get back to you soon.</span>
+</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-section footer-about">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.4rem">
+          <div id="footer-logo-icon" style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:var(--navy);font-size:1.1rem;flex-shrink:0;overflow:hidden">H</div>
+          <span id="footer-brand-name" style="font-family:'Syne',sans-serif;font-weight:800;color:white;font-size:1rem;letter-spacing:-.01em">HARITECH</span>
+        </div>
+        <h3 style="margin-bottom:.8rem">About <span id="footer-name">HARITECH</span></h3>
+        <p id="footer-desc">Your trusted partner for premium tech solutions, professional services, and innovative design in Nigeria.</p>
+        <div class="social-row" id="footer-socials"></div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="#home"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Home</a></li>
+          <li><a href="#about"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>About</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Services</a></li>
+          <li><a href="#products"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Products</a></li>
+          <li><a href="#booking"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Book a Service</a></li>
+          <li><a href="#faq"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>FAQ</a></li>
+          <li><a href="#contact"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Services</h3>
+        <ul class="footer-links" id="footer-svc-links">
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Importation</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Tech Café</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>3D Epoxy Design</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Interior Design</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Printing</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Newsletter</h3>
+        <p style="color:rgba(255,255,255,.55);font-size:.87rem;margin-bottom:1rem;line-height:1.7">Subscribe for tech tips and exclusive offers delivered to your inbox</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit"><i class="fas fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="footer-year"></span> <span id="footer-name2">HARITECH EXCLUSIVE SERVICES</span>. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#contact">Support</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="#" id="wa-btn" class="wa-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ═══════════════════════════════════════════════════════════════
+//  HARITECH — Main Website Data Engine
+//  Single source of truth: all data lives in localStorage.
+//  Admin dashboard writes → this script reads & renders.
+// ═══════════════════════════════════════════════════════════════
+
+// ── Helpers ────────────────────────────────────────────────────
+function gs(k){ try{ return JSON.parse(localStorage.getItem(k)) || null; } catch(e){ return null; } }
+function ss(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function el(id){ return document.getElementById(id); }
+function setText(id, val){ var e=el(id); if(e && val !== undefined && val !== null && val !== '') e.textContent = val; }
+
+// ── Master loadAll ──────────────────────────────────────────────
+function loadAll(){
+  applyTheme();
+  applyBranding();
+  applyHero();
+  applyStats();
+  applyServices();
+  applyProducts();
+  applyBlog();
+  applyTestimonials();
+  applyFaq();
+  applyPromoBanner();
+  applyFooterServices();
+  applyContact();
+  applySocial();
+  applyFooter();
+  applyFavicon();
+}
+
+// ── 1. THEME ────────────────────────────────────────────────────
+function applyTheme(){
+  var th = gs('haritechTheme');
+  if(!th) return;
+  var r = document.documentElement;
+  if(th.primary){
+    r.style.setProperty('--navy',       th.primary);
+    r.style.setProperty('--navy-mid',   th.primary + 'dd');
+    r.style.setProperty('--navy-light', th.primary + 'aa');
+  }
+  if(th.accent){
+    r.style.setProperty('--accent',      th.accent);
+    r.style.setProperty('--accent-dark', th.accent);
+    r.style.setProperty('--accent-glow', th.accent + '28');
+  }
+}
+
+// ── 2. BRANDING (logo + site name) ─────────────────────────────
+function applyBranding(){
+  var logo = localStorage.getItem('haritechLogo');   // raw base64, NOT JSON
+  var st   = gs('haritechSettings') || {};
+  var name  = (st.siteName  || 'HARITECH EXCLUSIVE SERVICES').trim();
+  var short = name.split(' ')[0];
+  var letter = short.charAt(0).toUpperCase();
+
+  // Build logo HTML once
+  var logoHTML = (logo && logo.startsWith && logo.startsWith('data:'))
+    ? '<img src="'+logo+'" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;">'
+    : letter;
+
+  // Inject into every logo icon container
+  ['nav-logo-icon','footer-logo-icon'].forEach(function(id){
+    var e = el(id); if(!e) return;
+    e.innerHTML = logoHTML;
+  });
+
+  // Site name text everywhere
+  setText('nav-logo-name',    short);
+  setText('footer-brand-name', short);
+  setText('footer-name',       short);
+  setText('footer-name2',      name);
+  // page <title>
+  document.title = name + ' – Premium Tech Solutions';
+
+  // Tagline (may not exist)
+  if(st.tagline){ var tg=el('nav-tagline'); if(tg) tg.textContent = st.tagline; }
+
+  // Footer description
+  var fd = el('footer-desc');
+  if(fd) fd.textContent = st.footerDesc || fd.textContent;
+}
+
+// ── 3. HERO SECTION ─────────────────────────────────────────────
+function applyHero(){
+  var h = gs('haritechHero') || {};
+  if(h.badge)       setText('h-badge',  h.badge);
+  if(h.title)       setText('h-title',  h.title);
+  if(h.subtitle)    setText('h-sub',    h.subtitle);
+  if(h.description) setText('h-desc',   h.description);
+  if(h.btn1)        setText('h-btn1',   h.btn1);
+  if(h.btn2)        setText('h-btn2',   h.btn2);
+
+  // Background image
+  var bg = el('hero-bg-img');
+  if(bg){
+    if(h.bgImage && h.bgImage.startsWith && h.bgImage.startsWith('data:')){
+      bg.style.backgroundImage    = 'url('+h.bgImage+')';
+      bg.style.backgroundSize     = 'cover';
+      bg.style.backgroundPosition = 'center';
+      bg.style.opacity            = '0.22';
+    } else {
+      bg.style.backgroundImage = 'none';
+      bg.style.opacity         = '0';
+    }
+  }
+}
+
+// ── 4. STATS ────────────────────────────────────────────────────
+function applyStats(){
+  var st = gs('haritechStats')    || {};
+  var pr = gs('haritechProducts') || [];
+  if(st.clients)  setText('st-clients',  st.clients);
+  if(st.projects) setText('st-projects', st.projects);
+  if(st.support)  setText('st-support',  st.support);
+  var ep = el('st-products');
+  if(ep) ep.textContent = pr.length + '+';
+}
+
+// ── 5. SERVICES ─────────────────────────────────────────────────
+function applyServices(){
+  var sv   = gs('haritechServices') || [];
+  var grid = el('svc-grid');
+  if(!grid) return;
+
+  if(!sv.length){
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-tools"></i><h3>No services yet</h3><p>Check back soon!</p></div>';
+    return;
+  }
+
+  grid.innerHTML = sv.map(function(s){
+    var visual = s.image && s.image.startsWith && s.image.startsWith('data:')
+      ? '<img src="'+s.image+'" alt="'+s.title+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">'
+      : '<i class="'+(s.icon||'fas fa-tools')+'"></i>';
+    return '<div class="svc-card">'
+      + '<div class="svc-img-wrap">'+visual+'</div>'
+      + '<h3 class="svc-title">'+s.title+'</h3>'
+      + '<p class="svc-desc">'+s.description+'</p>'
+      + '<a href="'+(s.link||'#contact')+'" class="svc-link"><span>Learn More</span><i class="fas fa-arrow-right"></i></a>'
+      + '</div>';
+  }).join('');
+  observeReveal();
+}
+
+// ── 6. PRODUCTS ─────────────────────────────────────────────────
+var _allProducts = [];
+function applyProducts(){
+  _allProducts = gs('haritechProducts') || [];
+  // Rebuild filter buttons
+  var filtersEl = el('prod-filters');
+  if(filtersEl){
+    var cats = [];
+    _allProducts.forEach(function(p){ if(p.category && cats.indexOf(p.category)===-1) cats.push(p.category); });
+    var html = '<button class="filter-btn active" data-cat="all">All Products</button>';
+    cats.forEach(function(c){ html += '<button class="filter-btn" data-cat="'+c+'">'+c+'</button>'; });
+    filtersEl.innerHTML = html;
+    filtersEl.querySelectorAll('.filter-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filtersEl.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderProducts(btn.dataset.cat === 'all' ? _allProducts : _allProducts.filter(function(p){ return p.category===btn.dataset.cat; }));
+      });
+    });
+  }
+  renderProducts(_allProducts);
+}
+
+function renderProducts(list){
+  var grid = el('prod-grid');
+  if(!grid) return;
+  if(!list.length){
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-box-open"></i><h3>No products available</h3><p>Check back soon!</p></div>';
+    return;
+  }
+  grid.innerHTML = list.map(function(p){
+    var visual = p.image && p.image.startsWith && p.image.startsWith('data:')
+      ? '<img src="'+p.image+'" alt="'+p.name+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;">'
+      : '<i class="'+(p.icon||'fas fa-box')+'"></i>';
+    var statusCls = p.status==='In Stock' ? 'ps-in' : p.status==='Coming Soon' ? 'ps-soon' : 'ps-out';
+    var wl = getWishlist();
+    var isWL = wl.some(function(w){ return w.name===p.name; });
+    var imgData = (p.image && p.image.startsWith && p.image.startsWith('data:')) ? p.image : '';
+    var wlBtn = '<button class="wishlist-btn'+(isWL?' active':'')+'" onclick="toggleWishlistItem(this,event)" '
+      + 'data-name="'+p.name+'" data-price="'+p.price+'" data-icon="'+(p.icon||'fas fa-box')+'" data-image="'+(imgData?'1':'')+'"  data-imgsrc="" '
+      + 'title="'+(isWL?'Remove from':'Add to')+' wishlist"><i class="'+(isWL?'fas':'far')+' fa-heart"></i></button>';
+    return '<div class="prod-card">'
+      + '<div class="prod-img" style="position:relative">'+visual
+      + '<div class="prod-badge-wrap"><span class="prod-badge pb-new">NEW</span>'+(p.featured==='yes'?'<span class="prod-badge pb-feat">FEATURED</span>':'')+'</div>'
+      + wlBtn
+      + '</div>'
+      + '<div class="prod-body">'
+      + '<div class="prod-cat">'+p.category+'</div>'
+      + '<div class="prod-name">'+p.name+'</div>'
+      + '<div class="prod-price">&#8358;'+parseInt(p.price).toLocaleString()+'</div>'
+      + '<span class="prod-status '+statusCls+'">'+p.status+'</span>'
+      + '<p class="prod-desc">'+p.description+'</p>'
+      + '<button class="order-btn" onclick="openCheckout(this)" data-name="'+p.name+'" data-price="'+p.price+'" data-category="'+p.category+'"><i class="fas fa-shopping-cart"></i>Order Now</button>'
+      + '</div></div>';
+  }).join('');
+  observeReveal();
+}
+
+// ── 7. BLOG ──────────────────────────────────────────────────────
+function applyBlog(){
+  var bl   = (gs('haritechBlogs')||[]).filter(function(b){ return b.status==='Published'; });
+  var grid = el('blog-grid');
+  if(!grid) return;
+  if(!bl.length){
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-newspaper"></i><h3>No posts yet</h3><p>Check back soon!</p></div>';
+    return;
+  }
+  grid.innerHTML = bl.map(function(b, i){
+    var visual = b.image && b.image.startsWith && b.image.startsWith('data:')
+      ? '<img src="'+b.image+'" alt="'+b.title+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;">'
+      : '<i class="'+(b.icon||'fas fa-blog')+'"></i>';
+    return '<div class="blog-card">'
+      + '<div class="blog-img">'+visual+'</div>'
+      + '<div class="blog-body">'
+      + '<div class="blog-meta"><div class="blog-meta-item"><i class="far fa-calendar"></i><span>'+b.date+'</span></div>'
+      + '<div class="blog-meta-item"><i class="far fa-user"></i><span>'+b.author+'</span></div></div>'
+      + '<h3 class="blog-title">'+b.title+'</h3>'
+      + '<p class="blog-excerpt">'+b.excerpt+'</p>'
+      + '<a href="#" class="read-more" onclick="openPost('+i+');return false;"><span>Read More</span><i class="fas fa-arrow-right"></i></a>'
+      + '</div></div>';
+  }).join('');
+  observeReveal();
+}
+
+function openPost(idx){
+  var bl = (gs('haritechBlogs')||[]).filter(function(b){ return b.status==='Published'; });
+  var b = bl[idx]; if(!b) return;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;overflow-y:auto;padding:24px;display:flex;align-items:flex-start;justify-content:center';
+  ov.innerHTML = '<div style="background:#fff;border-radius:18px;max-width:720px;width:100%;padding:32px;position:relative;margin:auto">'
+    + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="position:absolute;top:16px;right:16px;background:#f0f0f0;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem">&times;</button>'
+    + (b.image && b.image.startsWith && b.image.startsWith('data:') ? '<img src="'+b.image+'" style="width:100%;border-radius:12px;margin-bottom:20px;max-height:300px;object-fit:cover;" alt="">' : '')
+    + '<h2 style="font-family:Syne,sans-serif;font-weight:800;margin-bottom:8px;color:#1e3a5f">'+b.title+'</h2>'
+    + '<div style="font-size:.8rem;color:#888;margin-bottom:20px">'+b.author+' &bull; '+b.date+'</div>'
+    + '<div style="line-height:1.8;color:#444">'+(b.content||b.excerpt)+'</div>'
+    + '</div>';
+  ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+}
+
+// ── 8. TESTIMONIALS ─────────────────────────────────────────────
+function applyTestimonials(){
+  var tm  = (gs('haritechTestimonials')||[]).filter(function(t){ return t.status !== 'draft'; });
+  var cfg = gs('haritechTmConfig') || {};
+
+  // Section title / sub
+  var titleEl = el('tm-sec-title-el');
+  var subEl   = el('tm-sec-sub-el');
+  if(titleEl && cfg.title) titleEl.innerHTML = cfg.title;
+  if(subEl   && cfg.sub)   subEl.textContent  = cfg.sub;
+
+  var container = el('tm-container');
+  var summary   = el('tm-summary');
+  if(!container) return;
+
+  if(!tm.length){
+    container.innerHTML = '';
+    if(summary) summary.style.display = 'none';
+    return;
+  }
+
+  // ── Summary stats ──
+  if(summary){
+    summary.style.display = 'flex';
+    var total  = tm.length;
+    var avgRaw = tm.reduce(function(s,t){ return s+parseInt(t.rating||5); },0) / total;
+    var avg    = Math.round(avgRaw*10)/10;
+    var fivePct= Math.round(tm.filter(function(t){ return parseInt(t.rating||5)===5; }).length/total*100);
+    var el2 = el('tm-avg-rating'); if(el2) el2.textContent = avg.toFixed(1);
+    var stEl = el('tm-avg-stars');
+    if(stEl){
+      var full = Math.round(avg);
+      stEl.textContent = '★'.repeat(full) + '☆'.repeat(5-full);
+    }
+    var cntEl = el('tm-count');   if(cntEl) cntEl.textContent = total;
+    var fvEl  = el('tm-five-star'); if(fvEl)  fvEl.textContent  = fivePct+'%';
+  }
+
+  // ── Layout ──
+  var layout = cfg.layout || 'grid';
+  container.className = layout === 'slider' ? 'tm-slider' : layout === 'masonry' ? 'tm-masonry' : 'tm-grid';
+
+  // ── Build cards ──
+  container.innerHTML = tm.map(function(t,i){
+    var rating = parseInt(t.rating||5);
+    var stars  = '';
+    for(var s=1;s<=5;s++) stars += '<span class="tm-star'+(s>rating?' empty':'')+'">★</span>';
+
+    var avatar = (t.image && t.image.startsWith && t.image.startsWith('data:'))
+      ? '<img src="'+t.image+'" alt="'+t.name+'">'
+      : '<span>'+t.name.charAt(0).toUpperCase()+'</span>';
+
+    return '<div class="tm-card reveal" style="transition-delay:'+(i%3 * 0.1)+'s">'
+      + '<div class="tm-stars">'+stars+'</div>'
+      + '<p class="tm-review">"'+t.review+'"</p>'
+      + '<div class="tm-author">'
+      + '<div class="tm-avatar">'+avatar+'</div>'
+      + '<div>'
+      + '<div class="tm-name">'+t.name+'</div>'
+      + (t.role ? '<div class="tm-role">'+t.role+'</div>' : '')
+      + '</div>'
+      + (t.service ? '<span class="tm-badge">'+t.service+'</span>' : '')
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  // ── Slider dots ──
+  var dotsEl = el('tm-dots');
+  if(dotsEl){
+    if(layout === 'slider'){
+      dotsEl.style.display = 'flex';
+      dotsEl.innerHTML = tm.map(function(_,i){
+        return '<button class="tm-dot'+(i===0?' active':'')+'" onclick="tmScrollTo('+i+')"></button>';
+      }).join('');
+      // Scroll listener for active dot
+      container.addEventListener('scroll', function(){
+        var w = container.scrollWidth / tm.length;
+        var active = Math.round(container.scrollLeft / w);
+        dotsEl.querySelectorAll('.tm-dot').forEach(function(d,i){ d.classList.toggle('active', i===active); });
+      });
+    } else {
+      dotsEl.style.display = 'none';
+    }
+  }
+
+  observeReveal();
+}
+
+function tmScrollTo(idx){
+  var c = el('tm-container');
+  if(!c) return;
+  var card = c.children[idx];
+  if(card) card.scrollIntoView({behavior:'smooth', block:'nearest', inline:'start'});
+}
+
+// ── 9. CONTACT ───────────────────────────────────────────────────
+function applyContact(){
+  var c = gs('haritechContact') || {};
+
+  if(c.phone){
+    var ph = el('c-phone'); if(ph) ph.textContent = c.phone;
+  }
+  if(c.email){
+    var em = el('c-email');
+    if(em) em.innerHTML = '<a href="mailto:'+c.email+'" style="color:inherit;text-decoration:none">'+c.email+'</a>';
+  }
+  if(c.location){
+    var lo = el('c-location'); if(lo) lo.textContent = c.location;
+  }
+  if(c.hours){
+    var hw = el('c-hours-wrap'), ht = el('c-hours-text');
+    if(hw) hw.style.display = 'flex';
+    if(ht) ht.textContent = c.hours;
+  }
+  // WhatsApp button
+  var wa = el('wa-btn');
+  if(wa && c.whatsapp){
+    var num = c.whatsapp.replace(/\D/g,'');
+    wa.href = 'https://wa.me/'+num;
+  }
+}
+
+// ── 9. SOCIAL MEDIA ──────────────────────────────────────────────
+function applySocial(){
+  var s = gs('haritechSocial') || {};
+  var icons = {
+    facebook:'fab fa-facebook-f',
+    twitter: 'fab fa-twitter',
+    instagram:'fab fa-instagram',
+    linkedin: 'fab fa-linkedin-in',
+    youtube:  'fab fa-youtube',
+    tiktok:   'fab fa-tiktok'
+  };
+  var html = '';
+  Object.keys(icons).forEach(function(k){
+    if(s[k]) html += '<a href="'+s[k]+'" class="social-btn" target="_blank" rel="noopener"><i class="'+icons[k]+'"></i></a>';
+  });
+  ['social-btns','footer-socials'].forEach(function(id){
+    var e = el(id); if(e) e.innerHTML = html;
+  });
+}
+
+// ── 10. FOOTER ───────────────────────────────────────────────────
+function applyFooter(){
+  var fy = el('footer-year');
+  if(fy) fy.textContent = new Date().getFullYear();
+}
+
+// ── 11. FAVICON ──────────────────────────────────────────────────
+function applyFavicon(){
+  var fav = gs('haritechFavicon');
+  if(!fav) return;
+  var lnk = el('favicon-link');
+  if(!lnk){ lnk=document.createElement('link'); lnk.id='favicon-link'; lnk.rel='icon'; document.head.appendChild(lnk); }
+  lnk.href = fav;
+}
+
+// ── CONTACT FORM ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  var form = el('contact-form');
+  if(form) form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    var msg = {
+      date:    new Date().toLocaleDateString(),
+      name:    fd.get('name'),
+      email:   fd.get('email'),
+      phone:   fd.get('phone') || '',
+      service: fd.get('service'),
+      message: fd.get('message')
+    };
+    var msgs = gs('haritechMessages') || [];
+    msgs.push(msg);
+    localStorage.setItem('haritechMessages', JSON.stringify(msgs));
+    e.target.reset();
+    // Show inline success
+    var successEl = document.getElementById('form-success');
+    if(successEl){
+      successEl.style.display = 'flex';
+      setTimeout(function(){ successEl.style.display='none'; }, 5000);
+    }
+    // Update admin message count via storage event
+    var btn = document.getElementById('contact-submit-btn');
+    if(btn){ btn.innerHTML='<i class="fas fa-check"></i><span>Sent!</span>'; setTimeout(function(){ btn.innerHTML='<i class="fas fa-paper-plane"></i><span>Send Message</span>'; },3000); }
+  });
+});
+
+function subscribeNewsletter(e){
+  e.preventDefault();
+  var emailInput = e.target.querySelector('input[type="email"]');
+  var email = emailInput ? emailInput.value.trim() : '';
+  if(!email) return;
+  // Save to localStorage so admin can see subscribers
+  var subs = gs('haritechSubscribers') || [];
+  var already = subs.some(function(s){ return s.email === email; });
+  if(already){
+    showToastWL('Already subscribed!', '');
+  } else {
+    subs.push({ email: email, date: new Date().toLocaleDateString('en-NG') });
+    ss('haritechSubscribers', subs);
+    showToastWL('Subscribed! Thank you 🎉', 'var(--accent)');
+  }
+  e.target.reset();
+}
+function showToastWL(msg, color){
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:.7rem 1.4rem;border-radius:50px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:fadeUp .3s ease both';
+  if(color) t.style.background = color;
+  if(color === 'var(--accent)') t.style.color = 'var(--navy)';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(function(){ t.remove(); }, 300); }, 3000);
+}
+
+// ── NAV + MOBILE MENU ────────────────────────────────────────────
+var _lastScrollY = 0;
+window.addEventListener('scroll', function(){
+  var nav = el('navbar');
+  var sy = window.scrollY;
+  if(nav){
+    nav.classList.toggle('scrolled', sy > 60);
+    // Hide on scroll down (mobile), show on scroll up
+    if(window.innerWidth <= 768){
+      if(sy > _lastScrollY && sy > 200){
+        nav.style.transform = 'translateY(-100%)';
+      } else {
+        nav.style.transform = '';
+      }
+    } else {
+      nav.style.transform = '';
+    }
+  }
+  _lastScrollY = sy;
+  updateActiveNav();
+});
+
+function updateActiveNav(){
+  var sections = ['home','about','booking','services','products','blog','testimonials','faq','contact'];
+  var scrollY = window.scrollY + 120;
+  var current = 'home';
+  sections.forEach(function(id){
+    var sec = document.getElementById(id);
+    if(sec && sec.offsetTop <= scrollY) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    var href = a.getAttribute('href');
+    var isActive = href === '#'+current;
+    a.style.color = isActive ? 'var(--navy)' : '';
+    a.style.fontWeight = isActive ? '700' : '';
+  });
+}
+function toggleMobileMenu(){
+  var m=el('mobile-menu');
+  var h=document.querySelector('.hamburger');
+  if(m){ m.classList.toggle('open'); }
+  if(h){ h.classList.toggle('open'); }
+}
+
+// ── LIVE SYNC ────────────────────────────────────────────────────
+// Cross-tab: the storage event fires in other tabs
+window.addEventListener('storage', function(e){
+  // Fires in OTHER tabs when admin saves something
+  if(!e.key || e.key.indexOf('haritech') === 0){
+    _lastFingerprint = _fingerprint(); // reset so next poll doesn't double-fire
+    loadAll();
+  }
+});
+
+// Same-tab polling: fires every 800ms, compares a fingerprint of all data
+var _lastFingerprint = null;
+function _fingerprint(){
+  // Use haritechUpdated timestamp directly (changes every admin save)
+  // PLUS length of data keys (catches bulk changes)
+  var updated = localStorage.getItem('haritechUpdated') || '0';
+  var keys = [
+    'haritechServices','haritechProducts','haritechBlogs',
+    'haritechContact','haritechSocial','haritechSettings',
+    'haritechHero','haritechTheme','haritechStats',
+    'haritechLogo','haritechFavicon','haritechTestimonials',
+    'haritechFaqs','haritechPromo','haritechTmConfig'
+  ];
+  var sizes = keys.map(function(k){
+    var v = localStorage.getItem(k);
+    return v ? v.length : 0;
+  }).join('|');
+  return updated + '::' + sizes;
+}
+
+setInterval(function(){
+  var fp = _fingerprint();
+  if(_lastFingerprint !== null && fp !== _lastFingerprint){
+    _lastFingerprint = fp;
+    loadAll();
+  } else {
+    _lastFingerprint = fp;
+  }
+}, 600);
+
+// ── SCROLL REVEAL ────────────────────────────────────────────────
+var _revealObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(en.isIntersecting){ en.target.classList.add('visible'); _revealObs.unobserve(en.target); }
+  });
+}, {threshold:0.08});
+
+function observeReveal(){
+  document.querySelectorAll('.reveal').forEach(function(el){
+    if(!el.classList.contains('visible')) _revealObs.observe(el);
+  });
+}
+document.addEventListener('DOMContentLoaded', observeReveal);
+
+
+// ════════════════════════════════════════════
+//  DARK / LIGHT MODE
+// ════════════════════════════════════════════
+function toggleTheme(){
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('haritechThemeMode', next);
+  _syncThemeIcons(next);
+}
+function _syncThemeIcons(theme){
+  var icon = el('theme-icon');
+  var mIcon = el('mobile-theme-icon');
+  var mLabel = el('mobile-theme-label');
+  if(icon)   icon.className   = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  if(mIcon)  mIcon.className  = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  if(mLabel) mLabel.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+// Init theme on load
+(function(){
+  var saved = localStorage.getItem('haritechThemeMode') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    _syncThemeIcons(saved);
+  });
+})();
+
+// ════════════════════════════════════════════
+//  ANIMATED COUNTERS
+// ════════════════════════════════════════════
+function animateCounter(el, target, duration){
+  var start = 0;
+  var num = parseInt(target);
+  if(isNaN(num)) return;
+  var suffix = target.toString().replace(num.toString(),'');
+  var step = num / (duration / 16);
+  var current = 0;
+  var timer = setInterval(function(){
+    current = Math.min(current + step, num);
+    el.textContent = Math.floor(current) + suffix;
+    if(current >= num) clearInterval(timer);
+  }, 16);
+}
+var _countersRan = false;
+function tryAnimateCounters(){
+  if(_countersRan) return;
+  var sec = document.querySelector('.stats-sec');
+  if(!sec) return;
+  var rect = sec.getBoundingClientRect();
+  if(rect.top < window.innerHeight * 0.9){
+    _countersRan = true;
+    ['st-clients','st-products','st-projects','st-support'].forEach(function(id){
+      var e = el(id);
+      if(e) animateCounter(e, e.textContent, 1800);
+    });
+  }
+}
+window.addEventListener('scroll', tryAnimateCounters);
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryAnimateCounters, 600); });
+
+// ════════════════════════════════════════════
+//  BOOKING SYSTEM
+// ════════════════════════════════════════════
+var _bkStep = 1;
+var _bkData = { service:'', date:'', time:'', location:'', name:'', phone:'', email:'', notes:'' };
+
+// Set min date to today
+document.addEventListener('DOMContentLoaded', function(){
+  var d = el('bk-date');
+  if(d) d.min = new Date().toISOString().split('T')[0];
+});
+
+function selectService(btn, name){
+  document.querySelectorAll('.bk-service-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  _bkData.service = name;
+}
+
+function bkNext(step){
+  if(step === 1){
+    if(!_bkData.service){ showBkError('Please select a service'); return; }
+  }
+  if(step === 2){
+    _bkData.date     = el('bk-date')     ? el('bk-date').value     : '';
+    _bkData.time     = el('bk-time')     ? el('bk-time').value     : '';
+    _bkData.location = el('bk-location') ? el('bk-location').value : '';
+    if(!_bkData.date || !_bkData.time || !_bkData.location){ showBkError('Please fill in all scheduling fields'); return; }
+  }
+  if(step === 3){
+    _bkData.name  = el('bk-name')  ? el('bk-name').value.trim()  : '';
+    _bkData.phone = el('bk-phone') ? el('bk-phone').value.trim() : '';
+    _bkData.email = el('bk-email') ? el('bk-email').value.trim() : '';
+    _bkData.notes = el('bk-notes') ? el('bk-notes').value.trim() : '';
+    if(!_bkData.name || !_bkData.phone){ showBkError('Name and phone are required'); return; }
+    // Build summary
+    var dateStr = _bkData.date ? new Date(_bkData.date).toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'long',year:'numeric'}) : '—';
+    var sumEl = el('bk-summary');
+    if(sumEl) sumEl.innerHTML =
+      '<div class="bk-summary-row"><span>Service</span><span>'+_bkData.service+'</span></div>'
+    + '<div class="bk-summary-row"><span>Date</span><span>'+dateStr+'</span></div>'
+    + '<div class="bk-summary-row"><span>Time</span><span>'+_bkData.time+'</span></div>'
+    + '<div class="bk-summary-row"><span>Location</span><span>'+_bkData.location+'</span></div>'
+    + '<div class="bk-summary-row"><span>Name</span><span>'+_bkData.name+'</span></div>'
+    + '<div class="bk-summary-row"><span>Phone</span><span>'+_bkData.phone+'</span></div>';
+  }
+  bkGoTo(step + 1);
+}
+
+function bkBack(step){ bkGoTo(step - 1); }
+
+function bkGoTo(step){
+  // Hide all panels
+  for(var i=1;i<=4;i++){
+    var p = el('bk-panel-'+i); if(p) p.classList.remove('active');
+    var s = el('bk-step-'+i);
+    if(s){
+      s.classList.remove('active','done');
+      if(i < step) s.classList.add('done');
+      if(i === step) s.classList.add('active');
+    }
+  }
+  var next = el('bk-panel-'+step);
+  if(next) next.classList.add('active');
+  _bkStep = step;
+}
+
+function showBkError(msg){
+  alert(msg); // Could be replaced with a nicer inline error
+}
+
+function bkSubmit(){
+  var ref = 'BK-' + Date.now().toString(36).toUpperCase();
+  var booking = Object.assign({}, _bkData, {
+    id: ref,
+    status: 'pending',
+    date: _bkData.date,
+    submitted: new Date().toLocaleString('en-NG')
+  });
+  // Save to localStorage for admin
+  var bookings = gs('haritechBookings') || [];
+  bookings.push(booking);
+  ss('haritechBookings', bookings);
+  broadcastStorageUpdate();
+  // Show success
+  for(var i=1;i<=4;i++){
+    var p = el('bk-panel-'+i); if(p) p.style.display='none';
+  }
+  var stepsEl = document.querySelector('.booking-steps');
+  if(stepsEl) stepsEl.style.display='none';
+  var succ = el('bk-success');
+  if(succ){ succ.style.display='block'; var ref2=el('bk-ref-display'); if(ref2) ref2.textContent='Your booking reference: '+ref; }
+}
+
+function bkReset(){
+  _bkData = { service:'', date:'', time:'', location:'', name:'', phone:'', email:'', notes:'' };
+  _bkStep = 1;
+  for(var i=1;i<=4;i++){
+    var p = el('bk-panel-'+i); if(p){ p.style.display=''; p.classList.remove('active'); }
+  }
+  var succ = el('bk-success'); if(succ) succ.style.display='none';
+  var steps = document.querySelector('.booking-steps'); if(steps) steps.style.display='';
+  document.querySelectorAll('.bk-service-btn').forEach(function(b){ b.classList.remove('selected'); });
+  bkGoTo(1);
+}
+
+function broadcastStorageUpdate(){
+  localStorage.setItem('haritechUpdated', Date.now().toString());
+}
+
+// ════════════════════════════════════════════
+//  WISHLIST
+// ════════════════════════════════════════════
+function getWishlist(){ return gs('haritechWishlist') || []; }
+function saveWishlist(wl){ ss('haritechWishlist', wl); updateWlUI(); }
+
+function toggleWishlistItem(btn, e){
+  e.stopPropagation();
+  var name  = btn.getAttribute('data-name');
+  var price = btn.getAttribute('data-price');
+  var icon  = btn.getAttribute('data-icon');
+  var imgAttr = btn.getAttribute('data-image');
+  var wl = getWishlist();
+  var idx = wl.findIndex(function(w){ return w.name===name; });
+  if(idx >= 0){
+    wl.splice(idx, 1);
+    btn.classList.remove('active');
+    btn.querySelector('i').className = 'far fa-heart';
+    btn.title = 'Add to wishlist';
+  } else {
+    wl.push({ name:name, price:price, icon:icon, image: imgAttr || '' });
+    btn.classList.add('active');
+    btn.querySelector('i').className = 'fas fa-heart';
+    btn.title = 'Remove from wishlist';
+    // Heartbeat animation
+    btn.style.transform='scale(1.3)';
+    setTimeout(function(){ btn.style.transform=''; },300);
+  }
+  saveWishlist(wl);
+}
+
+function toggleWishlist(){
+  var panel = el('wishlist-panel');
+  var overlay = el('wishlist-overlay');
+  if(!panel) return;
+  var isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  if(overlay) overlay.classList.toggle('open', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+  if(!isOpen) renderWishlistPanel();
+}
+
+function renderWishlistPanel(){
+  var wl = getWishlist();
+  var list = el('wl-list');
+  if(!list) return;
+  if(!wl.length){
+    list.innerHTML = '<div class="wl-empty"><i class="fas fa-heart"></i><p>Your wishlist is empty.<br>Tap the heart on any product to save it.</p></div>';
+    return;
+  }
+  list.innerHTML = wl.map(function(item, i){
+    var visual = item.image && item.image.startsWith && item.image.startsWith('data:')
+      ? '<img src="'+item.image+'" alt="'+item.name+'">'
+      : '<i class="'+(item.icon||'fas fa-box')+'" style="font-size:1.4rem;color:var(--navy-mid)"></i>';
+    return '<div class="wl-item">'
+      + '<div class="wl-item-img">'+visual+'</div>'
+      + '<div class="wl-item-body">'
+      + '<div class="wl-item-name">'+item.name+'</div>'
+      + '<div class="wl-item-price">&#8358;'+parseInt(item.price||0).toLocaleString()+'</div>'
+      + '<div class="wl-item-actions">'
+      + '<button class="wl-item-order" data-name="'+item.name+'" data-price="'+item.price+'" onclick="wlOrder(this.dataset.name,this.dataset.price)">Order Now</button>'
+      + '<button class="wl-item-remove" onclick="wlRemove('+i+')">Remove</button>'
+      + '</div></div></div>';
+  }).join('');
+}
+
+function wlOrder(name, price){
+  toggleWishlist();
+  // Find the product's order button and trigger checkout
+  var btn = document.querySelector('[data-name="'+name+'"]');
+  if(btn && btn.classList.contains('order-btn')) openCheckout(btn);
+  else {
+    // Fallback: open checkout directly
+    _coProduct = { name:name, price:parseFloat(price), category:'Product', qty:1 };
+    _coSelectedMethod = null;
+    var pm = gs('haritechPayment')||{};
+    var sym = {NGN:'₦',USD:'$',GBP:'£',EUR:'€',GHS:'GH₵',KES:'KSh'}[pm.currency||'NGN']||'₦';
+    el('co-title').textContent = pm.pageTitle||'Complete Your Order';
+    el('co-product-label').textContent = name;
+    el('co-price-display').textContent = sym+parseFloat(price).toLocaleString();
+    el('co-btn-label').textContent = pm.btnText||'Place Order';
+    buildPaymentMethods(pm, sym);
+    el('checkout-overlay').style.display='flex';
+    document.body.style.overflow='hidden';
+  }
+}
+
+function wlRemove(idx){
+  var wl = getWishlist();
+  wl.splice(idx, 1);
+  saveWishlist(wl);
+  renderWishlistPanel();
+  // Re-render products to update heart icons
+  renderProducts(_allProducts);
+}
+
+function clearWishlist(){
+  saveWishlist([]);
+  renderWishlistPanel();
+  renderProducts(_allProducts);
+}
+
+function updateWlUI(){
+  var wl = getWishlist();
+  var n = wl.length;
+  var badge = el('wl-badge-count'); if(badge) badge.textContent = n;
+  var floatCount = el('wl-float-count');
+  if(floatCount){
+    floatCount.textContent = n;
+    floatCount.style.display = n > 0 ? 'flex' : 'none';
+  }
+}
+
+// Init wishlist UI on load
+document.addEventListener('DOMContentLoaded', updateWlUI);
+
+
+
+// ════════════════════════════════════════════
+//  BLOG SEARCH
+// ════════════════════════════════════════════
+function filterBlog(query){
+  var clear = document.getElementById('blog-clear');
+  var noRes = document.getElementById('blog-no-results');
+  var grid  = document.getElementById('blog-grid');
+  if(clear) clear.style.display = query ? 'block' : 'none';
+  var bl = (gs('haritechBlogs')||[]).filter(function(b){ return b.status==='Published'; });
+  if(!query.trim()){
+    if(noRes) noRes.style.display='none';
+    if(grid)  grid.style.display='';
+    applyBlog();
+    return;
+  }
+  var q = query.toLowerCase();
+  var filtered = bl.filter(function(b){
+    return (b.title   && b.title.toLowerCase().includes(q))
+        || (b.excerpt && b.excerpt.toLowerCase().includes(q))
+        || (b.author  && b.author.toLowerCase().includes(q))
+        || (b.content && b.content.toLowerCase().includes(q));
+  });
+  if(!filtered.length){
+    if(noRes) noRes.style.display='block';
+    if(grid)  grid.style.display='none';
+  } else {
+    if(noRes) noRes.style.display='none';
+    if(grid)  grid.style.display='';
+    // Re-render with filtered list
+    var _orig = gs('haritechBlogs') || [];
+    // Temporarily render filtered
+    grid.innerHTML = filtered.map(function(b, i){
+      var visual = b.image && b.image.startsWith && b.image.startsWith('data:image')
+        ? '<img src="'+b.image+'" alt="'+b.title+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">'
+        : '<i class="'+(b.icon||'fas fa-blog')+'"></i>';
+      return '<div class="blog-card">'
+        + '<div class="blog-img" style="position:relative">'+visual+'</div>'
+        + '<div class="blog-body">'
+        + '<div class="blog-meta"><div class="blog-meta-item"><i class="far fa-calendar"></i><span>'+b.date+'</span></div>'
+        + '<div class="blog-meta-item"><i class="far fa-user"></i><span>'+b.author+'</span></div></div>'
+        + '<h3 class="blog-title">'+b.title+'</h3>'
+        + '<p class="blog-excerpt">'+b.excerpt+'</p>'
+        + '<a href="#" class="read-more" onclick="openPostDirect('+JSON.stringify(b).replace(/'/g,"\'")+');return false;"><span>Read More</span><i class="fas fa-arrow-right"></i></a>'
+        + '</div></div>';
+    }).join('');
+    observeReveal();
+  }
+}
+
+function openPostDirect(b){
+  if(!b) return;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;overflow-y:auto;padding:24px;display:flex;align-items:flex-start;justify-content:center';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:white;border-radius:18px;max-width:720px;width:100%;padding:32px;position:relative;margin:auto';
+  var closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:#f0f0f0;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem';
+  closeBtn.addEventListener('click', function(){ ov.remove(); });
+  inner.appendChild(closeBtn);
+  var imgHtml = '';
+  if(b.image && b.image.startsWith && b.image.startsWith('data:image')){
+    var imgEl = document.createElement('img');
+    imgEl.src = b.image;
+    imgEl.style.cssText = 'width:100%;border-radius:12px;margin-bottom:20px;max-height:300px;object-fit:cover;display:block';
+    inner.appendChild(imgEl);
+  }
+  var body = document.createElement('div');
+  body.innerHTML = '<h2 style="font-family:Syne,sans-serif;font-weight:800;margin-bottom:8px;color:#1e3a5f">'+b.title+'</h2>'
+    + '<div style="font-size:.8rem;color:#888;margin-bottom:20px">'+b.author+' &bull; '+b.date+'</div>'
+    + '<div style="line-height:1.8;color:#444">'+(b.content||b.excerpt)+'</div>';
+  inner.appendChild(body);
+  ov.appendChild(inner);
+  ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+}
+
+// ════════════════════════════════════════════
+//  FAQ
+// ════════════════════════════════════════════
+var _defaultFaqs = [
+  {q:"How do I place an order for a product?", a:"Order directly from our Products section — click Order Now on any product and choose your payment method: Paystack, Flutterwave, bank transfer, WhatsApp, or cash on delivery."},
+  {q:"Do you deliver outside Lagos?", a:"Yes! We deliver nationwide. Typically 1-3 days within Lagos and 3-7 days for other states."},
+  {q:"How do I book a service like 3D Epoxy or Interior Design?", a:"Use the Booking section on this page. Pick your service, date, and time — we will confirm within 24 hours."},
+  {q:"What payment methods do you accept?", a:"We accept Paystack, Flutterwave, bank transfer, WhatsApp orders, and cash on delivery for Lagos orders."},
+  {q:"Can I return or exchange a product?", a:"Yes — exchanges within 7 days of delivery if the item is unused and in original packaging. Contact us via WhatsApp or email."},
+  {q:"How long does a 3D Epoxy floor installation take?", a:"A standard room takes 2-4 days including preparation, application, and curing time. We give you a full timeline during your consultation."},
+  {q:"Are your products original and genuine?", a:"100% yes. All products are sourced from verified suppliers. We stand behind everything we sell."},
+  {q:"How do I track my order?", a:"You receive a booking reference number after ordering. Send it to us on WhatsApp for a real-time update."}
+];
+
+function applyFaq(){
+  var faqs = gs('haritechFaqs') || _defaultFaqs;
+  var container = document.getElementById('faq-list');
+  if(!container) return;
+  if(!faqs.length){
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem">No FAQs yet.</div>';
+    return;
+  }
+  container.innerHTML = faqs.map(function(faq, i){
+    return '<div class="faq-item reveal" style="transition-delay:'+(i*0.04)+'s">'
+      + '<div class="faq-q" onclick="toggleFaq(this.parentElement)">'
+      + '<span>'+faq.q+'</span>'
+      + '<div class="faq-icon"><i class="fas fa-plus"></i></div>'
+      + '</div>'
+      + '<div class="faq-a"><div class="faq-a-inner">'+faq.a+'</div></div>'
+      + '</div>';
+  }).join('');
+  observeReveal();
+}
+
+function toggleFaq(item){
+  var isOpen = item.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.faq-item.open').forEach(function(f){ f.classList.remove('open'); });
+  if(!isOpen) item.classList.add('open');
+}
+
+// ════════════════════════════════════════════
+//  PROMO BANNER
+// ════════════════════════════════════════════
+function applyPromoBanner(){
+  var cfg = gs('haritechPromo') || {};
+  var banner = document.getElementById('promo-banner');
+  var textEl = document.getElementById('promo-text');
+  if(!banner || !textEl) return;
+  if(cfg.enabled && cfg.text){
+    textEl.innerHTML = cfg.text;
+    banner.style.display = 'block';
+    if(cfg.bg)  banner.style.background = cfg.bg;
+    if(cfg.color) banner.style.color    = cfg.color;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════
+//  PAGE TRANSITIONS
+// ════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  document.body.classList.add('page-fade');
+});
+
+// ════════════════════════════════════════════
+//  DYNAMIC FOOTER SERVICES
+// ════════════════════════════════════════════
+function applyFooterServices(){
+  var sv = gs('haritechServices') || [];
+  var footerSvc = document.getElementById('footer-svc-links');
+  if(!footerSvc) return;
+  if(!sv.length){
+    footerSvc.innerHTML = '<li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>Our Services</a></li>';
+    return;
+  }
+  footerSvc.innerHTML = sv.slice(0,6).map(function(s){
+    return '<li><a href="#services"><i class="fas fa-chevron-right" style="font-size:.65rem;opacity:.5"></i>'+s.title+'</a></li>';
+  }).join('');
+}
+
+
+// ════════════════════════════════════════════
+//  3D TILT EFFECT on hero cards
+// ════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.hcard').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var rect = card.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width  - 0.5) * 16;
+      var y = ((e.clientY - rect.top)  / rect.height - 0.5) * -16;
+      card.style.transform = 'translateY(-10px) rotateX('+y+'deg) rotateY('+x+'deg)';
+      card.style.transition = 'transform .1s';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+      card.style.transition = 'transform .5s var(--ease)';
+    });
+  });
+
+  // Tilt on stat cards too
+  document.querySelectorAll('.stat-card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var rect = card.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width  - 0.5) * 10;
+      var y = ((e.clientY - rect.top)  / rect.height - 0.5) * -10;
+      card.style.transform = 'translateY(-8px) rotateX('+y+'deg) rotateY('+x+'deg)';
+      card.style.transition = 'transform .1s';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+      card.style.transition = 'transform .4s var(--ease)';
+    });
+  });
+});
+
+// ── INIT ─────────────────────────────────────────────────────────
+loadAll();
+_lastFingerprint = _fingerprint(); // Set AFTER loadAll
+setTimeout(observeReveal, 200);
+
+// Smooth scroll with navbar offset
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var target = document.querySelector(this.getAttribute('href'));
+    if(target){
+      e.preventDefault();
+      var offset = 72;
+      var top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({top:top, behavior:'smooth'});
+    }
+  });
+});
+</script>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkout-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div id="checkout-box" style="background:#fff;border-radius:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.25)">
+    <div style="padding:20px 22px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;border-radius:20px 20px 0 0;z-index:1">
+      <div>
+        <div id="co-title" style="font-family:Syne,sans-serif;font-weight:800;font-size:1.05rem;color:#1e3a5f">Complete Your Order</div>
+        <div id="co-product-label" style="font-size:.78rem;color:#666;margin-top:2px"></div>
+      </div>
+      <button onclick="closeCheckout()" style="background:#f5f5f5;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1.1rem;color:#666;display:flex;align-items:center;justify-content:center">&times;</button>
+    </div>
+    <div style="padding:20px 22px">
+      <div id="co-price-bar" style="background:linear-gradient(135deg,#1e3a5f,#2a5298);border-radius:12px;padding:14px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center">
+        <div style="color:rgba(255,255,255,.75);font-size:.8rem">Order Total</div>
+        <div id="co-price-display" style="font-family:Syne,sans-serif;font-weight:800;color:#00d4aa;font-size:1.3rem">₦0</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="font-size:.77rem;font-weight:700;color:#555;display:block;margin-bottom:4px">Full Name *</label><input type="text" id="co-name" placeholder="John Doe" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none" onfocus="this.style.borderColor='#00d4aa'" onblur="this.style.borderColor='#e0e0e0'"></div>
+        <div><label style="font-size:.77rem;font-weight:700;color:#555;display:block;margin-bottom:4px">Phone *</label><input type="tel" id="co-phone" placeholder="+234 XXX XXXX" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none" onfocus="this.style.borderColor='#00d4aa'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      </div>
+      <div style="margin-bottom:14px"><label style="font-size:.77rem;font-weight:700;color:#555;display:block;margin-bottom:4px">Email Address</label><input type="email" id="co-email" placeholder="you@email.com" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none" onfocus="this.style.borderColor='#00d4aa'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      <div style="margin-bottom:14px"><label style="font-size:.77rem;font-weight:700;color:#555;display:block;margin-bottom:4px">Delivery Address</label><textarea id="co-address" rows="2" placeholder="Street address, area..." style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none;resize:none" onfocus="this.style.borderColor='#00d4aa'" onblur="this.style.borderColor='#e0e0e0'"></textarea></div>
+      <div style="margin-bottom:18px"><label style="font-size:.77rem;font-weight:700;color:#555;display:block;margin-bottom:4px">Notes / Special Instructions</label><textarea id="co-notes" rows="2" placeholder="Any special requests..." style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:9px;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none;resize:none" onfocus="this.style.borderColor='#00d4aa'" onblur="this.style.borderColor='#e0e0e0'"></textarea></div>
+      <div style="font-size:.77rem;font-weight:700;color:#555;margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em">Choose Payment Method</div>
+      <div id="co-methods" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
+      <div id="co-instructions" style="background:#f8fffe;border:1px solid #d0f5ee;border-radius:10px;padding:12px;font-size:.8rem;color:#555;line-height:1.55;display:none;margin-top:10px"></div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid #eee;position:sticky;bottom:0;background:#fff;border-radius:0 0 20px 20px">
+      <button id="co-submit-btn" onclick="submitOrder()" style="width:100%;padding:14px;background:linear-gradient(135deg,#00d4aa,#00b894);color:white;border:none;border-radius:50px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <i class="fas fa-lock"></i><span id="co-btn-label">Place Order</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Checkout state
+var _coProduct={};
+var _coSelectedMethod=null;
+
+function openCheckout(btn){
+  var name=btn.getAttribute('data-name');
+  var price=btn.getAttribute('data-price');
+  var cat=btn.getAttribute('data-category');
+  _coProduct={name:name,price:parseFloat(price),category:cat,qty:1};
+  _coSelectedMethod=null;
+  var pm=gs('haritechPayment')||{};
+  var sym={NGN:'₦',USD:'$',GBP:'£',EUR:'€',GHS:'GH₵',KES:'KSh'}[pm.currency||'NGN']||'₦';
+  document.getElementById('co-title').textContent=pm.pageTitle||'Complete Your Order';
+  document.getElementById('co-product-label').textContent=name+' · '+cat;
+  document.getElementById('co-price-display').textContent=sym+parseFloat(price).toLocaleString();
+  document.getElementById('co-btn-label').textContent=pm.btnText||'Place Order';
+  var instrEl=document.getElementById('co-instructions');
+  if(pm.instructions){instrEl.textContent=pm.instructions;instrEl.style.display='block';}
+  else instrEl.style.display='none';
+  buildPaymentMethods(pm,sym);
+  document.getElementById('checkout-overlay').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function buildPaymentMethods(pm,sym){
+  var html='';
+  if(pm.paystack&&pm.paystack.enabled&&pm.paystack.pubkey)
+    html+=methodCard('paystack','PS','linear-gradient(135deg,#00c3f7,#011b33)',pm.paystack.label||'Pay with Paystack','Card, Bank Transfer, USSD');
+  if(pm.flutterwave&&pm.flutterwave.enabled&&pm.flutterwave.pubkey)
+    html+=methodCard('flutterwave','FW','linear-gradient(135deg,#f5a623,#e8330d)',pm.flutterwave.label||'Pay with Flutterwave','Card, Bank, Mobile Money');
+  if(pm.bank&&pm.bank.enabled)
+    html+=methodCard('bank','<i class="fas fa-university"></i>','linear-gradient(135deg,#2c5f2e,#97bc62)',pm.bank.label||'Bank Transfer',pm.bank.bankName?(pm.bank.bankName+' · Acc: '+pm.bank.acctNo):'Direct Bank Transfer');
+  if(pm.whatsapp&&pm.whatsapp.enabled)
+    html+=methodCard('whatsapp','<i class="fab fa-whatsapp"></i>','linear-gradient(135deg,#25d366,#128c7e)',pm.whatsapp.label||'Order via WhatsApp','Chat with us to complete order');
+  if(pm.cod&&pm.cod.enabled)
+    html+=methodCard('cod','<i class="fas fa-hand-holding-usd"></i>','linear-gradient(135deg,#f7c948,#e6890a)',pm.cod.label||'Cash on Delivery',pm.cod.time||'Pay on delivery');
+  if(pm.ussd&&pm.ussd.enabled)
+    html+=methodCard('ussd','<i class="fas fa-mobile-alt"></i>','linear-gradient(135deg,#4f8ef7,#a855f7)',pm.ussd.label||'Pay via USSD','GTBank, Zenith, Access and more');
+  if(!html)
+    html='<div style="text-align:center;padding:24px;color:#aaa;font-size:.85rem"><i class="fas fa-exclamation-circle" style="font-size:1.8rem;display:block;margin-bottom:8px;color:#ddd"></i>No payment methods are currently available.<br>Please contact us directly via WhatsApp or phone.</div>';
+  document.getElementById('co-methods').innerHTML=html;
+}
+
+function methodCard(id,icon,bg,label,sub){
+  return '<div id="co-m-'+id+'" onclick="selectMethod(\''+id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:2px solid #eee;border-radius:12px;cursor:pointer;transition:all .2s">'
+    +'<div style="width:38px;height:38px;background:'+bg+';border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;flex-shrink:0">'+icon+'</div>'
+    +'<div style="flex:1"><div style="font-weight:700;color:#1e3a5f;font-size:.88rem">'+label+'</div><div style="font-size:.74rem;color:#999;margin-top:1px">'+sub+'</div></div>'
+    +'<div id="co-m-'+id+'-chk" style="width:20px;height:20px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s"></div></div>';
+}
+
+function selectMethod(id){
+  _coSelectedMethod=id;
+  ['paystack','flutterwave','bank','whatsapp','cod','ussd'].forEach(function(m){
+    var card=document.getElementById('co-m-'+m);
+    var chk=document.getElementById('co-m-'+m+'-chk');
+    if(card){card.style.borderColor='#eee';card.style.background='#fff';}
+    if(chk){chk.style.background='transparent';chk.innerHTML='';chk.style.borderColor='#ddd';}
+  });
+  var card=document.getElementById('co-m-'+id);
+  var chk=document.getElementById('co-m-'+id+'-chk');
+  if(card){card.style.borderColor='#00d4aa';card.style.background='rgba(0,212,170,.04)';}
+  if(chk){chk.style.background='#00d4aa';chk.style.borderColor='#00d4aa';chk.innerHTML='<i class="fas fa-check" style="color:#fff;font-size:.5rem"></i>';}
+}
+
+function closeCheckout(){
+  document.getElementById('checkout-overlay').style.display='none';
+  document.body.style.overflow='';
+}
+
+function submitOrder(){
+  var name=document.getElementById('co-name').value.trim();
+  var phone=document.getElementById('co-phone').value.trim();
+  var email=document.getElementById('co-email').value.trim();
+  var address=document.getElementById('co-address').value.trim();
+  var notes=document.getElementById('co-notes').value.trim();
+  var pm=gs('haritechPayment')||{};
+  if(!name){alert('Please enter your full name.');return;}
+  if(!phone){alert('Please enter your phone number.');return;}
+  if(!_coSelectedMethod){alert('Please choose a payment method.');return;}
+  var orderId='HT-'+Date.now().toString(36).toUpperCase();
+  var order={
+    id:orderId,
+    date:new Date().toLocaleDateString('en-NG',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),
+    customerName:name,customerEmail:email,customerPhone:phone,address:address,notes:notes,
+    items:[{name:_coProduct.name,qty:1,price:_coProduct.price}],
+    total:_coProduct.price,
+    paymentMethod:_coSelectedMethod,
+    status:'pending'
+  };
+  var orders=gs('haritechOrders')||[];
+  orders.push(order);
+  ss('haritechOrders',orders);
+  if(_coSelectedMethod==='paystack'&&pm.paystack&&pm.paystack.pubkey) doPaystack(pm.paystack,order,pm);
+  else if(_coSelectedMethod==='flutterwave'&&pm.flutterwave&&pm.flutterwave.pubkey) doFlutterwave(pm.flutterwave,order,pm);
+  else if(_coSelectedMethod==='whatsapp'&&pm.whatsapp) doWhatsApp(pm.whatsapp,order);
+  else if(_coSelectedMethod==='bank') showBankDetails(pm.bank||{},order);
+  else if(_coSelectedMethod==='ussd') showUssdDetails(pm.ussd||{},order);
+  else showOrderSuccess(order,pm.successMsg||'Thank you! Your order has been received. We will contact you shortly.');
+}
+
+function doPaystack(ps,order,pm){
+  function go(){
+    var h=window.PaystackPop.setup({
+      key:ps.pubkey,
+      email:order.customerEmail||'customer@haritechexclusive.com',
+      amount:Math.round(order.total*100),
+      currency:pm.currency||'NGN',
+      ref:order.id+'-'+Date.now(),
+      channels:ps.channels||['card','bank','ussd'],
+      metadata:{custom_fields:[{display_name:'Customer',variable_name:'customer',value:order.customerName},{display_name:'Phone',variable_name:'phone',value:order.customerPhone}]},
+      callback:function(resp){
+        var ords=gs('haritechOrders')||[];
+        var idx=ords.findIndex(function(x){return x.id===order.id;});
+        if(idx>=0){ords[idx].paymentRef=resp.reference;ords[idx].status='confirmed';ss('haritechOrders',ords);}
+        closeCheckout();
+        showOrderSuccess(order,'Payment successful! Reference: '+resp.reference);
+      },
+      onClose:function(){alert('Payment closed. Your order is saved as pending.');}
+    });
+    h.openIframe();
+  }
+  if(window.PaystackPop){go();}
+  else{var s=document.createElement('script');s.src='https://js.paystack.co/v1/inline.js';s.onload=go;document.head.appendChild(s);}
+}
+
+function doFlutterwave(fw,order,pm){
+  function go(){
+    window.FlutterwaveCheckout({
+      public_key:fw.pubkey,
+      tx_ref:order.id+'-'+Date.now(),
+      amount:order.total,
+      currency:pm.currency||'NGN',
+      payment_options:'card,banktransfer,ussd',
+      customer:{email:order.customerEmail||'customer@haritechexclusive.com',phone_number:order.customerPhone,name:order.customerName},
+      customizations:{title:'HARITECH EXCLUSIVE',description:order.items.map(function(i){return i.name;}).join(', '),logo:localStorage.getItem('haritechLogo')||''},
+      callback:function(data){
+        var ords=gs('haritechOrders')||[];
+        var idx=ords.findIndex(function(x){return x.id===order.id;});
+        if(idx>=0){ords[idx].paymentRef=data.transaction_id;ords[idx].status='confirmed';ss('haritechOrders',ords);}
+        closeCheckout();
+        showOrderSuccess(order,'Payment confirmed! Transaction ID: '+data.transaction_id);
+      },
+      onclose:function(){alert('Payment closed. Your order is saved.');}
+    });
+  }
+  if(window.FlutterwaveCheckout){go();}
+  else{var s=document.createElement('script');s.src='https://checkout.flutterwave.com/v3.js';s.onload=go;document.head.appendChild(s);}
+}
+
+function doWhatsApp(wa,order){
+  var tpl=wa.msg||'Hello HARITECH! I want to order: {product} at {price}. My name is {name}. Phone: {phone}.';
+  var msg=tpl.replace('{product}',order.items.map(function(i){return i.name;}).join(', '))
+             .replace('{price}','₦'+order.total.toLocaleString())
+             .replace('{name}',order.customerName)
+             .replace('{phone}',order.customerPhone);
+  var num=(wa.number||'').replace(/\D/g,'');
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+  closeCheckout();
+  showOrderSuccess(order,'Opening WhatsApp to complete your order! Order ID: '+order.id);
+}
+
+function showBankDetails(bk,order){
+  var box=document.createElement('div');
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  box.innerHTML='<div style="background:#fff;border-radius:20px;padding:28px;max-width:420px;width:100%;text-align:center;max-height:90vh;overflow-y:auto">'
+    +'<div style="font-size:2.8rem;margin-bottom:10px">🏦</div>'
+    +'<div style="font-family:Syne,sans-serif;font-weight:800;color:#1e3a5f;font-size:1.15rem;margin-bottom:6px">Bank Transfer Details</div>'
+    +'<div style="font-size:.82rem;color:#888;margin-bottom:18px">Order #'+order.id+' &bull; ₦'+order.total.toLocaleString()+'</div>'
+    +'<div style="background:#f8fffe;border:1px solid #c8f0e8;border-radius:12px;padding:16px;text-align:left;margin-bottom:16px;font-size:.87rem;line-height:2.1">'
+    +'<div><span style="color:#888">Bank:</span> <strong style="color:#1e3a5f">'+(bk.bankName||'—')+'</strong></div>'
+    +'<div><span style="color:#888">Account Name:</span> <strong style="color:#1e3a5f">'+(bk.acctName||'—')+'</strong></div>'
+    +'<div><span style="color:#888">Account No:</span> <strong style="color:#1e3a5f;font-size:1.05rem;letter-spacing:.06em">'+(bk.acctNo||'—')+'</strong></div>'
+    +(bk.sortCode?'<div><span style="color:#888">Sort Code:</span> <strong style="color:#1e3a5f">'+bk.sortCode+'</strong></div>':'')
+    +'<div><span style="color:#888">Amount:</span> <strong style="color:#00b894;font-size:1rem">₦'+order.total.toLocaleString()+'</strong></div></div>'
+    +(bk.instructions?'<div style="font-size:.8rem;color:#666;margin-bottom:16px;line-height:1.6;text-align:left">'+bk.instructions+'</div>':'')
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove();closeCheckout();" style="width:100%;padding:13px;background:linear-gradient(135deg,#00d4aa,#00b894);color:#fff;border:none;border-radius:50px;font-family:Syne,sans-serif;font-weight:800;font-size:.95rem;cursor:pointer">I\'ve Transferred ✓</button></div>';
+  document.body.appendChild(box);
+}
+
+function showUssdDetails(ussd,order){
+  var banks=(ussd.banks||[]).map(function(b){
+    return '<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:.85rem">'
+      +'<span style="color:#555">'+b.name+'</span><strong style="color:#1e3a5f;letter-spacing:.05em;font-size:.95rem">'+b.code+'</strong></div>';
+  }).join('');
+  var box=document.createElement('div');
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  box.innerHTML='<div style="background:#fff;border-radius:20px;padding:28px;max-width:420px;width:100%;text-align:center">'
+    +'<div style="font-size:2.8rem;margin-bottom:10px">📱</div>'
+    +'<div style="font-family:Syne,sans-serif;font-weight:800;color:#1e3a5f;font-size:1.15rem;margin-bottom:6px">USSD Payment</div>'
+    +'<div style="font-size:.82rem;color:#888;margin-bottom:16px">Dial any code below on your mobile phone</div>'
+    +'<div style="background:#f8fffe;border:1px solid #c8f0e8;border-radius:12px;padding:14px;text-align:left;margin-bottom:14px">'
+    +(banks||'<div style="color:#aaa;text-align:center;padding:10px;font-size:.83rem">No USSD codes configured yet</div>')+'</div>'
+    +'<div style="font-size:.8rem;color:#888;margin-bottom:18px">Amount: <strong style="color:#00b894">₦'+order.total.toLocaleString()+'</strong> &bull; Use Order Ref: <strong>#'+order.id+'</strong></div>'
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove();closeCheckout();" style="width:100%;padding:13px;background:linear-gradient(135deg,#4f8ef7,#a855f7);color:#fff;border:none;border-radius:50px;font-family:Syne,sans-serif;font-weight:800;font-size:.95rem;cursor:pointer">Done</button></div>';
+  document.body.appendChild(box);
+}
+
+function showOrderSuccess(order,msg){
+  closeCheckout();
+  var box=document.createElement('div');
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  box.innerHTML='<div style="background:#fff;border-radius:20px;padding:32px;max-width:400px;width:100%;text-align:center">'
+    +'<div style="width:68px;height:68px;background:linear-gradient(135deg,#00d4aa,#00b894);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff"><i class="fas fa-check"></i></div>'
+    +'<div style="font-family:Syne,sans-serif;font-weight:800;color:#1e3a5f;font-size:1.2rem;margin-bottom:8px">Order Placed!</div>'
+    +'<div style="font-size:.84rem;color:#666;line-height:1.65;margin-bottom:8px">'+msg+'</div>'
+    +'<div style="font-size:.76rem;color:#aaa;background:#f9f9f9;border-radius:8px;padding:8px;margin-bottom:20px">Order ID: <strong style="color:#1e3a5f">#'+order.id+'</strong></div>'
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove();" style="width:100%;padding:13px;background:linear-gradient(135deg,#1e3a5f,#2a5298);color:#fff;border:none;border-radius:50px;font-family:Syne,sans-serif;font-weight:800;font-size:.95rem;cursor:pointer">Continue Shopping</button></div>';
+  document.body.appendChild(box);
+}
+
+document.getElementById('checkout-overlay').addEventListener('click',function(e){if(e.target===this)closeCheckout();});
+</script>
+
+<!-- BACK TO TOP -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"
+  style="position:fixed;bottom:98px;right:28px;width:44px;height:44px;background:var(--navy);color:white;border:none;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:997;
+  opacity:0;transform:translateY(12px);transition:all .35s var(--ease);
+  box-shadow:0 4px 18px rgba(13,34,64,.28);font-size:.9rem;">
+  <i class="fas fa-arrow-up"></i>
+</button>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 400){
+      btn.style.opacity='1'; btn.style.transform='translateY(0)';
+    } else {
+      btn.style.opacity='0'; btn.style.transform='translateY(12px)';
+    }
+  });
+})();
+</script>
+
+<!-- WISHLIST OVERLAY -->
+<div id="wishlist-overlay" onclick="toggleWishlist()"></div>
+
+<!-- WISHLIST PANEL -->
+<div id="wishlist-panel">
+  <div class="wl-header">
+    <div class="wl-title"><i class="fas fa-heart"></i> Wishlist <span class="wl-count-badge" id="wl-badge-count">0</span></div>
+    <button class="wl-close" onclick="toggleWishlist()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="wl-list" id="wl-list">
+    <div class="wl-empty"><i class="fas fa-heart"></i><p>Your wishlist is empty.<br>Tap the heart on any product to save it.</p></div>
+  </div>
+  <div class="wl-footer">
+    <button onclick="clearWishlist()" style="width:100%;padding:.75rem;border-radius:50px;background:transparent;border:1.5px solid var(--medium);color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .25s" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--medium)';this.style.color='var(--muted)'">Clear Wishlist</button>
+  </div>
+</div>
+
+<!-- WISHLIST FLOAT BUTTON -->
+<button id="wl-float" onclick="toggleWishlist()" aria-label="Open wishlist">
+  <i class="fas fa-heart"></i>
+  <span id="wl-float-count">0</span>
+</button>
+
+</body>
+</html>
