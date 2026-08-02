@@ -1,0 +1,39 @@
+{
+  "name": "haritech-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Premium portfolio website for HARITECH EXCLUSIVE SERVICES",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "web development",
+    "portfolio",
+    "haritech",
+    "excellence"
+  ],
+  "author": "HARITECH EXCLUSIVE SERVICES",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
+    "framer-motion": "^10.16.4",
+    "gsap": "^3.12.2",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.20",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9"
+  }
+}
