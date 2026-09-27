@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, MessageCircle, Clock, Send, ArrowRight, Zap, CheckCircle, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageCircle, Clock, Send, ArrowRight, Zap, CheckCircle, Twitter, Linkedin, Facebook, Instagram, AlertCircle } from 'lucide-react';
 import { getWhatsAppUrl, getHaritechContent, getSocialLinks } from '../../utils/haritechContent';
+import { submitContactMessage, buildWhatsAppFallbackUrl } from '../../utils/contactMessages';
+import type { ContactMessage } from '../../utils/contactMessages';
 
 const socialIcons = [
   { key: 'twitter', icon: Twitter, label: 'Twitter' },
@@ -18,9 +20,17 @@ const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ c
 );
 
 const Contact: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle');
+  const [fallbackUrl, setFallbackUrl] = useState('');
   const [contact, setContact] = useState(() => getHaritechContent());
   const [social, setSocial] = useState(() => getSocialLinks());
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
 
   useEffect(() => {
     const contentHandler = () => setContact(getHaritechContent());
@@ -33,11 +43,30 @@ const Contact: React.FC = () => {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+    if (status === 'sending') return;
+    setStatus('sending');
+    const msg: ContactMessage = {
+      form: 'contact',
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      subject: form.subject,
+      message: form.message,
+    };
+    const result = await submitContactMessage(msg);
+    if (result.ok) {
+      setStatus('sent');
+      setTimeout(() => setStatus('idle'), 5000);
+    } else {
+      setFallbackUrl(buildWhatsAppFallbackUrl(msg));
+      setStatus('failed');
+    }
   };
+
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
 
   return (
     <div className="relative overflow-x-hidden">
@@ -68,7 +97,7 @@ const Contact: React.FC = () => {
             <FadeInView>
               <div className="card p-8 md:p-10 glow-border">
                 <h2 className="text-2xl font-bold text-white mb-6">Send Us a Message</h2>
-                {submitted ? (
+                {status === 'sent' ? (
                   <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
                     <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-white mb-2">Message Sent!</h3>
@@ -78,21 +107,21 @@ const Contact: React.FC = () => {
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-2">Full Name</label>
-                        <input type="text" required className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="John Doe" />
+                        <label htmlFor="contact-name" className="block text-sm font-medium text-slate-400 mb-2">Full Name</label>
+                        <input id="contact-name" name="name" type="text" required value={form.name} onChange={set('name')} className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="John Doe" />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
-                        <input type="email" required className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="john@example.com" />
+                        <label htmlFor="contact-email" className="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
+                        <input id="contact-email" name="email" type="email" required value={form.email} onChange={set('email')} className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="john@example.com" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-2">Phone Number</label>
-                      <input type="tel" className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="+234 XXX XXX XXXX" />
+                      <label htmlFor="contact-phone" className="block text-sm font-medium text-slate-400 mb-2">Phone Number</label>
+                      <input id="contact-phone" name="phone" type="tel" value={form.phone} onChange={set('phone')} className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="+234 XXX XXX XXXX" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-2">Subject</label>
-                      <select className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
+                      <label htmlFor="contact-subject" className="block text-sm font-medium text-slate-400 mb-2">Subject</label>
+                      <select id="contact-subject" name="subject" value={form.subject} onChange={set('subject')} className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
                         <option value="">Select a service</option>
                         <option>Website Design & Development</option>
                         <option>E-commerce Solutions</option>
@@ -104,11 +133,24 @@ const Contact: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-2">Message</label>
-                      <textarea rows={5} required className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm resize-none" placeholder="Tell us about your project..." />
+                      <label htmlFor="contact-message" className="block text-sm font-medium text-slate-400 mb-2">Message</label>
+                      <textarea id="contact-message" name="message" rows={5} required value={form.message} onChange={set('message')} className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm resize-none" placeholder="Tell us about your project..." />
                     </div>
-                    <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="btn-primary w-full py-4 text-base">
-                      <Send className="h-5 w-5" /> Send Message
+
+                    {status === 'failed' && (
+                      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="text-amber-300 font-medium mb-2">Automatic send is unavailable right now.</p>
+                          <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-green-400 hover:text-green-300 underline">
+                            <MessageCircle className="h-3.5 w-3.5" /> Send this message on WhatsApp instead
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    <motion.button type="submit" disabled={status === 'sending'} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="btn-primary w-full py-4 text-base disabled:opacity-60">
+                      <Send className="h-5 w-5" /> {status === 'sending' ? 'Sending…' : 'Send Message'}
                     </motion.button>
                   </form>
                 )}
@@ -138,7 +180,7 @@ const Contact: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0"><Clock className="h-5 w-5 text-blue-400" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Business Hours</h3>
-                    {social.businessHours.split('\n').map((line, i) => (
+                    {(social.businessHours ?? '').split('\n').filter(Boolean).map((line, i) => (
                       <p key={i} className="text-sm text-slate-400">{line}</p>
                     ))}
                   </div>

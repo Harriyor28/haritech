@@ -2,20 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Upload, Code2 } from 'lucide-react';
 import { getHaritechBrandLogo, setHaritechBrandLogo } from '../../utils/haritechBrand';
+import { fileToSizedDataUrl } from '../../utils/image';
 
 const HaritechLogoManager: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState(() => getHaritechBrandLogo());
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => { setLogoUrl(getHaritechBrandLogo()); }, []);
 
   const handleSave = () => {
     const logo = logoPreview || logoUrl;
     if (!logo) return;
-    setHaritechBrandLogo(logo);
+    const ok = setHaritechBrandLogo(logo);
+    if (!ok) {
+      setUploadError('Logo too large for browser storage — try a smaller file or an image URL instead.');
+      return;
+    }
     setLogoUrl(logo);
     setLogoPreview(null);
+    setUploadError('');
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -24,12 +31,13 @@ const HaritechLogoManager: React.FC = () => {
     <div className="card p-8 bg-[#0e1326]/80 border-white/5 glow-border">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-white">Haritech Logo & Brand</h3>
-          <p className="text-slate-400 text-xs mt-1">Separate logo for the Haritech Services section</p>
+                    <h3 className="text-xl font-bold text-white">Site Logo</h3>
+                    <p className="text-slate-400 text-xs mt-1">One logo for the whole site — same on portfolio and Haritech pages</p>
         </div>
         <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSave} className="flex items-center gap-2 btn-primary px-6 py-3 rounded-xl text-sm"><Save className="h-4 w-4" /> Save Logo</motion.button>
       </div>
       {saved && <div className="text-emerald-400 text-sm font-bold mb-4">Logo saved successfully!</div>}
+      {uploadError && <div className="text-red-400 text-sm font-bold mb-4">{uploadError}</div>}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="p-6 bg-slate-950/50 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
@@ -52,10 +60,10 @@ const HaritechLogoManager: React.FC = () => {
           <div>
             <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Upload Logo File</label>
             <div className="relative border-2 border-dashed border-white/10 hover:border-cyan-500/40 rounded-xl p-6 text-center transition-all bg-slate-950/30 cursor-pointer group">
-              <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setLogoPreview(reader.result as string); reader.readAsDataURL(file); }}} className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+              <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; e.target.value = ''; setUploadError(''); fileToSizedDataUrl(file).then((dataUrl) => setLogoPreview(dataUrl)).catch((err: Error) => setUploadError(err.message)); }} className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
               <Upload className="h-8 w-8 text-cyan-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
               <p className="text-xs text-slate-300 font-medium">Click or drag & drop</p>
-              <p className="text-[10px] text-slate-500 mt-1">PNG, SVG, WebP up to 5MB</p>
+              <p className="text-[10px] text-slate-500 mt-1">PNG, SVG, WebP — auto-resized to fit</p>
             </div>
           </div>
           <div>

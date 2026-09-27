@@ -25,6 +25,8 @@ export const getSupabase = (): SupabaseClient | null => {
 
 export const isCloudConfigured = (): boolean => isConfigured;
 
+export const SUPABASE_URL = url || '';
+
 export const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined) || 'admin@haritech.com';
 
 export const CLOUD_TABLE = 'site_data';

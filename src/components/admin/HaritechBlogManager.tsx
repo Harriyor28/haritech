@@ -18,7 +18,7 @@ const HaritechBlogManager: React.FC = () => {
   useEffect(() => { setPosts(getBlogPosts()); }, []);
 
   const handleSave = () => {
-    setBlogPosts(posts);
+    if (!setBlogPosts(posts)) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

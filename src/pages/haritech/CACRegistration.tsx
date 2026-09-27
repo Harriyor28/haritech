@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FileText, CheckCircle, ArrowRight, Zap, Clock, Award, ChevronDown, ArrowUpRight, Download } from 'lucide-react';
+import { FileText, CheckCircle, ArrowRight, Zap, Clock, Award, ChevronDown, Download } from 'lucide-react';
 import { getCACInfo, CACInfo, getWhatsAppUrl } from '../../utils/haritechContent';
 
 const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => (
@@ -16,7 +16,13 @@ const DOCUMENTS_KEY = 'haritech-cac-docs';
 const CAC_FAQ_KEY = 'haritech-cac-faq';
 
 const getArr = (key: string, fallback: any[]) => {
-  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : fallback; } catch { return fallback; }
+  try {
+    const d = localStorage.getItem(key);
+    const parsed = d ? JSON.parse(d) : null;
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
 };
 
 const processSteps = [
@@ -46,7 +52,15 @@ const CACRegistration: React.FC = () => {
       setFaqs(getArr(CAC_FAQ_KEY, []));
     };
     window.addEventListener('haritech-cac-data-updated', handler);
-    return () => window.removeEventListener('haritech-cac-data-updated', handler);
+    window.addEventListener('haritech-cac-updated', handler);
+    window.addEventListener('haritech-content-updated', handler);
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('haritech-cac-data-updated', handler);
+      window.removeEventListener('haritech-cac-updated', handler);
+      window.removeEventListener('haritech-content-updated', handler);
+      window.removeEventListener('storage', handler);
+    };
   }, []);
 
   return (
@@ -180,10 +194,14 @@ const CACRegistration: React.FC = () => {
                 <FileText className="h-16 w-16 text-cyan-400/30 mb-4" />
                 <h3 className="text-lg font-bold text-white mb-2">CAC Certificate Preview</h3>
                 <p className="text-sm text-slate-500 mb-6">Your certificate will be displayed here once issued.</p>
-                <div className="flex gap-3">
-                  <button className="btn-primary text-xs py-2 px-4 rounded-lg"><Download className="h-3 w-3" /> Download Certificate</button>
-                  <button className="btn-secondary text-xs py-2 px-4 rounded-lg"><ArrowUpRight className="h-3 w-3 text-cyan-400" /> View Certificate</button>
-                </div>
+                <a
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary text-xs py-2 px-4 rounded-lg inline-flex items-center gap-1.5"
+                >
+                  <Download className="h-3 w-3" /> Ask About Your Certificate
+                </a>
               </div>
             </FadeInView>
           </div>

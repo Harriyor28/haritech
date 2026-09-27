@@ -142,8 +142,15 @@ const HaritechHome: React.FC = () => {
               <p className="text-slate-400 max-w-2xl mx-auto">Discover the projects we've delivered with passion and precision.</p>
             </div>
           </FadeInView>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, i) => (
+          {projects.length === 0 ? (
+            <FadeInView>
+              <div className="card p-10 text-center max-w-xl mx-auto glow-border">
+                <p className="text-slate-400 text-sm">Projects will appear here once they are added.</p>
+              </div>
+            </FadeInView>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.map((project, i) => (
               <FadeInView key={project.id} delay={i * 0.08}>
                 <div className="card group overflow-hidden h-full glow-border">
                   <div className="relative overflow-hidden">
@@ -155,17 +162,20 @@ const HaritechHome: React.FC = () => {
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
                     <p className="text-sm text-slate-400 mb-4 line-clamp-2">{project.description}</p>
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                      {project.tags.slice(0, 3).map(t => <span key={t} className="text-xs bg-slate-900 border border-white/5 text-slate-400 px-2 py-1 rounded-lg">{t}</span>)}
+                      {(project.tags ?? []).slice(0, 3).map(t => <span key={t} className="text-xs bg-slate-900 border border-white/5 text-slate-400 px-2 py-1 rounded-lg">{t}</span>)}
                     </div>
                     <div className="flex gap-2">
-                      <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2 rounded-xl text-xs font-bold border border-cyan-500/20 hover:border-transparent transition-all">Live Demo</a>
+                      {project.liveDemo && (
+                        <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2 rounded-xl text-xs font-bold border border-cyan-500/20 hover:border-transparent transition-all">Live Demo</a>
+                      )}
                       <Link to={`/project/${project.id}`} className="flex-1 text-center bg-slate-900 border border-white/5 text-slate-300 hover:text-white py-2 rounded-xl hover:bg-slate-800 text-xs font-bold transition-all">Details</Link>
                     </div>
                   </div>
                 </div>
               </FadeInView>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <FadeInView>
             <div className="text-center mt-10">
               <Link to="/haritech/portfolio" className="btn-secondary inline-flex items-center gap-2 px-8 py-3.5">View Full Portfolio <ArrowRight className="h-4 w-4" /></Link>
@@ -190,7 +200,7 @@ const HaritechHome: React.FC = () => {
                   <Quote className="h-8 w-8 text-cyan-400/30 mb-4" />
                   <p className="text-slate-300 text-sm leading-relaxed mb-6">{t.content}</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">{t.name[0]}</div>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">{(t.name || '?')[0]?.toUpperCase()}</div>
                     <div>
                       <div className="text-sm font-bold text-white">{t.name}</div>
                       <div className="text-xs text-slate-500">{t.position}</div>

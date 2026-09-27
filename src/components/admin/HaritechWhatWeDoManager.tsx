@@ -32,7 +32,7 @@ const HaritechWhatWeDoManager: React.FC = () => {
   useEffect(() => { setAreas(getWhatWeDoAreas()); }, []);
 
   const handleSave = () => {
-    setWhatWeDoAreas(areas);
+    if (!setWhatWeDoAreas(areas)) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

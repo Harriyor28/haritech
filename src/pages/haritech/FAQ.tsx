@@ -12,7 +12,7 @@ const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ c
 
 const FAQ: React.FC = () => {
   const [faqs, setFaqs] = useState<FAQCategory[]>(() => getFAQCategories());
-  const [activeCategory, setActiveCategory] = useState(faqs[0].category);
+  const [activeCategory, setActiveCategory] = useState(faqs[0]?.category ?? '');
   const [openItems, setOpenItems] = useState<number[]>([]);
   const [content, setContent] = useState(() => getHaritechContent());
 
@@ -21,7 +21,9 @@ const FAQ: React.FC = () => {
     const faqHandler = () => {
       const data = getFAQCategories();
       setFaqs(data);
-      setActiveCategory(prev => data.some(f => f.category === prev) ? prev : data[0].category);
+      setActiveCategory(prev =>
+        data.some(f => f.category === prev) ? prev : (data[0]?.category ?? '')
+      );
     };
     window.addEventListener('haritech-content-updated', contentHandler);
     window.addEventListener('haritech-faq-updated', faqHandler);
@@ -35,7 +37,7 @@ const FAQ: React.FC = () => {
     setOpenItems(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
   };
 
-  const activeFaqs = faqs.find(f => f.category === activeCategory)!;
+  const activeFaqs = faqs.find(f => f.category === activeCategory) ?? faqs[0];
 
   return (
     <div className="relative overflow-x-hidden">
@@ -71,7 +73,7 @@ const FAQ: React.FC = () => {
 
           <AnimatePresence mode="wait">
             <motion.div key={activeCategory} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-3xl mx-auto space-y-4">
-              {activeFaqs.items.map((faq, i) => (
+              {activeFaqs?.items?.map((faq, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="card overflow-hidden">
                   <button onClick={() => toggleItem(i)} className="w-full p-5 flex items-center justify-between text-left hover:bg-[#141b35] transition-colors">
                     <span className="text-sm font-bold text-white pr-4">{faq.q}</span>

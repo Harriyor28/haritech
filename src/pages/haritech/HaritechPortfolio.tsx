@@ -64,14 +64,16 @@ const HaritechPortfolio: React.FC = () => {
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
                       <p className="text-sm text-slate-400 mb-4 leading-relaxed line-clamp-2">{project.description}</p>
                       <div className="flex flex-wrap gap-2 mb-5">
-                        {project.tags.map(tag => (
+                        {(project.tags ?? []).map(tag => (
                           <span key={tag} className="text-xs bg-slate-900 border border-white/5 text-slate-400 px-2.5 py-1 rounded-lg">{tag}</span>
                         ))}
                       </div>
                       <div className="flex gap-3">
-                        <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2.5 px-4 rounded-xl transition-all text-xs font-bold border border-cyan-500/20 hover:border-transparent flex items-center justify-center gap-1">
-                          Live Demo <ExternalLink className="h-3 w-3" />
-                        </a>
+                        {project.liveDemo && (
+                          <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2.5 px-4 rounded-xl transition-all text-xs font-bold border border-cyan-500/20 hover:border-transparent flex items-center justify-center gap-1">
+                            Live Demo <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
                         <Link to={`/project/${project.id}`} className="flex-1 text-center bg-slate-900 border border-white/5 text-slate-300 hover:text-white py-2.5 px-4 rounded-xl hover:bg-slate-800 transition-all text-xs font-bold flex items-center justify-center gap-1">
                           Details <ArrowRight className="h-3 w-3" />
                         </Link>

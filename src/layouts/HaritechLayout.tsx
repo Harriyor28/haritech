@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun } from 'lucide-react';
+import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
 import { getHaritechBrandLogo, subscribeToHaritechLogo } from '../utils/haritechBrand';
-import { getWhatsAppUrl, getHaritechContent } from '../utils/haritechContent';
+import { getWhatsAppUrl, getHaritechContent, getSocialLinks } from '../utils/haritechContent';
+import type { SocialLinks } from '../utils/haritechContent';
+import { getStoredSettings } from '../utils/settings';
 import Underground3DBackground from '../components/Underground3DBackground';
+import CrossPromo from '../components/shared/CrossPromo';
 
 const navItems = [
   { label: 'Home', path: '/haritech', icon: Building2 },
@@ -20,18 +23,68 @@ const navItems = [
   { label: 'Contact', path: '/haritech/contact', icon: Mail },
 ];
 
+const footerSocialDefs: { key: keyof SocialLinks; icon: typeof Twitter; label: string }[] = [
+  { key: 'twitter', icon: Twitter, label: 'Twitter' },
+  { key: 'linkedin', icon: Linkedin, label: 'LinkedIn' },
+  { key: 'facebook', icon: Facebook, label: 'Facebook' },
+  { key: 'instagram', icon: Instagram, label: 'Instagram' },
+];
+
 const HaritechLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState(() => getHaritechBrandLogo());
   const [content, setContent] = useState(() => getHaritechContent());
+  const [settings, setSettings] = useState(() => getStoredSettings());
+  const [socials, setSocials] = useState<SocialLinks>(() => getSocialLinks());
   const location = useLocation();
+
+  // Close nav/dropdown whenever the route changes (Back/Forward, programmatic nav)
+  useEffect(() => {
+    setSidebarOpen(false);
+    setMoreOpen(false);
+  }, [location.pathname]);
+
+  // Lock body scroll while the mobile sidebar is open; Escape closes it
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [sidebarOpen]);
 
   useEffect(() => subscribeToHaritechLogo(setLogoUrl), []);
 
   useEffect(() => {
     const handler = () => setContent(getHaritechContent());
     window.addEventListener('haritech-content-updated', handler);
-    return () => window.removeEventListener('haritech-content-updated', handler);
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('haritech-content-updated', handler);
+      window.removeEventListener('storage', handler);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handler = () => {
+      setSettings(getStoredSettings());
+      setSocials(getSocialLinks());
+    };
+    window.addEventListener('haritech-settings-updated', handler);
+    window.addEventListener('haritech-social-updated', handler);
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('haritech-settings-updated', handler);
+      window.removeEventListener('haritech-social-updated', handler);
+      window.removeEventListener('storage', handler);
+    };
   }, []);
 
   const isActive = (path: string) => {
@@ -47,7 +100,13 @@ const HaritechLayout: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-slate-400 transition-colors">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-slate-400 transition-colors"
+                aria-label="Open navigation menu"
+                aria-expanded={sidebarOpen}
+                aria-controls="mobile-sidebar"
+              >
                 <Menu className="h-5 w-5" />
               </button>
               <Link to="/haritech" className="flex items-center gap-2 shrink-0">
@@ -78,10 +137,15 @@ const HaritechLayout: React.FC = () => {
                 </Link>
               ))}
               <div className="relative group">
-                <button className="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-1">
-                  More <ChevronDown className="h-3 w-3" />
+                <button
+                  onClick={() => setMoreOpen((v) => !v)}
+                  aria-haspopup="true"
+                  aria-expanded={moreOpen}
+                  className="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-1"
+                >
+                  More <ChevronDown className={`h-3 w-3 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className="absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
+                <div className={`absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 ${moreOpen ? '!opacity-100 !visible' : ''}`}>
                   {navItems.slice(5).map((item) => (
                     <Link key={item.path} to={item.path} className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-cyan-400 hover:bg-white/5 transition-colors">
                       <item.icon className="h-4 w-4" />
@@ -93,7 +157,7 @@ const HaritechLayout: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <Link to="/" className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-cyan-400 transition-colors">
+              <Link to="/portfolio" className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-cyan-400 transition-colors">
                 <ArrowLeft className="h-3 w-3" /> Portfolio
               </Link>
               <Link to="/haritech/request-quote" className="btn-primary text-xs py-2 px-4 rounded-lg whitespace-nowrap">
@@ -113,6 +177,10 @@ const HaritechLayout: React.FC = () => {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-50 lg:hidden" onClick={() => setSidebarOpen(false)} />
             <motion.aside
+              id="mobile-sidebar"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -132,7 +200,7 @@ const HaritechLayout: React.FC = () => {
                     </>
                   )}
                 </Link>
-                <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-400">
+                <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-400" aria-label="Close navigation menu">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -152,7 +220,7 @@ const HaritechLayout: React.FC = () => {
                   <Link to="/haritech/request-quote" onClick={() => setSidebarOpen(false)} className="btn-primary text-sm py-2.5 px-3 rounded-xl w-full justify-center">
                     Request a Quote
                   </Link>
-                  <Link to="/" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors py-2">
+                    <Link to="/portfolio" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors py-2">
                     <ArrowLeft className="h-4 w-4" /> Back to Portfolio
                   </Link>
                 </div>
@@ -166,6 +234,14 @@ const HaritechLayout: React.FC = () => {
       <main className="pt-16">
         <Outlet />
       </main>
+
+      <CrossPromo
+        eyebrow="Our Portfolio"
+        title="Want to see the websites we've built?"
+        text="You're on the Haritech Services side — but we also design and build premium websites for businesses like yours. Check out our portfolio to see real projects, case studies and client work."
+        cta="View Our Portfolio"
+        to="/portfolio"
+      />
 
       {/* Footer */}
       <footer className="bg-[#050810] border-t border-white/5 relative overflow-hidden">
@@ -187,17 +263,27 @@ const HaritechLayout: React.FC = () => {
                 )}
               </Link>
               <p className="text-slate-500 text-sm max-w-md leading-relaxed mb-6">
-                Empowering businesses with cutting-edge digital solutions — from web development and branding to business automation and CAC registration.
+                {settings.tagline}
               </p>
               <div className="flex gap-3">
                 <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors"><MessageCircle className="h-4 w-4" /></a>
                 <a href={`mailto:${content.email}`} className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors"><Mail className="h-4 w-4" /></a>
+                {footerSocialDefs
+                  .filter((def) => {
+                    const url = (socials[def.key] || '').trim();
+                    return Boolean(url) && url !== '#';
+                  })
+                  .map((def) => (
+                    <a key={def.label} href={socials[def.key]} target="_blank" rel="noopener noreferrer" aria-label={def.label} className="w-9 h-9 rounded-lg bg-slate-900/80 border border-white/5 text-slate-400 flex items-center justify-center hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
+                      <def.icon className="h-4 w-4" />
+                    </a>
+                  ))}
               </div>
             </div>
             <div>
               <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Quick Links</h4>
               <ul className="space-y-2.5">
-                {navItems.slice(0, 7).map((item) => (
+                {navItems.slice(0, 6).map((item) => (
                   <li key={item.path}><Link to={item.path} className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">{item.label}</Link></li>
                 ))}
               </ul>
@@ -209,14 +295,14 @@ const HaritechLayout: React.FC = () => {
                   <li key={item.path}><Link to={item.path} className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">{item.label}</Link></li>
                 ))}
                 <li><Link to="/haritech/request-quote" className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">Request a Quote</Link></li>
-                <li><Link to="/" className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">Portfolio Home</Link></li>
+                <li><Link to="/portfolio" className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">Portfolio Home</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-slate-600 text-xs font-mono">&copy; {new Date().getFullYear()} Haritech Exclusive Services. All rights reserved.</p>
+            <p className="text-slate-600 text-xs font-mono">&copy; {new Date().getFullYear()} {settings.companyName}. All rights reserved.</p>
             <div className="flex gap-6">
-              <Link to="/" className="text-slate-600 hover:text-cyan-400 text-xs transition-colors">Portfolio Home</Link>
+              <Link to="/portfolio" className="text-slate-600 hover:text-cyan-400 text-xs transition-colors">Portfolio Home</Link>
               <span className="text-slate-600 text-xs">Powered by Haritech</span>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { pushToCloud } from './cloudSync';
+import { pushToCloud, emitStorageError } from './cloudSync';
 
 const STORAGE_KEY = 'haritech-testimonials';
 
@@ -44,15 +44,22 @@ export const getStoredTestimonials = (): Testimonial[] => {
   if (typeof window === 'undefined') return defaultTestimonials;
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : defaultTestimonials;
+    const parsed = stored ? JSON.parse(stored) : null;
+    return Array.isArray(parsed) ? parsed : defaultTestimonials;
   } catch {
     return defaultTestimonials;
   }
 };
 
-export const setStoredTestimonials = (data: Testimonial[]): void => {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export const setStoredTestimonials = (data: Testimonial[]): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    emitStorageError('Could not save testimonials — browser storage is full. Remove old images/data, then try again.');
+    return false;
+  }
   void pushToCloud(STORAGE_KEY, data);
   window.dispatchEvent(new Event('haritech-testimonials-updated'));
+  return true;
 };

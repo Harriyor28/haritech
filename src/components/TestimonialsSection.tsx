@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Star, ChevronLeft, ChevronRight, Quote, Sparkles } from 'lucide-react';
 import Tilt3D from './Tilt3D';
 import { getStoredTestimonials } from '../utils/testimonials';
@@ -58,20 +59,42 @@ const TestimonialsSection: React.FC = () => {
       window.removeEventListener('storage', handler);
     };
   }, []);
-  
+
+  // Clamp the carousel when the list shrinks (e.g. admin deletes a testimonial)
+  useEffect(() => {
+    setCurrentIndex((prev) =>
+      testimonials.length === 0 ? 0 : Math.min(prev, testimonials.length - 1)
+    );
+  }, [testimonials.length]);
+
   const nextTestimonial = () => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
-  
+
   const prevTestimonial = () => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
-  
+
   React.useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || testimonials.length < 2) return;
     const interval = setInterval(nextTestimonial, 5000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonials.length]);
+
+  const activeTestimonial = testimonials[currentIndex];
+
+  if (testimonials.length === 0) {
+    return (
+      <section id="testimonials" className="section-padding bg-[#070a13]">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl font-black mb-4">Client <span className="gradient-text-pink">Feedback</span></h2>
+          <p className="text-slate-400 text-sm">No testimonials yet — check back soon.</p>
+        </div>
+      </section>
+    );
+  }
   
   return (
     <section id="testimonials" className="section-padding bg-[#070a13] relative overflow-hidden">
@@ -111,7 +134,7 @@ const TestimonialsSection: React.FC = () => {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.4 }}
             >
-              <TestimonialCard testimonial={testimonials[currentIndex]} index={0} />
+              {activeTestimonial && <TestimonialCard testimonial={activeTestimonial} index={0} />}
             </motion.div>
           </AnimatePresence>
           
@@ -146,6 +169,8 @@ const TestimonialsSection: React.FC = () => {
                   setIsAutoPlaying(false);
                   setCurrentIndex(index);
                 }}
+                aria-label={`Go to testimonial ${index + 1}`}
+                aria-current={index === currentIndex}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === currentIndex ? 'bg-cyan-400 w-6' : 'bg-slate-700'}`}
               />
             ))}
@@ -154,15 +179,15 @@ const TestimonialsSection: React.FC = () => {
         
         <div className="text-center mt-16">
           <p className="text-slate-400 mb-6 text-sm">Ready to build your company's web experience?</p>
-          <motion.a
-            href="#contact"
+          <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="btn-primary inline-flex px-10 py-4"
           >
-            <Sparkles className="h-4.5 w-4.5 text-cyan-300" />
-            Start Your Project
-          </motion.a>
+            <Link to="/portfolio/contact" className="btn-primary inline-flex px-10 py-4">
+              <Sparkles className="h-4.5 w-4.5 text-cyan-300" />
+              Start Your Project
+            </Link>
+          </motion.div>
         </div>
       </div>
     </section>

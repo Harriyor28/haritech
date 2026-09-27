@@ -47,7 +47,7 @@ const Industries: React.FC = () => {
             {industries.map((ind, i) => {
               const IndIcon = iconMap[ind.icon] || Building2;
               return (
-                <FadeInView key={ind.name} delay={i * 0.05}>
+                <FadeInView key={ind.id ?? `${ind.name}-${i}`} delay={i * 0.05}>
                   <div className="card p-6 h-full hover:bg-[#141b35] transition-all group glow-border">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 p-2.5 mb-4 group-hover:scale-110 transition-transform">
                       <IndIcon className="h-full w-full text-white" />

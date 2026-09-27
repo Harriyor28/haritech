@@ -6,6 +6,16 @@ export default defineConfig({
   build: {
     target: 'es2020',
     minify: 'esbuild',
-    sourcemap: false
-  }
+    sourcemap: false,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['framer-motion', 'lucide-react'],
+          cloud: ['@supabase/supabase-js'],
+        },
+      },
+    },
+  },
 });

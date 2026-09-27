@@ -70,14 +70,14 @@ const WhatWeDo: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-black mb-4">Our <span className="gradient-text-pink">Expertise</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">23 specialized areas of digital excellence</p>
+              <p className="text-slate-400 max-w-2xl mx-auto">{expertiseAreas.length} specialized areas of digital excellence</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {expertiseAreas.map((area, i) => {
               const Icon = iconMap[area.icon] || Code2;
               return (
-                <FadeInView key={area.title} delay={i * 0.03}>
+                <FadeInView key={`${area.title}-${i}`} delay={i * 0.03}>
                   <div className="card p-5 h-full hover:bg-[#141b35] transition-all group glow-border">
                     <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${area.color} p-2 mb-3 group-hover:scale-110 transition-transform`}>
                       <Icon className="h-full w-full text-white" />

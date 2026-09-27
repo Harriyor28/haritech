@@ -13,7 +13,7 @@ const HaritechContentManager: React.FC = () => {
   useEffect(() => { setContent(getHaritechContent()); }, []);
 
   const handleSave = () => {
-    setHaritechContent(content);
+    if (!setHaritechContent(content)) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

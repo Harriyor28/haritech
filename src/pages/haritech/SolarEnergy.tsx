@@ -21,7 +21,14 @@ const SolarEnergy: React.FC = () => {
   useEffect(() => {
     const handler = () => setSolar(getSolarContent());
     window.addEventListener('haritech-solar-updated', handler);
-    return () => window.removeEventListener('haritech-solar-updated', handler);
+    // WhatsApp CTAs read haritech-content — re-render when it changes
+    window.addEventListener('haritech-content-updated', handler);
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('haritech-solar-updated', handler);
+      window.removeEventListener('haritech-content-updated', handler);
+      window.removeEventListener('storage', handler);
+    };
   }, []);
 
   const { services: solarServices, whySolar, applications, stats } = solar;

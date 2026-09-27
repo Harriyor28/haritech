@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, MessageCircle, Mail, Phone, MapPin, Clock, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
 import { getHaritechContent, setHaritechContent, getSocialLinks, setSocialLinks, HaritechSiteContent, SocialLinks } from '../../utils/haritechContent';
+import { syncSettingsFromContent } from '../../utils/settings';
 
 const inputClass = "w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white";
 const labelClass = "block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide";
@@ -17,8 +18,10 @@ const HaritechContactManager: React.FC = () => {
   }, []);
 
   const handleSave = () => {
-    setHaritechContent(content);
-    setSocialLinks(social);
+    if (!setHaritechContent(content)) return;
+    if (!setSocialLinks(social)) return;
+    // Mirror contact fields into site settings so Footer/portfolio show the same details
+    if (!syncSettingsFromContent()) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

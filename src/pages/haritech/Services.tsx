@@ -19,7 +19,11 @@ const Services: React.FC = () => {
   const [expandedService, setExpandedService] = useState<string | null>(null);
 
   useEffect(() => {
-    const handler = () => setCategories(getServiceCategories());
+    const handler = () => {
+      const data = getServiceCategories();
+      setCategories(data);
+      setActiveCategory(prev => (data.some(c => c.id === prev) ? prev : (data[0]?.id ?? '')));
+    };
     window.addEventListener('haritech-services-updated', handler);
     return () => window.removeEventListener('haritech-services-updated', handler);
   }, []);
@@ -80,11 +84,11 @@ const Services: React.FC = () => {
               transition={{ duration: 0.3 }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeCat.services.map((svc, i) => (
+                {(activeCat?.services ?? []).map((svc, i) => (
                   <FadeInView key={svc.name} delay={i * 0.05}>
                     <div className="card p-6 h-full hover:bg-[#141b35] transition-all group glow-border">
                       <div className="flex items-start gap-4 mb-4">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeCat.color} p-2 shrink-0`}>
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeCat?.color ?? 'from-cyan-500 to-blue-600'} p-2 shrink-0`}>
                           <Code2 className="h-full w-full text-white" />
                         </div>
                         <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">{svc.name}</h3>

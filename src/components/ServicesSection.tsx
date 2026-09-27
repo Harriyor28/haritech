@@ -1,130 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ArrowRight, X, Sparkles } from 'lucide-react';
 import Tilt3D from './Tilt3D';
+import { getStoredPortfolioServices, SERVICE_UPDATED_EVENT } from '../utils/portfolioServices';
+import type { PortfolioService } from '../utils/portfolioServices';
 
 const ServicesSection: React.FC = () => {
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
+  const [services, setServices] = useState<PortfolioService[]>(() => getStoredPortfolioServices());
 
-  const services = [
-    {
-      id: 1,
-      icon: "🌐",
-      title: "Website Design",
-      description: "Premium, pixel-perfect website designs that captivate visitors and drive conversions with modern aesthetics and user-friendly interfaces.",
-      features: [
-        "Custom design tailored to your brand",
-        "Mobile-first responsive design",
-        "Modern UI/UX design",
-        "Prototyping & wireframing",
-        "Design system implementation"
-      ]
-    },
-    {
-      id: 2,
-      icon: "🏢",
-      title: "Business Websites",
-      description: "Complete business website solutions that establish credibility, showcase services, and generate leads for growth.",
-      features: [
-        "Business website development",
-        "CMS integration",
-        "Contact & inquiry forms",
-        "Analytics integration",
-        "SEO optimization"
-      ]
-    },
-    {
-      id: 3,
-      icon: "👔",
-      title: "Corporate Websites",
-      description: "Professional corporate websites that reflect your company's values and establish authority in your industry.",
-      features: [
-        "Corporate identity design",
-        "Executive profiles",
-        "Investment section",
-        "Multi-location support",
-        "Global accessibility"
-      ]
-    },
-    {
-      id: 4,
-      icon: "🏥",
-      title: "Hospital Systems",
-      description: "Secure, compliant healthcare systems that improve patient experience and streamline medical operations.",
-      features: [
-        "HIPAA-compliant solutions",
-        "Patient portal integration",
-        "Appointment scheduling",
-        "Medical records management",
-        "Telemedicine support"
-      ]
-    },
-    {
-      id: 5,
-      icon: "🏨",
-      title: "Hotel Booking Platforms",
-      description: "Luxury booking platforms with CRM integration, revenue management, and seamless guest experience.",
-      features: [
-        "OTA integration",
-        "Revenue management system",
-        "Guest database",
-        "Package & promotion management",
-        "Mobile app support"
-      ]
-    },
-    {
-      id: 6,
-      icon: "⛪",
-      title: "Church Websites",
-      description: "Spiritually uplifting websites that connect with congregants and enhance community engagement.",
-      features: [
-        "Live streaming integration",
-        "Sermon archives",
-        "Giving portals",
-        "Event calendar",
-        "Member directory"
-      ]
-    },
-    {
-      id: 7,
-      icon: "🛍️",
-      title: "E-commerce Stores",
-      description: "Complete e-commerce solutions with payment integration, inventory management, and conversion optimization.",
-      features: [
-        "Payment gateway integration",
-        "Inventory management",
-        "Customer account system",
-        "Order management",
-        "Tax & shipping calculations"
-      ]
-    },
-    {
-      id: 8,
-      icon: "💼",
-      title: "Portfolio Websites",
-      description: "Stunning portfolio websites that showcase your work, achievements, and professional credentials.",
-      features: [
-        "Project galleries",
-        "Case studies",
-        "Client testimonials",
-        "Downloadable resume",
-        "International languages"
-      ]
-    },
-    {
-      id: 9,
-      icon: "⚡",
-      title: "Custom Web Applications",
-      description: "Tailor-made web applications that solve unique business challenges and streamline operations.",
-      features: [
-        "Custom development",
-        "API integration",
-        "Database solutions",
-        "User authentication",
-        "Real-time features"
-      ]
-    }
-  ];
+  useEffect(() => {
+    const handler = () => setServices(getStoredPortfolioServices());
+    window.addEventListener('storage', handler);
+    window.addEventListener(SERVICE_UPDATED_EVENT, handler);
+    return () => {
+      window.removeEventListener('storage', handler);
+      window.removeEventListener(SERVICE_UPDATED_EVENT, handler);
+    };
+  }, []);
 
   const selectedService = services.find(s => s.id === selectedServiceId);
 
@@ -235,7 +128,7 @@ const ServicesSection: React.FC = () => {
                   Key Specifications
                 </h4>
                 <ul className="space-y-3.5">
-                  {selectedService.features.map((feature, idx) => (
+                  {(selectedService.features ?? []).map((feature, idx) => (
                     <motion.li 
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}

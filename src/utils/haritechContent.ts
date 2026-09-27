@@ -9,11 +9,42 @@ const HARITECH_SOLAR_KEY = 'haritech-solar';
 const HARITECH_WHATTWEDO_KEY = 'haritech-whatwedo';
 const HARITECH_SOCIAL_KEY = 'haritech-social';
 
-import { pushToCloud } from './cloudSync';
+import { pushToCloud, eventForCloudKey, emitStorageError } from './cloudSync';
 
-const persist = (key: string, value: unknown): void => {
-  window.localStorage.setItem(key, JSON.stringify(value));
+// Safe JSON reader: a corrupt key must never white-screen a page.
+const readJson = (key: string): unknown => {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+// Keep only defined, non-null entries so a bad stored value can't
+// overwrite a default with null/undefined.
+const compactObject = (value: unknown): Record<string, unknown> => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (v !== null && v !== undefined) out[k] = v;
+  }
+  return out;
+};
+
+const persist = (key: string, value: unknown): boolean => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    emitStorageError(
+      `Could not save "${key}" — browser storage is full. Remove old images/data or use a smaller file, then save again.`
+    );
+    return false;
+  }
   void pushToCloud(key, value);
+  const eventName = eventForCloudKey(key);
+  if (eventName) window.dispatchEvent(new Event(eventName));
+  return true;
 };
 
 export interface FAQCategory {
@@ -207,68 +238,75 @@ const defaultCAC: CACInfo = {
 
 export function getHaritechContent(): HaritechSiteContent {
   if (typeof window === 'undefined') return defaultContent;
-  const stored = window.localStorage.getItem(HARITECH_CONTENT_KEY);
-  return stored ? { ...defaultContent, ...JSON.parse(stored) } : defaultContent;
+  const merged: HaritechSiteContent = {
+    ...defaultContent,
+    ...(compactObject(readJson(HARITECH_CONTENT_KEY)) as Partial<HaritechSiteContent>),
+  };
+  // Corrupt values (wrong type from bad JSON) must never crash render-time .map()
+  if (!Array.isArray(merged.stats)) merged.stats = defaultContent.stats;
+  if (!Array.isArray(merged.whyChoose)) merged.whyChoose = defaultContent.whyChoose;
+  return merged;
 }
 
-export function setHaritechContent(data: HaritechSiteContent): void {
-  persist(HARITECH_CONTENT_KEY, data);
-  window.dispatchEvent(new Event('haritech-content-updated'));
+export function setHaritechContent(data: HaritechSiteContent): boolean {
+  return persist(HARITECH_CONTENT_KEY, data);
 }
+
+export const subscribeToHaritechContent = (
+  callback: (content: HaritechSiteContent) => void
+): (() => void) => {
+  const handler = () => callback(getHaritechContent());
+  window.addEventListener('haritech-content-updated', handler);
+  return () => window.removeEventListener('haritech-content-updated', handler);
+};
 
 export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return defaultTeam;
-  const stored = window.localStorage.getItem(HARITECH_TEAM_KEY);
-  return stored ? JSON.parse(stored) : defaultTeam;
+  const parsed = readJson(HARITECH_TEAM_KEY);
+  return Array.isArray(parsed) ? parsed : defaultTeam;
 }
 
-export function setTeamMembers(data: TeamMember[]): void {
-  persist(HARITECH_TEAM_KEY, data);
-  window.dispatchEvent(new Event('haritech-team-updated'));
+export function setTeamMembers(data: TeamMember[]): boolean {
+  return persist(HARITECH_TEAM_KEY, data);
 }
 
 export function getIndustries(): IndustryCard[] {
   if (typeof window === 'undefined') return defaultIndustries;
-  const stored = window.localStorage.getItem(HARITECH_INDUSTRIES_KEY);
-  return stored ? JSON.parse(stored) : defaultIndustries;
+  const parsed = readJson(HARITECH_INDUSTRIES_KEY);
+  return Array.isArray(parsed) ? parsed : defaultIndustries;
 }
 
-export function setIndustries(data: IndustryCard[]): void {
-  persist(HARITECH_INDUSTRIES_KEY, data);
-  window.dispatchEvent(new Event('haritech-industries-updated'));
+export function setIndustries(data: IndustryCard[]): boolean {
+  return persist(HARITECH_INDUSTRIES_KEY, data);
 }
 
 export function getBlogPosts(): BlogPost[] {
   if (typeof window === 'undefined') return defaultBlog;
-  const stored = window.localStorage.getItem(HARITECH_BLOG_KEY);
-  return stored ? JSON.parse(stored) : defaultBlog;
+  const parsed = readJson(HARITECH_BLOG_KEY);
+  return Array.isArray(parsed) ? parsed : defaultBlog;
 }
 
-export function setBlogPosts(data: BlogPost[]): void {
-  persist(HARITECH_BLOG_KEY, data);
-  window.dispatchEvent(new Event('haritech-blog-updated'));
+export function setBlogPosts(data: BlogPost[]): boolean {
+  return persist(HARITECH_BLOG_KEY, data);
 }
 
 export function getCACInfo(): CACInfo {
   if (typeof window === 'undefined') return defaultCAC;
-  const stored = window.localStorage.getItem(HARITECH_CAC_KEY);
-  return stored ? { ...defaultCAC, ...JSON.parse(stored) } : defaultCAC;
+  return { ...defaultCAC, ...compactObject(readJson(HARITECH_CAC_KEY)) };
 }
 
-export function setCACInfo(data: CACInfo): void {
-  persist(HARITECH_CAC_KEY, data);
-  window.dispatchEvent(new Event('haritech-cac-updated'));
+export function setCACInfo(data: CACInfo): boolean {
+  return persist(HARITECH_CAC_KEY, data);
 }
 
 export function getServiceCategories(): ServiceCategory[] {
   if (typeof window === 'undefined') return defaultServiceCategories;
-  const stored = window.localStorage.getItem(HARITECH_SERVICE_CATS_KEY);
-  return stored ? JSON.parse(stored) : defaultServiceCategories;
+  const parsed = readJson(HARITECH_SERVICE_CATS_KEY);
+  return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultServiceCategories;
 }
 
-export function setServiceCategories(data: ServiceCategory[]): void {
-  persist(HARITECH_SERVICE_CATS_KEY, data);
-  window.dispatchEvent(new Event('haritech-services-updated'));
+export function setServiceCategories(data: ServiceCategory[]): boolean {
+  return persist(HARITECH_SERVICE_CATS_KEY, data);
 }
 
 export function getWhatsAppUrl(): string {
@@ -321,13 +359,12 @@ const defaultFAQ: FAQCategory[] = [
 
 export function getFAQCategories(): FAQCategory[] {
   if (typeof window === 'undefined') return defaultFAQ;
-  const stored = window.localStorage.getItem(HARITECH_FAQ_KEY);
-  return stored ? JSON.parse(stored) : defaultFAQ;
+  const parsed = readJson(HARITECH_FAQ_KEY);
+  return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultFAQ;
 }
 
-export function setFAQCategories(data: FAQCategory[]): void {
-  persist(HARITECH_FAQ_KEY, data);
-  window.dispatchEvent(new Event('haritech-faq-updated'));
+export function setFAQCategories(data: FAQCategory[]): boolean {
+  return persist(HARITECH_FAQ_KEY, data);
 }
 
 const defaultSolar: SolarContent = {
@@ -370,13 +407,19 @@ const defaultSolar: SolarContent = {
 
 export function getSolarContent(): SolarContent {
   if (typeof window === 'undefined') return defaultSolar;
-  const stored = window.localStorage.getItem(HARITECH_SOLAR_KEY);
-  return stored ? { ...defaultSolar, ...JSON.parse(stored) } : defaultSolar;
+  const parsed = compactObject(readJson(HARITECH_SOLAR_KEY));
+  const pick = (k: keyof SolarContent): unknown[] =>
+    Array.isArray(parsed[k]) ? (parsed[k] as unknown[]) : defaultSolar[k];
+  return {
+    services: pick('services') as SolarContent['services'],
+    whySolar: pick('whySolar') as SolarContent['whySolar'],
+    applications: pick('applications') as SolarContent['applications'],
+    stats: pick('stats') as SolarContent['stats'],
+  };
 }
 
-export function setSolarContent(data: SolarContent): void {
-  persist(HARITECH_SOLAR_KEY, data);
-  window.dispatchEvent(new Event('haritech-solar-updated'));
+export function setSolarContent(data: SolarContent): boolean {
+  return persist(HARITECH_SOLAR_KEY, data);
 }
 
 const defaultWhatWeDo: WhatWeDoArea[] = [
@@ -407,13 +450,12 @@ const defaultWhatWeDo: WhatWeDoArea[] = [
 
 export function getWhatWeDoAreas(): WhatWeDoArea[] {
   if (typeof window === 'undefined') return defaultWhatWeDo;
-  const stored = window.localStorage.getItem(HARITECH_WHATTWEDO_KEY);
-  return stored ? JSON.parse(stored) : defaultWhatWeDo;
+  const parsed = readJson(HARITECH_WHATTWEDO_KEY);
+  return Array.isArray(parsed) ? parsed : defaultWhatWeDo;
 }
 
-export function setWhatWeDoAreas(data: WhatWeDoArea[]): void {
-  persist(HARITECH_WHATTWEDO_KEY, data);
-  window.dispatchEvent(new Event('haritech-whatwedo-updated'));
+export function setWhatWeDoAreas(data: WhatWeDoArea[]): boolean {
+  return persist(HARITECH_WHATTWEDO_KEY, data);
 }
 
 const defaultSocial: SocialLinks = {
@@ -426,11 +468,9 @@ const defaultSocial: SocialLinks = {
 
 export function getSocialLinks(): SocialLinks {
   if (typeof window === 'undefined') return defaultSocial;
-  const stored = window.localStorage.getItem(HARITECH_SOCIAL_KEY);
-  return stored ? { ...defaultSocial, ...JSON.parse(stored) } : defaultSocial;
+  return { ...defaultSocial, ...compactObject(readJson(HARITECH_SOCIAL_KEY)) };
 }
 
-export function setSocialLinks(data: SocialLinks): void {
-  persist(HARITECH_SOCIAL_KEY, data);
-  window.dispatchEvent(new Event('haritech-social-updated'));
+export function setSocialLinks(data: SocialLinks): boolean {
+  return persist(HARITECH_SOCIAL_KEY, data);
 }
