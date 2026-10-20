@@ -21,7 +21,7 @@ const HaritechFAQManager: React.FC = () => {
   useEffect(() => { setCategories(getFAQCategories()); }, []);
 
   const handleSave = () => {
-    if (!setFAQCategories(categories)) return;
+    setFAQCategories(categories);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

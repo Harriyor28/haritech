@@ -25,5 +25,3 @@ Thumbs.db
 # Misc
 .cache/
 .tmp/
-# Build info
-tsconfig.tsbuildinfo

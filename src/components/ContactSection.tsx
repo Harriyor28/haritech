@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Mail, Phone, MessageCircle, Send, Sparkles, AlertCircle } from 'lucide-react';
+import { MapPin, Mail, Phone, MessageCircle, Send, Sparkles } from 'lucide-react';
 import { getStoredSettings } from '../utils/settings';
 import type { SiteSettings } from '../utils/settings';
-import { getHaritechContent } from '../utils/haritechContent';
-import { submitContactMessage, buildWhatsAppFallbackUrl } from '../utils/contactMessages';
-import type { ContactMessage } from '../utils/contactMessages';
 
 const ContactSection: React.FC = () => {
   const [settings, setSettings] = useState<SiteSettings>(() => getStoredSettings());
-  // Single site-wide WhatsApp number — same value used on the Haritech side
-  const [whatsappNumber, setWhatsappNumber] = useState(() => getHaritechContent().whatsapp);
 
   useEffect(() => {
     const handler = () => setSettings(getStoredSettings());
-    const waHandler = () => setWhatsappNumber(getHaritechContent().whatsapp);
     window.addEventListener('storage', handler);
     window.addEventListener('haritech-settings-updated', handler);
-    window.addEventListener('storage', waHandler);
-    window.addEventListener('haritech-content-updated', waHandler);
     return () => {
       window.removeEventListener('storage', handler);
       window.removeEventListener('haritech-settings-updated', handler);
-      window.removeEventListener('storage', waHandler);
-      window.removeEventListener('haritech-content-updated', waHandler);
     };
   }, []);
 
@@ -39,7 +29,6 @@ const ContactSection: React.FC = () => {
   });
   
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [fallbackUrl, setFallbackUrl] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -60,45 +49,25 @@ const ContactSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+    
     setFormStatus('submitting');
-
-    const msg: ContactMessage = {
-      form: 'contact',
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      subject: formData.projectType,
-      message: [
-        formData.company && `Company: ${formData.company}`,
-        `Type: ${formData.projectType}`,
-        `Budget: ${formData.budget}`,
-        `Timeline: ${formData.timeline}`,
-        '',
-        formData.message,
-      ].filter(Boolean).join('\n'),
-      budget: formData.budget,
-      timeline: formData.timeline,
-    };
-
-    const result = await submitContactMessage(msg);
-    if (result.ok) {
-      setFormStatus('success');
-      setFormData({
-        name: '',
-        company: '',
-        phone: '',
-        email: '',
-        projectType: '',
-        budget: '',
-        timeline: '',
-        message: ''
-      });
-      setTimeout(() => setFormStatus('idle'), 5000);
-    } else {
-      setFallbackUrl(buildWhatsAppFallbackUrl(msg));
-      setFormStatus('error');
-    }
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setFormStatus('success');
+    setFormData({
+      name: '',
+      company: '',
+      phone: '',
+      email: '',
+      projectType: '',
+      budget: '',
+      timeline: '',
+      message: ''
+    });
+    
+    setTimeout(() => setFormStatus('idle'), 5000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -108,7 +77,7 @@ const ContactSection: React.FC = () => {
   };
 
   const contactInfo = [
-    { icon: MessageCircle, label: 'WhatsApp', value: whatsappNumber, href: `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`, color: 'text-green-400 bg-green-500/10 border-green-500/20' },
+    { icon: MessageCircle, label: 'WhatsApp', value: settings.whatsappNumber, href: `https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, '')}`, color: 'text-green-400 bg-green-500/10 border-green-500/20' },
     { icon: Mail, label: 'Email', value: settings.contactEmail, href: `mailto:${settings.contactEmail}`, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
     { icon: Phone, label: 'Phone', value: settings.phoneNumber, href: `tel:${settings.phoneNumber.replace(/[^0-9+]/g, '')}`, color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
     { icon: MapPin, label: 'Address', value: settings.address, href: 'https://maps.google.com', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' }
@@ -160,7 +129,7 @@ const ContactSection: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
             Let's Build Something <span className="gradient-text-pink">Amazing</span>
           </h2>
           <p className="text-lg text-slate-400 max-w-3xl mx-auto">
@@ -248,23 +217,6 @@ const ContactSection: React.FC = () => {
                 </motion.div>
               )}
               
-              {formStatus === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-8 p-6 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-4 text-amber-400"
-                >
-                  <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-bold">Couldn't send automatically</h4>
-                    <p className="text-xs text-slate-300 mt-1 mb-2">Please continue on WhatsApp — your message is pre-filled for you.</p>
-                    <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-green-400 hover:text-green-300 underline">
-                      Open WhatsApp & send →
-                    </a>
-                  </div>
-                </motion.div>
-              )}
-
               <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>

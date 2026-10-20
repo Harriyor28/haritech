@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 
 interface SectionHeadingProps {
   title: string;
@@ -18,7 +18,7 @@ export function SectionHeading({ title, highlight, subtitle, className = '' }: S
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4"
       >
         {parts.length > 1 ? (
           <>

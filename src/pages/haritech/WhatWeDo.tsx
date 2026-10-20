@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Globe, Code2, ShoppingCart, Layout, Monitor, BookOpen, Building2, Hotel, Utensils, Home, Zap, Cpu, Smartphone, Palette, Search, Settings, Shield, Globe2, Server, Mail, Headphones, Briefcase, ArrowRight, Sparkles, Layers, LucideIcon } from 'lucide-react';
@@ -37,7 +37,7 @@ const WhatWeDo: React.FC = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
                 <Globe className="h-4 w-4" /> What We Do
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
                 Comprehensive <span className="gradient-text">Digital Solutions</span> for Modern Businesses
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
@@ -69,15 +69,15 @@ const WhatWeDo: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Our <span className="gradient-text-pink">Expertise</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">{expertiseAreas.length} specialized areas of digital excellence</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">Our <span className="gradient-text-pink">Expertise</span></h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">23 specialized areas of digital excellence</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {expertiseAreas.map((area, i) => {
               const Icon = iconMap[area.icon] || Code2;
               return (
-                <FadeInView key={`${area.title}-${i}`} delay={i * 0.03}>
+                <FadeInView key={area.title} delay={i * 0.03}>
                   <div className="card p-5 h-full hover:bg-[#141b35] transition-all group glow-border">
                     <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${area.color} p-2 mb-3 group-hover:scale-110 transition-transform`}>
                       <Icon className="h-full w-full text-white" />
@@ -98,7 +98,7 @@ const WhatWeDo: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <FadeInView>
-              <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Need a Specific Solution?</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Need a Specific Solution?</h2>
               <p className="text-lg text-slate-300 mb-8">We tailor every project to your unique requirements. Let's discuss how we can help.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4">Request a Quote</Link>

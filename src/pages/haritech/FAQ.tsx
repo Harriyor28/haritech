@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { HelpCircle, ChevronDown, ArrowRight, MessageCircle, Mail } from 'lucide-react';
@@ -12,7 +12,7 @@ const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ c
 
 const FAQ: React.FC = () => {
   const [faqs, setFaqs] = useState<FAQCategory[]>(() => getFAQCategories());
-  const [activeCategory, setActiveCategory] = useState(faqs[0]?.category ?? '');
+  const [activeCategory, setActiveCategory] = useState(faqs[0].category);
   const [openItems, setOpenItems] = useState<number[]>([]);
   const [content, setContent] = useState(() => getHaritechContent());
 
@@ -21,9 +21,7 @@ const FAQ: React.FC = () => {
     const faqHandler = () => {
       const data = getFAQCategories();
       setFaqs(data);
-      setActiveCategory(prev =>
-        data.some(f => f.category === prev) ? prev : (data[0]?.category ?? '')
-      );
+      setActiveCategory(prev => data.some(f => f.category === prev) ? prev : data[0].category);
     };
     window.addEventListener('haritech-content-updated', contentHandler);
     window.addEventListener('haritech-faq-updated', faqHandler);
@@ -37,7 +35,7 @@ const FAQ: React.FC = () => {
     setOpenItems(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
   };
 
-  const activeFaqs = faqs.find(f => f.category === activeCategory) ?? faqs[0];
+  const activeFaqs = faqs.find(f => f.category === activeCategory)!;
 
   return (
     <div className="relative overflow-x-hidden">
@@ -50,7 +48,7 @@ const FAQ: React.FC = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
                 <HelpCircle className="h-4 w-4" /> FAQ
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
                 Frequently Asked <span className="gradient-text">Questions</span>
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
@@ -73,7 +71,7 @@ const FAQ: React.FC = () => {
 
           <AnimatePresence mode="wait">
             <motion.div key={activeCategory} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-3xl mx-auto space-y-4">
-              {activeFaqs?.items?.map((faq, i) => (
+              {activeFaqs.items.map((faq, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="card overflow-hidden">
                   <button onClick={() => toggleItem(i)} className="w-full p-5 flex items-center justify-between text-left hover:bg-[#141b35] transition-colors">
                     <span className="text-sm font-bold text-white pr-4">{faq.q}</span>
@@ -100,7 +98,7 @@ const FAQ: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-pink-600/10 to-cyan-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Still Have Questions?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Still Have Questions?</h2>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">We're here to help. Reach out to us directly and we'll get back to you promptly.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-primary text-base px-10 py-4"><MessageCircle className="h-5 w-5" /> WhatsApp Us</a>

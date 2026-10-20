@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -40,7 +40,7 @@ const Projects: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-black mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
               Premium <span className="gradient-text-pink">Showcase</span>
             </h2>
             <p className="text-lg text-slate-400 max-w-3xl mx-auto">

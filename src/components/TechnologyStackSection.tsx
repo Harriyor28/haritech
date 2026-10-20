@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { Layers, Database, Globe, Cloud, Cpu, Terminal } from 'lucide-react';
 import Tilt3D from './Tilt3D';
@@ -57,7 +57,7 @@ const TechnologyStackSection: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
             Premium <span className="gradient-text">Engine</span> Stack
           </h2>
           <p className="text-lg text-slate-400 max-w-3xl mx-auto">

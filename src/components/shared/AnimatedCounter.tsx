@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useInView } from 'framer-motion';
 
 interface AnimatedCounterProps {
@@ -55,7 +55,7 @@ export function AnimatedCounter({ value, label }: AnimatedCounterProps) {
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold ht-gradient-text mb-2 tracking-tight">
+      <div className="text-3xl md:text-4xl font-bold ht-gradient-text mb-2 tracking-tight">
         {displayValue}
       </div>
       <div className="text-slate-400 text-sm md:text-base font-medium">

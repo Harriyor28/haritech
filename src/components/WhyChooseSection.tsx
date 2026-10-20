@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Code, Users, CheckCircle, ArrowRight, Calendar, MessageCircle, Clock } from 'lucide-react';
 import Tilt3D from './Tilt3D';
@@ -77,7 +77,7 @@ const WhyChooseSection: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
             Why Partner with <span className="gradient-text">HARITECH</span>
           </h2>
           <p className="text-lg text-slate-400 max-w-3xl mx-auto">

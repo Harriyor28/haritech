@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Zap, Send, CheckCircle, MessageCircle, Mail, Phone, ClipboardList, AlertCircle } from 'lucide-react';
+import { Zap, Send, CheckCircle, MessageCircle, Mail, Phone, ClipboardList } from 'lucide-react';
 import { getWhatsAppUrl, getHaritechContent } from '../../utils/haritechContent';
-import { submitContactMessage, buildWhatsAppFallbackUrl } from '../../utils/contactMessages';
-import type { ContactMessage } from '../../utils/contactMessages';
 
 const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => (
   <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay }}>
@@ -45,20 +43,8 @@ const timelineOptions = [
 ];
 
 const RequestQuote: React.FC = () => {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle');
-  const [fallbackUrl, setFallbackUrl] = useState('');
+  const [submitted, setSubmitted] = useState(false);
   const [contactInfo, setContactInfo] = useState(() => getHaritechContent());
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    service: '',
-    description: '',
-    budget: '',
-    timeline: '',
-    contactMethod: 'email',
-  });
 
   useEffect(() => {
     const handler = () => setContactInfo(getHaritechContent());
@@ -66,32 +52,10 @@ const RequestQuote: React.FC = () => {
     return () => window.removeEventListener('haritech-content-updated', handler);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status === 'sending') return;
-    setStatus('sending');
-    const msg: ContactMessage = {
-      form: 'quote',
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      subject: form.service + (form.company ? ` (${form.company})` : ''),
-      message: form.description,
-      budget: form.budget,
-      timeline: form.timeline,
-      contactMethod: form.contactMethod,
-    };
-    const result = await submitContactMessage(msg);
-    if (result.ok) {
-      setStatus('sent');
-    } else {
-      setFallbackUrl(buildWhatsAppFallbackUrl(msg));
-      setStatus('failed');
-    }
+    setSubmitted(true);
   };
-
-  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm((f) => ({ ...f, [key]: e.target.value }));
 
   return (
     <div className="relative overflow-x-hidden">
@@ -104,7 +68,7 @@ const RequestQuote: React.FC = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
                 <ClipboardList className="h-4 w-4" /> Request a Quote
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
                 Tell Us About <span className="gradient-text">Your Project</span>
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
@@ -117,7 +81,7 @@ const RequestQuote: React.FC = () => {
 
       <section className="section-padding pt-0">
         <div className="container mx-auto max-w-3xl">
-          {status === 'sent' ? (
+          {submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="card p-12 text-center glow-border">
               <CheckCircle className="h-20 w-20 text-green-400 mx-auto mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">Quote Request Received!</h2>
@@ -135,50 +99,50 @@ const RequestQuote: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="q-name" className="block text-sm font-medium text-slate-400 mb-2">Full Name *</label>
-                      <input id="q-name" name="name" type="text" required value={form.name} onChange={set('name')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="Your full name" />
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Full Name *</label>
+                      <input type="text" required className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="Your full name" />
                     </div>
                     <div>
-                      <label htmlFor="q-email" className="block text-sm font-medium text-slate-400 mb-2">Email Address *</label>
-                      <input id="q-email" name="email" type="email" required value={form.email} onChange={set('email')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="your@email.com" />
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Email Address *</label>
+                      <input type="email" required className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="your@email.com" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="q-phone" className="block text-sm font-medium text-slate-400 mb-2">Phone Number *</label>
-                      <input id="q-phone" name="phone" type="tel" required value={form.phone} onChange={set('phone')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="+234 XXX XXX XXXX" />
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Phone Number *</label>
+                      <input type="tel" required className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="+234 XXX XXX XXXX" />
                     </div>
                     <div>
-                      <label htmlFor="q-company" className="block text-sm font-medium text-slate-400 mb-2">Company / Business Name</label>
-                      <input id="q-company" name="company" type="text" value={form.company} onChange={set('company')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="Your business name" />
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Company / Business Name</label>
+                      <input type="text" className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" placeholder="Your business name" />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="q-service" className="block text-sm font-medium text-slate-400 mb-2">Service Needed *</label>
-                    <select id="q-service" name="service" required value={form.service} onChange={set('service')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
+                    <label className="block text-sm font-medium text-slate-400 mb-2">Service Needed *</label>
+                    <select required className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
                       <option value="">Select a service</option>
                       {serviceOptions.map(s => <option key={s}>{s}</option>)}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="q-description" className="block text-sm font-medium text-slate-400 mb-2">Project Description *</label>
-                    <textarea id="q-description" name="description" rows={6} required value={form.description} onChange={set('description')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm resize-none" placeholder="Tell us about your project in detail — goals, features, target audience, design preferences, etc." />
+                    <label className="block text-sm font-medium text-slate-400 mb-2">Project Description *</label>
+                    <textarea rows={6} required className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm resize-none" placeholder="Tell us about your project in detail — goals, features, target audience, design preferences, etc." />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="q-budget" className="block text-sm font-medium text-slate-400 mb-2">Budget Range</label>
-                      <select id="q-budget" name="budget" value={form.budget} onChange={set('budget')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Budget Range</label>
+                      <select className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
                         <option value="">Select budget range</option>
                         {budgetOptions.map(b => <option key={b}>{b}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label htmlFor="q-timeline" className="block text-sm font-medium text-slate-400 mb-2">Desired Timeline</label>
-                      <select id="q-timeline" name="timeline" value={form.timeline} onChange={set('timeline')} className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
+                      <label className="block text-sm font-medium text-slate-400 mb-2">Desired Timeline</label>
+                      <select className="w-full px-4 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white text-sm">
                         <option value="">Select timeline</option>
                         {timelineOptions.map(t => <option key={t}>{t}</option>)}
                       </select>
@@ -186,7 +150,7 @@ const RequestQuote: React.FC = () => {
                   </div>
 
                   <div>
-                    <span className="block text-sm font-medium text-slate-400 mb-3">Preferred Contact Method</span>
+                    <label className="block text-sm font-medium text-slate-400 mb-2">Preferred Contact Method</label>
                     <div className="flex flex-wrap gap-4">
                       {[
                         { value: 'email', label: 'Email', icon: Mail },
@@ -194,7 +158,7 @@ const RequestQuote: React.FC = () => {
                         { value: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
                       ].map(m => (
                         <label key={m.value} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="contactMethod" checked={form.contactMethod === m.value} onChange={() => setForm(f => ({ ...f, contactMethod: m.value }))} className="text-cyan-400 focus:ring-cyan-500/20 bg-slate-900 border-white/10" />
+                          <input type="radio" name="contactMethod" defaultChecked={m.value === 'email'} className="text-cyan-400 focus:ring-cyan-500/20 bg-slate-900 border-white/10" />
                           <m.icon className="h-4 w-4 text-slate-400" />
                           <span className="text-sm text-slate-400">{m.label}</span>
                         </label>
@@ -202,20 +166,8 @@ const RequestQuote: React.FC = () => {
                     </div>
                   </div>
 
-                  {status === 'failed' && (
-                    <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
-                      <div className="text-sm">
-                        <p className="text-amber-300 font-medium mb-2">Automatic send is unavailable right now.</p>
-                        <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-green-400 hover:text-green-300 underline">
-                          <MessageCircle className="h-3.5 w-3.5" /> Send this quote request on WhatsApp instead
-                        </a>
-                      </div>
-                    </div>
-                  )}
-
-                  <motion.button type="submit" disabled={status === 'sending'} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="btn-primary w-full py-4 text-base mt-4 disabled:opacity-60">
-                    <Send className="h-5 w-5" /> {status === 'sending' ? 'Sending…' : 'Submit Quote Request'}
+                  <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="btn-primary w-full py-4 text-base mt-4">
+                    <Send className="h-5 w-5" /> Submit Quote Request
                   </motion.button>
                 </form>
               </div>

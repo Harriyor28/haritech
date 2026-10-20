@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Sun, Zap, Battery, Cpu, Shield, Star, TrendingUp, Home, Building2, Factory, Warehouse, TreePine, Smartphone, Headphones, Award, Settings, Wrench, Gauge, Droplets, LucideIcon } from 'lucide-react';
 import { getWhatsAppUrl, getSolarContent } from '../../utils/haritechContent';
+import SolarSavingsCalculator from '../../components/haritech/SolarSavingsCalculator';
 
 const iconMap: Record<string, LucideIcon> = {
   Sun, Zap, Battery, Cpu, Shield, Star, TrendingUp, Home, Building2, Factory, Warehouse,
@@ -21,14 +22,7 @@ const SolarEnergy: React.FC = () => {
   useEffect(() => {
     const handler = () => setSolar(getSolarContent());
     window.addEventListener('haritech-solar-updated', handler);
-    // WhatsApp CTAs read haritech-content — re-render when it changes
-    window.addEventListener('haritech-content-updated', handler);
-    window.addEventListener('storage', handler);
-    return () => {
-      window.removeEventListener('haritech-solar-updated', handler);
-      window.removeEventListener('haritech-content-updated', handler);
-      window.removeEventListener('storage', handler);
-    };
+    return () => window.removeEventListener('haritech-solar-updated', handler);
   }, []);
 
   const { services: solarServices, whySolar, applications, stats } = solar;
@@ -51,18 +45,18 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
             <FadeInView>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm font-medium mb-8">
-                <Sun className="h-4 w-4" /> Solar Energy Solutions
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/15 text-slate-200 text-xs font-mono font-medium mb-8">
+                <Sun className="h-4 w-4 text-amber-400" /> Solar Energy Solutions
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight font-poppins">
-                Power Your World with <span className="text-yellow-400">Clean Solar Energy</span>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight font-syne">
+                Power Your World with <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">Clean Solar Energy</span>
               </h1>
-              <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-base text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed font-normal">
                 From residential rooftops to industrial solar farms — Haritech provides end-to-end solar energy solutions that cut costs, ensure energy independence, and protect the environment.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/haritech/request-quote" className="btn-primary text-base px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/45"><Zap className="h-5 w-5" /> Get Solar Quote</Link>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-base px-8 py-4"><Sun className="h-5 w-5 text-yellow-400" /> Free Consultation</a>
+                <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Get Solar Quote</Link>
+                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Sun className="h-4 w-4 text-slate-300" /> Free Consultation</a>
               </div>
             </FadeInView>
           </div>
@@ -77,9 +71,9 @@ const SolarEnergy: React.FC = () => {
               const Icon = iconMap[s.icon] || Sun;
               return (
                 <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
-                  <Icon className="h-6 w-6 text-yellow-400 mx-auto mb-3" />
-                  <div className="text-3xl md:text-4xl font-black text-white mb-1 font-poppins">{s.value}</div>
-                  <div className="text-sm text-slate-500 font-medium">{s.label}</div>
+                  <Icon className="h-5 w-5 text-yellow-400 mx-auto mb-2" />
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white mb-1 font-mono">{s.value}</div>
+                  <div className="text-xs text-slate-400 font-medium">{s.label}</div>
                 </motion.div>
               );
             })}
@@ -92,8 +86,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Our Solar <span className="text-yellow-400">Services</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">Comprehensive solar energy solutions tailored to your needs.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Our Solar <span className="text-yellow-400">Services</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Comprehensive solar energy solutions tailored to your needs.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -120,8 +114,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Why Go <span className="text-yellow-400">Solar?</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">The benefits of switching to solar energy extend far beyond cost savings.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Why Go <span className="text-yellow-400">Solar?</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">The benefits of switching to solar energy extend far beyond cost savings.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -146,8 +140,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Solar Applications <span className="text-yellow-400">We Serve</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">Solar solutions for every sector and application.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Solar Applications <span className="text-yellow-400">We Serve</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Solar solutions for every sector and application.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -176,8 +170,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Our <span className="text-yellow-400">Process</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">From consultation to commissioning — we handle everything.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Our <span className="text-yellow-400">Process</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">From consultation to commissioning — we handle everything.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -194,20 +188,23 @@ const SolarEnergy: React.FC = () => {
         </div>
       </section>
 
+      {/* Solar Savings Calculator */}
+      <SolarSavingsCalculator />
+
       {/* CTA */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 via-orange-600/10 to-amber-600/20" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(234,179,8,0.1)_0%,transparent_70%)]" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <Sun className="h-16 w-16 text-yellow-400 mx-auto mb-6" />
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">Ready to Harness the Power of the Sun?</h2>
-            <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+            <Sun className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Ready to Harness the Power of the Sun?</h2>
+            <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
               Take control of your energy future. Contact Haritech today for a free consultation and customized solar solution.
             </p>
-            <div className="flex flex-col sm:flex-row gap-5 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-lg px-12 py-5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-6 w-6" /> Get a Free Quote</Link>
-              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-lg px-12 py-5"><Sun className="h-5 w-5 text-yellow-400" /> Speak to an Expert</a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Get a Free Quote</Link>
+              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><Sun className="h-4 w-4 text-yellow-400" /> Speak to an Expert</a>
             </div>
           </FadeInView>
         </div>

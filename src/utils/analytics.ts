@@ -2,27 +2,79 @@ import { getSupabase, isCloudConfigured } from './supabaseClient';
 
 const TABLE = 'page_views';
 const MAX_PATH_LEN = 200;
+/** Back off after the table is missing so we don't fire a 404 on every navigation. */
+const RETRY_AFTER_MS = 5 * 60 * 1000;
+const DISABLE_KEY = 'haritech:analytics-unavailable-until';
 
-let lastTrackedPath = '';
-let lastTrackedAt = 0;
+/** Reads the shared back-off stamp (per tab; survives reloads, cleared on tab close). */
+const unavailableUntil = (): number => {
+  try {
+    return Number(sessionStorage.getItem(DISABLE_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+};
 
-/** Record one page view. Fire-and-forget, safe to call on every route change. */
-export const trackPageView = (path: string): void => {
-  if (!isCloudConfigured()) return;
-  const clean = (path.split('?')[0].split('#')[0] || '/').slice(0, MAX_PATH_LEN);
+const suppressTracking = (): void => {
+  try {
+    sessionStorage.setItem(DISABLE_KEY, String(Date.now() + RETRY_AFTER_MS));
+  } catch {
+    /* storage unavailable (private mode) — fall back to in-memory only */
+  }
+};
+
+/** PostgREST signals an unknown table with PGRST205 "Could not find the table ..." */
+const isMissingTable = (message: string): boolean =>
+  message.includes('Could not find the table') && message.includes(TABLE);
+
+const reportUnavailable = (): void => {
+  if (typeof window === 'undefined') return;
+  console.warn(
+    `[analytics] paused: table public.${TABLE} does not exist yet. ` +
+      'Run supabase/schema.sql (analytics section) in the Supabase SQL editor, then reload.'
+  );
+};
+
+/** Wait for the router to settle before recording — <Navigate> redirects change the path twice. */
+const TRACK_DEBOUNCE_MS = 400;
+const DEDUPE_MS = 10000;
+
+let lastSentPath = '';
+let lastSentAt = 0;
+let pendingTimer: ReturnType<typeof setTimeout> | undefined;
+
+const sendView = (clean: string): void => {
   const now = Date.now();
   // Guard against React StrictMode double-firing the same view in dev
-  if (clean === lastTrackedPath && now - lastTrackedAt < 10000) return;
-  lastTrackedPath = clean;
-  lastTrackedAt = now;
+  if (clean === lastSentPath && now - lastSentAt < DEDUPE_MS) return;
+  lastSentPath = clean;
+  lastSentAt = now;
   const sb = getSupabase();
   if (!sb) return;
   void sb
     .from(TABLE)
     .insert({ path: clean })
     .then(({ error }) => {
-      if (error) console.warn('[analytics] track failed:', error.message);
+      if (!error) return;
+      if (isMissingTable(error.message)) {
+        suppressTracking();
+        reportUnavailable();
+        return;
+      }
+      console.warn('[analytics] track failed:', error.message);
     });
+};
+
+/** Record one page view. Fire-and-forget, safe to call on every route change. */
+export const trackPageView = (path: string): void => {
+  if (!isCloudConfigured()) return;
+  if (Date.now() < unavailableUntil()) return;
+  const clean = (path.split('?')[0].split('#')[0] || '/').slice(0, MAX_PATH_LEN);
+  if (pendingTimer !== undefined) clearTimeout(pendingTimer);
+  pendingTimer = setTimeout(() => {
+    pendingTimer = undefined;
+    sendView(clean);
+  }, TRACK_DEBOUNCE_MS);
 };
 
 export interface AnalyticsSummary {
@@ -51,6 +103,7 @@ const startOfDay = (d: Date): number => {
 /** Aggregate the last 30 days of views into dashboard numbers. Returns null when unavailable. */
 export const getAnalyticsSummary = async (): Promise<AnalyticsSummary | null> => {
   if (!isCloudConfigured()) return null;
+  if (Date.now() < unavailableUntil()) return null;
   const sb = getSupabase();
   if (!sb) return null;
   try {
@@ -62,7 +115,12 @@ export const getAnalyticsSummary = async (): Promise<AnalyticsSummary | null> =>
       .order('created_at', { ascending: false })
       .limit(10000);
     if (error || !data) {
-      console.warn('[analytics] fetch failed:', error?.message);
+      if (error && isMissingTable(error.message)) {
+        suppressTracking();
+        reportUnavailable();
+      } else {
+        console.warn('[analytics] fetch failed:', error?.message);
+      }
       return null;
     }
     const rows = data as ViewRow[];

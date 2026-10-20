@@ -18,7 +18,7 @@ const HaritechIndustriesManager: React.FC = () => {
   useEffect(() => { setIndustriesState(getIndustries()); }, []);
 
   const handleSave = () => {
-    if (!setIndustries(industries)) return;
+    setIndustries(industries);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

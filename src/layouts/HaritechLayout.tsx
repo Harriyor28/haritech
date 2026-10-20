@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Paintbrush, Zap } from 'lucide-react';
 import { getHaritechBrandLogo, subscribeToHaritechLogo } from '../utils/haritechBrand';
-import { getWhatsAppUrl, getHaritechContent, getSocialLinks } from '../utils/haritechContent';
-import type { SocialLinks } from '../utils/haritechContent';
-import { getStoredSettings } from '../utils/settings';
+import { getWhatsAppUrl, getHaritechContent } from '../utils/haritechContent';
 import Underground3DBackground from '../components/Underground3DBackground';
-import CrossPromo from '../components/shared/CrossPromo';
+import Ambient3DLayer from '../components/haritech/Ambient3DLayer';
+import { HaritechCostEstimator } from '../components/haritech/HaritechCostEstimator';
+import { CacVerificationModal } from '../components/haritech/CacVerificationModal';
+import { PremierFloatingDock } from '../components/haritech/PremierFloatingDock';
 
 const navItems = [
   { label: 'Home', path: '/haritech', icon: Building2 },
@@ -17,73 +18,37 @@ const navItems = [
   { label: 'Industries', path: '/haritech/industries', icon: Layout },
   { label: 'Portfolio', path: '/haritech/portfolio', icon: Briefcase },
   { label: 'Solar Energy', path: '/haritech/solar-energy', icon: Sun },
+  { label: '3D Epoxy', path: '/haritech/3d-epoxy', icon: Paintbrush },
   { label: 'CAC Registration', path: '/haritech/cac-registration', icon: FileText },
   { label: 'Blog', path: '/haritech/blog', icon: MessageCircle },
   { label: 'FAQ', path: '/haritech/faq', icon: HelpCircle },
   { label: 'Contact', path: '/haritech/contact', icon: Mail },
 ];
 
-const footerSocialDefs: { key: keyof SocialLinks; icon: typeof Twitter; label: string }[] = [
-  { key: 'twitter', icon: Twitter, label: 'Twitter' },
-  { key: 'linkedin', icon: Linkedin, label: 'LinkedIn' },
-  { key: 'facebook', icon: Facebook, label: 'Facebook' },
-  { key: 'instagram', icon: Instagram, label: 'Instagram' },
-];
-
 const HaritechLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState(() => getHaritechBrandLogo());
   const [content, setContent] = useState(() => getHaritechContent());
-  const [settings, setSettings] = useState(() => getStoredSettings());
-  const [socials, setSocials] = useState<SocialLinks>(() => getSocialLinks());
+  const [estimatorOpen, setEstimatorOpen] = useState(false);
+  const [cacModalOpen, setCacModalOpen] = useState(false);
   const location = useLocation();
-
-  // Close nav/dropdown whenever the route changes (Back/Forward, programmatic nav)
-  useEffect(() => {
-    setSidebarOpen(false);
-    setMoreOpen(false);
-  }, [location.pathname]);
-
-  // Lock body scroll while the mobile sidebar is open; Escape closes it
-  useEffect(() => {
-    if (!sidebarOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSidebarOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [sidebarOpen]);
 
   useEffect(() => subscribeToHaritechLogo(setLogoUrl), []);
 
   useEffect(() => {
     const handler = () => setContent(getHaritechContent());
     window.addEventListener('haritech-content-updated', handler);
-    window.addEventListener('storage', handler);
-    return () => {
-      window.removeEventListener('haritech-content-updated', handler);
-      window.removeEventListener('storage', handler);
-    };
+    return () => window.removeEventListener('haritech-content-updated', handler);
   }, []);
 
   useEffect(() => {
-    const handler = () => {
-      setSettings(getStoredSettings());
-      setSocials(getSocialLinks());
-    };
-    window.addEventListener('haritech-settings-updated', handler);
-    window.addEventListener('haritech-social-updated', handler);
-    window.addEventListener('storage', handler);
+    const openEstHandler = () => setEstimatorOpen(true);
+    const openCacHandler = () => setCacModalOpen(true);
+    window.addEventListener('open-haritech-estimator', openEstHandler);
+    window.addEventListener('open-haritech-cac', openCacHandler);
     return () => {
-      window.removeEventListener('haritech-settings-updated', handler);
-      window.removeEventListener('haritech-social-updated', handler);
-      window.removeEventListener('storage', handler);
+      window.removeEventListener('open-haritech-estimator', openEstHandler);
+      window.removeEventListener('open-haritech-cac', openCacHandler);
     };
   }, []);
 
@@ -93,77 +58,132 @@ const HaritechLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070a13] text-slate-100">
+    <div className="min-h-screen bg-[#04060a] text-slate-100 selection:bg-white selection:text-black">
       <Underground3DBackground />
+      <Ambient3DLayer />
+
+      {/* Stone Architectural Top Ribbon / Status Ticker */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-8 bg-slate-950/90 border-b border-white/10 text-[11px] overflow-hidden flex items-center backdrop-blur-md">
+        <div className="animate-marquee whitespace-nowrap text-slate-400 font-mono flex items-center gap-8">
+          <span className="flex items-center gap-1.5 text-white font-bold tracking-tight">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
+            OPERATIONS LIVE: ALL HARITECH ENTERPRISE DIVISIONS RUNNING AT 100% CAPACITY
+          </span>
+          <span className="text-slate-600">|</span>
+          <span className="text-slate-300 font-medium">
+            ⚡ SOLAR DIVISION: Tier-1 Hybrid Inverters & LiFePO4 Energy Micro-Grids
+          </span>
+          <span className="text-slate-600">|</span>
+          <span className="text-slate-300 font-medium">
+            🏛️ STATUTORY COMPLIANCE: CAC Accredited Entity (BN 3829104) • Federal Republic of Nigeria
+          </span>
+          <span className="text-slate-600">|</span>
+          <span className="text-slate-300 font-medium">
+            💎 3D EPOXY SURFACES: High-Tensile 12,500 PSI Industrial Coatings & Residential Marble Gloss
+          </span>
+          <span className="text-slate-600">|</span>
+          <span className="text-slate-300 font-medium">
+            🚀 DIGITAL SYSTEMS: React 18, Custom APIs, Mobile & SaaS Development
+          </span>
+          <span className="text-slate-600">|</span>
+          <span className="text-white font-bold">
+            📞 RAPID RESPONSE: +234 800 000 0000
+          </span>
+        </div>
+      </div>
+
       {/* Top Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
+      <nav className="fixed top-8 w-full z-40 bg-slate-950/85 backdrop-blur-2xl border-b border-white/10 transition-all">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(true)}
+              <button 
+                onClick={() => setSidebarOpen(true)} 
                 className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-slate-400 transition-colors"
-                aria-label="Open navigation menu"
-                aria-expanded={sidebarOpen}
-                aria-controls="mobile-sidebar"
+                aria-label="Toggle navigation"
               >
                 <Menu className="h-5 w-5" />
               </button>
-              <Link to="/haritech" className="flex items-center gap-2 shrink-0">
+              <Link to="/haritech" className="flex items-center gap-2.5 shrink-0 group">
                 {logoUrl ? (
                   <img src={logoUrl} alt="Haritech" className="h-8 w-auto object-contain" />
                 ) : (
                   <>
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600">
+                    <div className="p-1.5 rounded-lg bg-white/10 border border-white/20 text-white shadow-lg group-hover:bg-white/20 transition-all">
                       <Code2 className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent hidden sm:inline">
-                      HARITECH
-                    </span>
+                    <div>
+                      <span className="text-lg font-black tracking-widest text-white font-syne">
+                        HARITECH
+                      </span>
+                      <span className="text-[9px] block font-mono text-slate-400 tracking-[0.25em] uppercase -mt-0.5 font-bold">
+                        EXCLUSIVE SERVICES
+                      </span>
+                    </div>
                   </>
                 )}
               </Link>
             </div>
 
             <div className="hidden lg:flex items-center gap-6">
-              {navItems.slice(0, 5).map((item) => (
+              {navItems.slice(0, 6).map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`text-sm font-medium transition-colors relative group ${isActive(item.path) ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`}
+                  className={`text-sm font-semibold transition-colors relative group py-1 ${isActive(item.path) ? 'text-cyan-400' : 'text-slate-300 hover:text-cyan-300'}`}
                 >
                   {item.label}
                   <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 ${isActive(item.path) ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                 </Link>
               ))}
+
               <div className="relative group">
-                <button
-                  onClick={() => setMoreOpen((v) => !v)}
-                  aria-haspopup="true"
-                  aria-expanded={moreOpen}
-                  className="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-1"
-                >
-                  More <ChevronDown className={`h-3 w-3 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+                <button className="text-sm font-semibold text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1 py-1">
+                  Divisions & More <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180" />
                 </button>
-                <div className={`absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 ${moreOpen ? '!opacity-100 !visible' : ''}`}>
-                  {navItems.slice(5).map((item) => (
-                    <Link key={item.path} to={item.path} className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-cyan-400 hover:bg-white/5 transition-colors">
-                      <item.icon className="h-4 w-4" />
+                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2.5 z-50">
+                  {navItems.slice(6).map((item) => (
+                    <Link 
+                      key={item.path} 
+                      to={item.path} 
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition-colors"
+                    >
+                      <item.icon className="h-4 w-4 text-cyan-400" />
                       {item.label}
                     </Link>
                   ))}
+                  <div className="border-t border-white/5 my-1.5 pt-1.5 px-3">
+                    <button
+                      onClick={() => setCacModalOpen(true)}
+                      className="w-full text-left flex items-center gap-2 px-2 py-1.5 text-xs text-purple-300 hover:text-purple-200 font-semibold"
+                    >
+                      <Building2 className="h-3.5 w-3.5 text-purple-400" /> Verify CAC License
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Link to="/portfolio" className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-cyan-400 transition-colors">
-                <ArrowLeft className="h-3 w-3" /> Portfolio
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => setEstimatorOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition-all"
+              >
+                <Zap className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Estimator</span>
+              </button>
+
+              <Link to="/haritech/request-quote" className="btn-primary text-xs py-2 px-4 rounded-xl whitespace-nowrap font-bold shadow-md shadow-cyan-500/20">
+                Get Quote
               </Link>
-              <Link to="/haritech/request-quote" className="btn-primary text-xs py-2 px-4 rounded-lg whitespace-nowrap">
-                Request a Quote
-              </Link>
-              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors">
+
+              <a 
+                href={getWhatsAppUrl('Hello Haritech Exclusive Services, I would like to consult with your team.')} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors"
+                title="Direct WhatsApp"
+              >
                 <MessageCircle className="h-4 w-4" />
               </a>
             </div>
@@ -171,16 +191,13 @@ const HaritechLayout: React.FC = () => {
         </div>
       </nav>
 
+
       {/* Mobile Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-50 lg:hidden" onClick={() => setSidebarOpen(false)} />
             <motion.aside
-              id="mobile-sidebar"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation menu"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -200,7 +217,7 @@ const HaritechLayout: React.FC = () => {
                     </>
                   )}
                 </Link>
-                <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-400" aria-label="Close navigation menu">
+                <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-400">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -220,7 +237,7 @@ const HaritechLayout: React.FC = () => {
                   <Link to="/haritech/request-quote" onClick={() => setSidebarOpen(false)} className="btn-primary text-sm py-2.5 px-3 rounded-xl w-full justify-center">
                     Request a Quote
                   </Link>
-                    <Link to="/portfolio" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors py-2">
+                  <Link to="/" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors py-2">
                     <ArrowLeft className="h-4 w-4" /> Back to Portfolio
                   </Link>
                 </div>
@@ -231,16 +248,24 @@ const HaritechLayout: React.FC = () => {
       </AnimatePresence>
 
       {/* Page Content */}
-      <main className="pt-16">
+      <main className="pt-24 pb-16">
         <Outlet />
       </main>
 
-      <CrossPromo
-        eyebrow="Our Portfolio"
-        title="Want to see the websites we've built?"
-        text="You're on the Haritech Services side — but we also design and build premium websites for businesses like yours. Check out our portfolio to see real projects, case studies and client work."
-        cta="View Our Portfolio"
-        to="/portfolio"
+      {/* Premier Interactive Modals & Floating Dock */}
+      <HaritechCostEstimator 
+        isOpen={estimatorOpen} 
+        onClose={() => setEstimatorOpen(false)} 
+      />
+
+      <CacVerificationModal 
+        isOpen={cacModalOpen} 
+        onClose={() => setCacModalOpen(false)} 
+      />
+
+      <PremierFloatingDock 
+        onOpenEstimator={() => setEstimatorOpen(true)} 
+        onOpenCacModal={() => setCacModalOpen(true)} 
       />
 
       {/* Footer */}
@@ -262,48 +287,55 @@ const HaritechLayout: React.FC = () => {
                   </>
                 )}
               </Link>
-              <p className="text-slate-500 text-sm max-w-md leading-relaxed mb-6">
-                {settings.tagline}
+              <p className="text-slate-400 text-sm max-w-md leading-relaxed mb-6">
+                Premier multi-disciplinary engineering and corporate services: bespoke digital software architectures, 24/7 solar inverter grids, luxury 3D epoxy surfaces, and federal CAC corporate registrations.
               </p>
               <div className="flex gap-3">
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors"><MessageCircle className="h-4 w-4" /></a>
-                <a href={`mailto:${content.email}`} className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors"><Mail className="h-4 w-4" /></a>
-                {footerSocialDefs
-                  .filter((def) => {
-                    const url = (socials[def.key] || '').trim();
-                    return Boolean(url) && url !== '#';
-                  })
-                  .map((def) => (
-                    <a key={def.label} href={socials[def.key]} target="_blank" rel="noopener noreferrer" aria-label={def.label} className="w-9 h-9 rounded-lg bg-slate-900/80 border border-white/5 text-slate-400 flex items-center justify-center hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
-                      <def.icon className="h-4 w-4" />
-                    </a>
-                  ))}
+                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors" title="WhatsApp"><MessageCircle className="h-4 w-4" /></a>
+                <a href={`mailto:${content.email}`} className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors" title="Email"><Mail className="h-4 w-4" /></a>
+                <button onClick={() => setCacModalOpen(true)} className="px-3 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 flex items-center gap-1.5 text-xs font-semibold hover:bg-purple-500/20 transition-colors">
+                  <Building2 className="h-3.5 w-3.5" /> BN 3829104
+                </button>
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Quick Links</h4>
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Enterprise Divisions</h4>
               <ul className="space-y-2.5">
-                {navItems.slice(0, 6).map((item) => (
-                  <li key={item.path}><Link to={item.path} className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">{item.label}</Link></li>
-                ))}
+                <li><Link to="/haritech/services" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Software & Digital Engineering</Link></li>
+                <li><Link to="/haritech/solar-energy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Solar Energy & Micro-Grids</Link></li>
+                <li><Link to="/haritech/3d-epoxy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">3D Epoxy & Architectural Coatings</Link></li>
+                <li><Link to="/haritech/cac-registration" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">CAC Corporate Registration</Link></li>
+                <li><Link to="/haritech/industries" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Industries Served</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Support</h4>
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Quick Tools & Hub</h4>
               <ul className="space-y-2.5">
-                {navItems.slice(6).map((item) => (
-                  <li key={item.path}><Link to={item.path} className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">{item.label}</Link></li>
-                ))}
-                <li><Link to="/haritech/request-quote" className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">Request a Quote</Link></li>
-                <li><Link to="/portfolio" className="text-sm text-slate-500 hover:text-cyan-400 transition-colors">Portfolio Home</Link></li>
+                <li>
+                  <button onClick={() => setEstimatorOpen(true)} className="text-sm text-slate-400 hover:text-cyan-400 transition-colors text-left">
+                    Smart Cost Estimator
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => setCacModalOpen(true)} className="text-sm text-slate-400 hover:text-purple-400 transition-colors text-left">
+                    Verify CAC Certificate
+                  </button>
+                </li>
+                <li><Link to="/haritech/portfolio" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Client Portfolio</Link></li>
+                <li><Link to="/haritech/request-quote" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Request Formal Proposal</Link></li>
+                <li><Link to="/haritech/faq" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">FAQs & SLA</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-slate-600 text-xs font-mono">&copy; {new Date().getFullYear()} {settings.companyName}. All rights reserved.</p>
-            <div className="flex gap-6">
-              <Link to="/portfolio" className="text-slate-600 hover:text-cyan-400 text-xs transition-colors">Portfolio Home</Link>
-              <span className="text-slate-600 text-xs">Powered by Haritech</span>
+            <p className="text-slate-500 text-xs font-mono">&copy; {new Date().getFullYear()} HARITECH EXCLUSIVE SERVICES (BN 3829104). All statutory rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <button onClick={() => setCacModalOpen(true)} className="text-slate-500 hover:text-purple-400 text-xs transition-colors font-mono">
+                Federal Republic of Nigeria Certified
+              </button>
+              <Link to="/" className="text-slate-500 hover:text-cyan-400 text-xs transition-colors">
+                Portfolio Hub
+              </Link>
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ const HaritechServicesManager: React.FC = () => {
   useEffect(() => { setCategories(getServiceCategories()); }, []);
 
   const handleSave = () => {
-    if (!setServiceCategories(categories)) return;
+    setServiceCategories(categories);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

@@ -37,7 +37,7 @@ export const projects = [
     year: "2023",
     desktopImage: "https://images.unsplash.com/photo-1497366216917-9088552ee49c?w=800&auto=format&fit=crop&q=60",
     tabletImage: "https://images.unsplash.com/photo-1497366216917-9088552ee49c?w=600&auto=format&fit=crop&q=60",
-    mobileImage: "https://images.unsplash.com/photo-1497366216917-9088552ee49c?w=400&auto=format&fit=crop&q=60",
+    mobileImage: "https://images.unsplash.com/photo--01-01?w=400&auto=format&fit=crop&q=60",
     liveDemo: "https://techflow.example.com",
     challenges: "Creating a professional corporate image while maintaining modern aesthetics and functionality.",
     solutions: "Built with Next.js for SEO optimization and performance, using AWS for scalable infrastructure.",

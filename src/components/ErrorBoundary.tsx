@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface ErrorBoundaryState {
   error: Error | null;
@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBounda
       return (
         <div className="min-h-screen bg-[#070a13] flex items-center justify-center px-6 text-white">
           <div className="text-center max-w-md">
-            <div className="text-6xl font-black mb-4 gradient-text">Oops</div>
+            <div className="text-4xl font-black mb-4 gradient-text">Oops</div>
             <h1 className="text-2xl font-bold mb-3">Something went wrong</h1>
             <p className="text-slate-400 text-sm mb-8 leading-relaxed">
               An unexpected error interrupted this page. Your saved content is safe —

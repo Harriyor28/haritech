@@ -15,7 +15,7 @@ const HaritechTeamManager: React.FC = () => {
   useEffect(() => { setMembers(getTeamMembers()); }, []);
 
   const handleSave = () => {
-    if (!setTeamMembers(members)) return;
+    setTeamMembers(members);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

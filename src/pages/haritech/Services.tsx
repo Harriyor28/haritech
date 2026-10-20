@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Code2, Palette, Megaphone, Briefcase, ArrowRight, CheckCircle, Zap, ChevronDown, Monitor, PaintBucket, BarChart3, Server } from 'lucide-react';
@@ -19,11 +19,7 @@ const Services: React.FC = () => {
   const [expandedService, setExpandedService] = useState<string | null>(null);
 
   useEffect(() => {
-    const handler = () => {
-      const data = getServiceCategories();
-      setCategories(data);
-      setActiveCategory(prev => (data.some(c => c.id === prev) ? prev : (data[0]?.id ?? '')));
-    };
+    const handler = () => setCategories(getServiceCategories());
     window.addEventListener('haritech-services-updated', handler);
     return () => window.removeEventListener('haritech-services-updated', handler);
   }, []);
@@ -35,19 +31,30 @@ const Services: React.FC = () => {
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
 
       {/* Hero */}
-      <section className="relative pt-24 pb-16 overflow-hidden">
+      <section className="relative pt-12 pb-16 overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <FadeInView>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
-                <Code2 className="h-4 w-4" /> Our Services
+              <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
+                <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
+                  <Code2 className="h-4 w-4" /> HARITECH INTEGRATED CAPABILITIES MATRIX
+                </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
-                Everything You Need to <span className="gradient-text">Succeed Online</span>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
+                Everything You Need to <span className="gradient-text">Dominate & Grow</span>
               </h1>
-              <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                From web development to branding, marketing, and IT solutions — we offer a complete ecosystem of digital services under one roof.
+              <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6">
+                From web development to branding, solar energy grids, 3D epoxy flooring, and corporate CAC governance — we offer a complete multi-disciplinary ecosystem under one roof.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-haritech-estimator'))}
+                  className="btn-primary text-xs py-3 px-6 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-cyan-500/20"
+                >
+                  <Zap className="h-4 w-4" />
+                  <span>Configure Scope in Estimator</span>
+                </button>
+              </div>
             </FadeInView>
           </div>
         </div>
@@ -84,11 +91,11 @@ const Services: React.FC = () => {
               transition={{ duration: 0.3 }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(activeCat?.services ?? []).map((svc, i) => (
+                {activeCat.services.map((svc, i) => (
                   <FadeInView key={svc.name} delay={i * 0.05}>
                     <div className="card p-6 h-full hover:bg-[#141b35] transition-all group glow-border">
                       <div className="flex items-start gap-4 mb-4">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeCat?.color ?? 'from-cyan-500 to-blue-600'} p-2 shrink-0`}>
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeCat.color} p-2 shrink-0`}>
                           <Code2 className="h-full w-full text-white" />
                         </div>
                         <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">{svc.name}</h3>
@@ -139,7 +146,7 @@ const Services: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Not Sure Which Service You Need?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Not Sure Which Service You Need?</h2>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Contact us today and our experts will help you find the perfect solution for your business.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Get a Free Consultation</Link>

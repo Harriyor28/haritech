@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+﻿import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { MessageCircle, Calendar, User, ArrowRight, Clock } from 'lucide-react';
 import { getBlogPosts } from '../../utils/haritechContent';
 import type { BlogPost } from '../../utils/haritechContent';
-import { submitNewsletterEmail } from '../../utils/contactMessages';
 
 const categories = ['All', 'Design', 'Business', 'SEO', 'AI', 'Branding', 'Marketing', 'E-commerce'];
 
@@ -16,25 +15,12 @@ const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ c
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(() => getBlogPosts());
   const [activeCategory, setActiveCategory] = useState('All');
-  const [openPost, setOpenPost] = useState<BlogPost | null>(null);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [subscribeFailed, setSubscribeFailed] = useState(false);
 
   useEffect(() => {
     const handler = () => setPosts(getBlogPosts());
     window.addEventListener('haritech-blog-updated', handler);
     return () => window.removeEventListener('haritech-blog-updated', handler);
   }, []);
-
-  useEffect(() => {
-    if (!openPost) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenPost(null);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [openPost]);
 
   const filteredPosts = activeCategory === 'All' ? posts : posts.filter(p => p.category === activeCategory);
 
@@ -49,7 +35,7 @@ const Blog: React.FC = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
                 <MessageCircle className="h-4 w-4" /> Our Blog
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
                 Insights & <span className="gradient-text">Articles</span>
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
@@ -72,12 +58,8 @@ const Blog: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPosts.map((post, i) => (
-              <FadeInView key={post.id ?? post.title} delay={i * 0.06}>
-                <button
-                  onClick={() => setOpenPost(post)}
-                  className="card group overflow-hidden h-full glow-border text-left w-full cursor-pointer"
-                  aria-label={`Read article: ${post.title}`}
-                >
+              <FadeInView key={post.title} delay={i * 0.06}>
+                <div className="card group overflow-hidden h-full glow-border">
                   <div className="h-48 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-purple-500/10 flex items-center justify-center border-b border-white/5">
                     <MessageCircle className="h-16 w-16 text-cyan-400/30 group-hover:scale-110 transition-transform duration-500" />
                   </div>
@@ -97,7 +79,7 @@ const Blog: React.FC = () => {
                       <span className="text-xs text-cyan-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">Read More <ArrowRight className="h-3 w-3" /></span>
                     </div>
                   </div>
-                </button>
+                </div>
               </FadeInView>
             ))}
           </div>
@@ -116,83 +98,15 @@ const Blog: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Subscribe to Our Newsletter</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Subscribe to Our Newsletter</h2>
             <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">Get the latest articles and insights delivered straight to your inbox.</p>
-            <form
-              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const value = email.trim();
-                if (!value) return;
-                submitNewsletterEmail(value).then((res) => {
-                  if (res.ok) setSubscribed(true);
-                  else setSubscribeFailed(true);
-                });
-              }}
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-5 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm"
-                required
-              />
-              <button type="submit" className="btn-primary px-8 py-3.5 rounded-xl text-sm whitespace-nowrap">
-                {subscribed ? 'Subscribed ✓' : 'Subscribe'}
-              </button>
+            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onSubmit={e => e.preventDefault()}>
+              <input type="email" placeholder="Enter your email" className="flex-1 px-5 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm" required />
+              <button type="submit" className="btn-primary px-8 py-3.5 rounded-xl text-sm whitespace-nowrap">Subscribe</button>
             </form>
-            {subscribed && (
-              <p className="text-cyan-400/80 text-sm mt-4">Thanks for subscribing!</p>
-            )}
-            {subscribeFailed && !subscribed && (
-              <p className="text-amber-400/80 text-sm mt-4">Could not subscribe — please try again later.</p>
-            )}
           </FadeInView>
         </div>
       </section>
-
-      {/* Article reader modal */}
-      <AnimatePresence>
-        {openPost && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
-            onClick={() => setOpenPost(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-label={openPost.title}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.97 }}
-              transition={{ duration: 0.25 }}
-              className="bg-[#0e1326] border border-white/10 rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-10 relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setOpenPost(null)}
-                className="absolute top-4 right-4 w-9 h-9 rounded-lg bg-slate-900 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-                aria-label="Close article"
-              >
-                ✕
-              </button>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded-full font-semibold">{openPost.category}</span>
-                <span className="text-xs text-slate-500">{openPost.date} · {openPost.readTime}</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white mb-3 font-poppins">{openPost.title}</h2>
-              <p className="text-xs text-slate-500 flex items-center gap-1 mb-6"><User className="h-3 w-3" /> {openPost.author}</p>
-              <div className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">
-                {openPost.content || openPost.excerpt}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

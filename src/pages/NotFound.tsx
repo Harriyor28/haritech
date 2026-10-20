@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
@@ -8,7 +8,7 @@ const NotFound: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#070a13] flex items-center justify-center px-6">
       <div className="text-center max-w-lg">
-        <div className="text-8xl font-black gradient-text mb-4">404</div>
+        <div className="text-6xl font-black gradient-text mb-4">404</div>
         <h1 className="text-3xl font-bold text-white mb-3">Page Not Found</h1>
         <p className="text-slate-400 mb-8 leading-relaxed">
           The page <span className="font-mono text-slate-500 break-all">{pathname}</span>{' '}

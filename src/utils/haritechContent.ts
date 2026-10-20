@@ -7,44 +7,14 @@ const HARITECH_SERVICE_CATS_KEY = 'haritech-service-cats';
 const HARITECH_FAQ_KEY = 'haritech-faq';
 const HARITECH_SOLAR_KEY = 'haritech-solar';
 const HARITECH_WHATTWEDO_KEY = 'haritech-whatwedo';
+const HARITECH_EPOXY_KEY = 'haritech-epoxy';
 const HARITECH_SOCIAL_KEY = 'haritech-social';
 
-import { pushToCloud, eventForCloudKey, emitStorageError } from './cloudSync';
+import { pushToCloud } from './cloudSync';
 
-// Safe JSON reader: a corrupt key must never white-screen a page.
-const readJson = (key: string): unknown => {
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
-
-// Keep only defined, non-null entries so a bad stored value can't
-// overwrite a default with null/undefined.
-const compactObject = (value: unknown): Record<string, unknown> => {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-    if (v !== null && v !== undefined) out[k] = v;
-  }
-  return out;
-};
-
-const persist = (key: string, value: unknown): boolean => {
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    emitStorageError(
-      `Could not save "${key}" — browser storage is full. Remove old images/data or use a smaller file, then save again.`
-    );
-    return false;
-  }
+const persist = (key: string, value: unknown): void => {
+  window.localStorage.setItem(key, JSON.stringify(value));
   void pushToCloud(key, value);
-  const eventName = eventForCloudKey(key);
-  if (eventName) window.dispatchEvent(new Event(eventName));
-  return true;
 };
 
 export interface FAQCategory {
@@ -57,6 +27,14 @@ export interface SolarContent {
   whySolar: { title: string; desc: string; icon: string }[];
   applications: { title: string; desc: string; icon: string }[];
   stats: { value: string; label: string; icon: string }[];
+}
+
+export interface EpoxyContent {
+  hero: { badge: string; title: string; accent: string; subtitle: string };
+  works: { img: string; title: string; tag: string; detail: string }[];
+  offers: { icon: string; title: string; desc: string; features: string[] }[];
+  process: { icon: string; title: string; desc: string }[];
+  qualities: { icon: string; title: string; desc: string }[];
 }
 
 export interface WhatWeDoArea {
@@ -201,6 +179,17 @@ const defaultServiceCategories = [
       { name: 'Domain Registration', desc: 'Secure the perfect domain for your business.', features: ['Domain Search', 'Registration', 'DNS Management'], benefits: ['Online Identity', 'Brand Protection'] },
       { name: 'Web Hosting', desc: 'Fast, reliable hosting for maximum performance.', features: ['SSD Storage', '99.9% Uptime', '24/7 Support'], benefits: ['Fast Loading', 'Reliable Service'] },
     ]
+  },
+  {
+    id: 'epoxy', label: '3D Epoxy & Interior Design', icon: 'PaintBucket', color: 'from-amber-500 to-orange-600',
+    services: [
+      { name: '3D Epoxy Flooring', desc: 'Photorealistic 3D floors — ocean waves, koi ponds, marble and more — sealed under a crystal-clear resin coat.', features: ['Custom 3D Artwork', 'Self-Levelling Resin', 'Slip & Scratch Resistant', '10+ Year Durability'], benefits: ['Show-Stopping Finish', 'Easy To Clean'] },
+      { name: 'Metallic & Marble Effects', desc: 'Luxury metallic pigments swirled into resin for a seamless marble-like finish on floors, walls and counters.', features: ['Pigment Customization', 'Seamless Surface', 'Gloss or Satin Finish'], benefits: ['Premium Look', 'Unique Pattern Every Time'] },
+      { name: 'Interior Design', desc: 'Complete space makeovers — colour, lighting and finishes planned around how you actually use the room.', features: ['Space Planning', 'Colour Consultation', 'Finish Selection'], benefits: ['Cohesive Design', 'Maximized Comfort'] },
+      { name: 'Wall Art & Murals', desc: 'Hand-painted, epoxy-sealed accent walls, murals and feature panels for homes, offices and lobbies.', features: ['Bespoke Murals', 'Resin Seal Coat', 'Interior & Exterior'], benefits: ['One-Of-A-Kind Art', 'Weatherproof Finish'] },
+      { name: 'Epoxy Tables & Furniture', desc: 'River tables, live-edge desks and custom furniture cast in crystal-clear, food-safe resin.', features: ['Live-Edge Wood', 'River & Ocean Designs', 'Food-Safe Coating'], benefits: ['Statement Piece', 'Built To Last'] },
+      { name: 'Surface Repair & Recoating', desc: 'Revive cracked, faded or yellowing floors and surfaces with a fresh resin system — no full replacement.', features: ['Crack Repair', 'Colour Refresh', 'Fast Turnaround'], benefits: ['Cost Saving', 'Like-New Finish'] },
+    ]
   }
 ];
 
@@ -238,79 +227,83 @@ const defaultCAC: CACInfo = {
 
 export function getHaritechContent(): HaritechSiteContent {
   if (typeof window === 'undefined') return defaultContent;
-  const merged: HaritechSiteContent = {
-    ...defaultContent,
-    ...(compactObject(readJson(HARITECH_CONTENT_KEY)) as Partial<HaritechSiteContent>),
-  };
-  // Corrupt values (wrong type from bad JSON) must never crash render-time .map()
-  if (!Array.isArray(merged.stats)) merged.stats = defaultContent.stats;
-  if (!Array.isArray(merged.whyChoose)) merged.whyChoose = defaultContent.whyChoose;
-  return merged;
+  const stored = window.localStorage.getItem(HARITECH_CONTENT_KEY);
+  return stored ? { ...defaultContent, ...JSON.parse(stored) } : defaultContent;
 }
 
-export function setHaritechContent(data: HaritechSiteContent): boolean {
-  return persist(HARITECH_CONTENT_KEY, data);
+export function setHaritechContent(data: HaritechSiteContent): void {
+  persist(HARITECH_CONTENT_KEY, data);
+  window.dispatchEvent(new Event('haritech-content-updated'));
 }
-
-export const subscribeToHaritechContent = (
-  callback: (content: HaritechSiteContent) => void
-): (() => void) => {
-  const handler = () => callback(getHaritechContent());
-  window.addEventListener('haritech-content-updated', handler);
-  return () => window.removeEventListener('haritech-content-updated', handler);
-};
 
 export function getTeamMembers(): TeamMember[] {
   if (typeof window === 'undefined') return defaultTeam;
-  const parsed = readJson(HARITECH_TEAM_KEY);
-  return Array.isArray(parsed) ? parsed : defaultTeam;
+  const stored = window.localStorage.getItem(HARITECH_TEAM_KEY);
+  return stored ? JSON.parse(stored) : defaultTeam;
 }
 
-export function setTeamMembers(data: TeamMember[]): boolean {
-  return persist(HARITECH_TEAM_KEY, data);
+export function setTeamMembers(data: TeamMember[]): void {
+  persist(HARITECH_TEAM_KEY, data);
+  window.dispatchEvent(new Event('haritech-team-updated'));
 }
 
 export function getIndustries(): IndustryCard[] {
   if (typeof window === 'undefined') return defaultIndustries;
-  const parsed = readJson(HARITECH_INDUSTRIES_KEY);
-  return Array.isArray(parsed) ? parsed : defaultIndustries;
+  const stored = window.localStorage.getItem(HARITECH_INDUSTRIES_KEY);
+  return stored ? JSON.parse(stored) : defaultIndustries;
 }
 
-export function setIndustries(data: IndustryCard[]): boolean {
-  return persist(HARITECH_INDUSTRIES_KEY, data);
+export function setIndustries(data: IndustryCard[]): void {
+  persist(HARITECH_INDUSTRIES_KEY, data);
+  window.dispatchEvent(new Event('haritech-industries-updated'));
 }
 
 export function getBlogPosts(): BlogPost[] {
   if (typeof window === 'undefined') return defaultBlog;
-  const parsed = readJson(HARITECH_BLOG_KEY);
-  return Array.isArray(parsed) ? parsed : defaultBlog;
+  const stored = window.localStorage.getItem(HARITECH_BLOG_KEY);
+  return stored ? JSON.parse(stored) : defaultBlog;
 }
 
-export function setBlogPosts(data: BlogPost[]): boolean {
-  return persist(HARITECH_BLOG_KEY, data);
+export function setBlogPosts(data: BlogPost[]): void {
+  persist(HARITECH_BLOG_KEY, data);
+  window.dispatchEvent(new Event('haritech-blog-updated'));
 }
 
 export function getCACInfo(): CACInfo {
   if (typeof window === 'undefined') return defaultCAC;
-  return { ...defaultCAC, ...compactObject(readJson(HARITECH_CAC_KEY)) };
+  const stored = window.localStorage.getItem(HARITECH_CAC_KEY);
+  return stored ? { ...defaultCAC, ...JSON.parse(stored) } : defaultCAC;
 }
 
-export function setCACInfo(data: CACInfo): boolean {
-  return persist(HARITECH_CAC_KEY, data);
+export function setCACInfo(data: CACInfo): void {
+  persist(HARITECH_CAC_KEY, data);
+  window.dispatchEvent(new Event('haritech-cac-updated'));
 }
 
 export function getServiceCategories(): ServiceCategory[] {
   if (typeof window === 'undefined') return defaultServiceCategories;
-  const parsed = readJson(HARITECH_SERVICE_CATS_KEY);
-  return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultServiceCategories;
+  const stored = window.localStorage.getItem(HARITECH_SERVICE_CATS_KEY);
+  if (!stored) return defaultServiceCategories;
+  try {
+    const parsed = JSON.parse(stored);
+    // An empty stored array (e.g. an admin reset) must fall back to the
+    // defaults rather than rendering a services page with no categories.
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultServiceCategories;
+  } catch {
+    return defaultServiceCategories;
+  }
 }
 
-export function setServiceCategories(data: ServiceCategory[]): boolean {
-  return persist(HARITECH_SERVICE_CATS_KEY, data);
+export function setServiceCategories(data: ServiceCategory[]): void {
+  persist(HARITECH_SERVICE_CATS_KEY, data);
+  window.dispatchEvent(new Event('haritech-services-updated'));
 }
 
-export function getWhatsAppUrl(): string {
+export function getWhatsAppUrl(text?: string): string {
   const num = getHaritechContent().whatsapp.replace(/[^0-9]/g, '');
+  if (text) {
+    return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  }
   return `https://wa.me/${num}`;
 }
 
@@ -359,12 +352,13 @@ const defaultFAQ: FAQCategory[] = [
 
 export function getFAQCategories(): FAQCategory[] {
   if (typeof window === 'undefined') return defaultFAQ;
-  const parsed = readJson(HARITECH_FAQ_KEY);
-  return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultFAQ;
+  const stored = window.localStorage.getItem(HARITECH_FAQ_KEY);
+  return stored ? JSON.parse(stored) : defaultFAQ;
 }
 
-export function setFAQCategories(data: FAQCategory[]): boolean {
-  return persist(HARITECH_FAQ_KEY, data);
+export function setFAQCategories(data: FAQCategory[]): void {
+  persist(HARITECH_FAQ_KEY, data);
+  window.dispatchEvent(new Event('haritech-faq-updated'));
 }
 
 const defaultSolar: SolarContent = {
@@ -407,19 +401,67 @@ const defaultSolar: SolarContent = {
 
 export function getSolarContent(): SolarContent {
   if (typeof window === 'undefined') return defaultSolar;
-  const parsed = compactObject(readJson(HARITECH_SOLAR_KEY));
-  const pick = (k: keyof SolarContent): unknown[] =>
-    Array.isArray(parsed[k]) ? (parsed[k] as unknown[]) : defaultSolar[k];
-  return {
-    services: pick('services') as SolarContent['services'],
-    whySolar: pick('whySolar') as SolarContent['whySolar'],
-    applications: pick('applications') as SolarContent['applications'],
-    stats: pick('stats') as SolarContent['stats'],
-  };
+  const stored = window.localStorage.getItem(HARITECH_SOLAR_KEY);
+  return stored ? { ...defaultSolar, ...JSON.parse(stored) } : defaultSolar;
 }
 
-export function setSolarContent(data: SolarContent): boolean {
-  return persist(HARITECH_SOLAR_KEY, data);
+export function setSolarContent(data: SolarContent): void {
+  persist(HARITECH_SOLAR_KEY, data);
+  window.dispatchEvent(new Event('haritech-solar-updated'));
+}
+
+const defaultEpoxy: EpoxyContent = {
+  hero: {
+    badge: '3D Epoxy & Interior Design',
+    title: 'Walk On Art. Live In ',
+    accent: 'Masterpieces.',
+    subtitle: 'Ocean floors, metallic marble, hand-painted murals and glass-smooth finishes — Haritech pours bespoke 3D epoxy surfaces for homes, offices and hospitality spaces across Nigeria.',
+  },
+  works: [
+    { img: '/images/epoxy-ocean.jpg', title: 'Ocean Depth Floor', tag: '3D Epoxy Flooring', detail: 'A photorealistic ocean floor poured in three layers — deep pigment base, hand-painted water detail, then a crystal-clear UV-stable top coat that gives the surface endless visual depth.' },
+    { img: '/images/epoxy-lagoon.jpg', title: 'Lagoon Water-Effect Floor', tag: '3D Epoxy Flooring', detail: 'Sunlit ripples captured mid-flow across an open-plan floor. Seamless from wall to wall, fully waterproof, and effortless to clean.' },
+    { img: '/images/epoxy-marble.jpg', title: 'Emerald Marble Reception', tag: 'Metallic & Marble', detail: 'Dark metallic pigments swirled into self-levelling resin to imitate rare marble — hand-combed on site, so no two pours are ever alike.' },
+    { img: '/images/epoxy-metallic-green.jpg', title: 'Metallic Pigment Pour', tag: 'Metallic & Marble', detail: 'Pearlescent pigments feathered by hand before the resin cures, producing soft cloud-like movement across the finished surface.' },
+    { img: '/images/epoxy-timber.webp', title: 'High-Gloss Timber Seal', tag: 'Wood Protection', detail: 'Natural timber sealed under a glass-clear coat that amplifies the grain while shrugging off scuffs, spills and pet claws.' },
+    { img: '/images/epoxy-living.webp', title: 'Full Home Finishing', tag: 'Interior Design', detail: 'Floor, wall and furniture finishes coordinated in a single project for one cohesive, gallery-clean living space.' },
+    { img: '/images/epoxy-bedroom.jpg', title: 'Warm Panelled Bedroom', tag: 'Interior Design', detail: 'Wood-panelled walls with hidden warm lighting paired with a satin epoxy floor that stays soft and quiet underfoot.' },
+    { img: '/images/epoxy-lobby.webp', title: 'Corporate Lobby Floor', tag: 'Commercial', detail: 'A mirror-finish light floor for a high-traffic lobby — chemical-resistant, slip-rated and polished to a deep reflection.' },
+    { img: '/images/epoxy-feature-wall.webp', title: 'Gold-Vein Feature Wall', tag: 'Wall Art', detail: 'A book-matched stone-look wall panel finished with hand-laid gold veining and sealed to lock in the colour permanently.' },
+    { img: '/images/epoxy-mural.jpg', title: 'Hand-Painted Mural', tag: 'Wall Art & Murals', detail: 'A bespoke line-art mural painted on site and sealed under a protective resin coat — suitable for interior and exterior walls.' },
+  ],
+  offers: [
+    { icon: 'Waves', title: '3D Epoxy Flooring', desc: 'Photorealistic ocean, koi, stone and sky floors cast under crystal-clear resin.', features: ['Custom 3D artwork', 'Self-levelling system', 'Slip-resistant options'] },
+    { icon: 'Gem', title: 'Metallic & Marble Effects', desc: 'Luxury pigments swirled into resin for a seamless stone-like finish anywhere.', features: ['Unlimited colourways', 'Seamless surface', 'Gloss or satin top coat'] },
+    { icon: 'Sofa', title: 'Interior Design', desc: 'Complete space makeovers planned around how you actually live and work.', features: ['Space planning', 'Colour consultation', 'Finish selection'] },
+    { icon: 'Brush', title: 'Wall Art & Murals', desc: 'Hand-painted, resin-sealed accent walls, murals and feature panels.', features: ['Bespoke designs', 'Weatherproof seal', 'Interior & exterior'] },
+    { icon: 'Layers', title: 'Tables & Furniture', desc: 'River tables, live-edge desks and custom pieces cast in food-safe resin.', features: ['Live-edge hardwood', 'River & ocean designs', 'Food-safe coating'] },
+    { icon: 'Wrench', title: 'Repair & Recoating', desc: 'Revive cracked, faded or yellowing surfaces without a full replacement.', features: ['Crack & chip repair', 'Colour refresh', 'Fast turnaround'] },
+  ],
+  process: [
+    { icon: 'Camera', title: 'Consultation & Design', desc: 'We visit your space, discuss the look you want, and prepare a design mock-up with pigment samples.' },
+    { icon: 'Ruler', title: 'Surface Preparation', desc: 'Floors are ground, cleaned and levelled — the hidden foundation of a flawless, long-lasting finish.' },
+    { icon: 'Droplets', title: 'Primer & Base Coat', desc: 'A bonding primer and pigment base coat seal the surface and set the depth of the final artwork.' },
+    { icon: 'Paintbrush', title: 'Artwork & Pigment Pour', desc: 'Our artists hand-paint 3D scenes or swirl metallic pigments directly into the flowing resin.' },
+    { icon: 'Hammer', title: 'Crystal Top Coat', desc: 'A crystal-clear, UV-stable top coat locks in the design and gives the signature glass finish.' },
+    { icon: 'Sparkles', title: 'Cure & Handover', desc: 'The surface cures to full hardness, then we inspect, polish and hand the space back to you.' },
+  ],
+  qualities: [
+    { icon: 'Gauge', title: 'Built To Last', desc: 'Properly installed epoxy floors serve for 10+ years without fading or peeling.' },
+    { icon: 'Droplets', title: 'Waterproof & Hygienic', desc: 'Seamless, non-porous surfaces repel water, dust, stains and bacteria.' },
+    { icon: 'Sparkles', title: 'Show-Stopping Finish', desc: 'A depth of shine no tile, paint or laminate can match — fully bespoke art underfoot.' },
+    { icon: 'Wrench', title: 'Easy Maintenance', desc: 'A simple wipe keeps the surface gleaming — no waxing, polishing or sealing rituals.' },
+  ],
+};
+
+export function getEpoxyContent(): EpoxyContent {
+  if (typeof window === 'undefined') return defaultEpoxy;
+  const stored = window.localStorage.getItem(HARITECH_EPOXY_KEY);
+  return stored ? { ...defaultEpoxy, ...JSON.parse(stored) } : defaultEpoxy;
+}
+
+export function setEpoxyContent(data: EpoxyContent): void {
+  persist(HARITECH_EPOXY_KEY, data);
+  window.dispatchEvent(new Event('haritech-epoxy-updated'));
 }
 
 const defaultWhatWeDo: WhatWeDoArea[] = [
@@ -450,12 +492,13 @@ const defaultWhatWeDo: WhatWeDoArea[] = [
 
 export function getWhatWeDoAreas(): WhatWeDoArea[] {
   if (typeof window === 'undefined') return defaultWhatWeDo;
-  const parsed = readJson(HARITECH_WHATTWEDO_KEY);
-  return Array.isArray(parsed) ? parsed : defaultWhatWeDo;
+  const stored = window.localStorage.getItem(HARITECH_WHATTWEDO_KEY);
+  return stored ? JSON.parse(stored) : defaultWhatWeDo;
 }
 
-export function setWhatWeDoAreas(data: WhatWeDoArea[]): boolean {
-  return persist(HARITECH_WHATTWEDO_KEY, data);
+export function setWhatWeDoAreas(data: WhatWeDoArea[]): void {
+  persist(HARITECH_WHATTWEDO_KEY, data);
+  window.dispatchEvent(new Event('haritech-whatwedo-updated'));
 }
 
 const defaultSocial: SocialLinks = {
@@ -468,9 +511,11 @@ const defaultSocial: SocialLinks = {
 
 export function getSocialLinks(): SocialLinks {
   if (typeof window === 'undefined') return defaultSocial;
-  return { ...defaultSocial, ...compactObject(readJson(HARITECH_SOCIAL_KEY)) };
+  const stored = window.localStorage.getItem(HARITECH_SOCIAL_KEY);
+  return stored ? { ...defaultSocial, ...JSON.parse(stored) } : defaultSocial;
 }
 
-export function setSocialLinks(data: SocialLinks): boolean {
-  return persist(HARITECH_SOCIAL_KEY, data);
+export function setSocialLinks(data: SocialLinks): void {
+  persist(HARITECH_SOCIAL_KEY, data);
+  window.dispatchEvent(new Event('haritech-social-updated'));
 }

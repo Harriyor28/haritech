@@ -45,19 +45,37 @@ const About: React.FC = () => {
       <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-purple-500/10 blur-[150px] pointer-events-none" />
 
       {/* Hero */}
-      <section className="relative pt-24 pb-16 overflow-hidden">
+      <section className="relative pt-12 pb-16 overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <FadeInView>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
-                <Award className="h-4 w-4" /> About Us
+              <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
+                <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
+                  <Award className="h-4 w-4" /> HARITECH CORPORATE DOSSIER • BN 3829104
+                </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
-                Empowering Businesses Through <span className="gradient-text">Digital Excellence</span>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
+                Empowering Enterprises Through <span className="gradient-text">Architectural Excellence</span>
               </h1>
-              <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                Haritech Exclusive Services is a premier digital solutions company dedicated to helping businesses establish, grow, and manage their digital presence with professional technology solutions.
+              <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6">
+                Haritech Exclusive Services is a premier multi-disciplinary enterprise delivering bespoke software engineering, 24/7 solar micro-grids, luxury 3D epoxy flooring, and corporate CAC governance solutions.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-haritech-cac'))}
+                  className="px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold font-mono flex items-center gap-2 transition-colors"
+                >
+                  <Shield className="h-4 w-4 text-purple-400" />
+                  <span>Verify Federal Republic of Nigeria CAC (BN 3829104)</span>
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-haritech-estimator'))}
+                  className="px-4 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold font-mono flex items-center gap-2 transition-colors"
+                >
+                  <Zap className="h-4 w-4 text-cyan-400" />
+                  <span>Launch Cost Estimator</span>
+                </button>
+              </div>
             </FadeInView>
           </div>
         </div>
@@ -69,9 +87,9 @@ const About: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <FadeInView>
               <div>
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-6">Our <span className="gradient-text">Story</span></h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-4">Our <span className="gradient-text">Story</span></h2>
                 <div className="space-y-4 text-slate-400 leading-relaxed">
-                  {(content.aboutStory ?? '').split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
+                  {content.aboutStory.split('\n').map((p, i) => <p key={i}>{p}</p>)}
                 </div>
               </div>
             </FadeInView>
@@ -121,8 +139,8 @@ const About: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Our <span className="gradient-text-pink">Core Values</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">The principles that guide everything we do.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Our <span className="gradient-text-pink">Core Values</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">The principles that guide everything we do.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,8 +164,8 @@ const About: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">Meet Our <span className="gradient-text">Team</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">The passionate experts behind Haritech Exclusive Services.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Meet Our <span className="gradient-text">Team</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">The passionate experts behind Haritech Exclusive Services.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -191,7 +209,7 @@ const About: React.FC = () => {
               </div>
             </FadeInView>
             <FadeInView delay={0.2}>
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-8">What We <span className="gradient-text">Aim to Achieve</span></h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-6">What We <span className="gradient-text">Aim to Achieve</span></h2>
               <div className="space-y-4">
                 {objectives.map((obj, i) => (
                   <div key={i} className="flex items-start gap-3">
@@ -210,11 +228,11 @@ const About: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Let's Work Together</h2>
-            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Ready to take your business to the next level? Partner with Haritech and experience the difference.</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight font-syne">Let's Work Together</h2>
+            <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto">Ready to take your business to the next level? Partner with Haritech and experience the difference.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Get Started</Link>
-              <Link to="/haritech/services" className="btn-secondary text-base px-10 py-4">Explore Services <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
+              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Get Started</Link>
+              <Link to="/haritech/services" className="btn-secondary text-xs sm:text-sm px-6 py-3">Explore Services <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
             </div>
           </FadeInView>
         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Plus, Edit, Trash2, X, GripVertical, Clock } from 'lucide-react';
 import { getCACInfo, setCACInfo, CACInfo } from '../../utils/haritechContent';
-import { pushToCloud, emitStorageError } from '../../utils/cloudSync';
+import { pushToCloud } from '../../utils/cloudSync';
 
 const inputClass = "w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white";
 const labelClass = "block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide";
@@ -13,26 +13,12 @@ const DOCUMENTS_KEY = 'haritech-cac-docs';
 const CAC_FAQ_KEY = 'haritech-cac-faq';
 
 const getStored = (key: string, fallback: any[]) => {
-  try {
-    const d = localStorage.getItem(key);
-    if (!d) return fallback;
-    const parsed = JSON.parse(d);
-    // Cloud sync can write arbitrary shapes — never feed a non-array into .map()
-    return Array.isArray(parsed) ? parsed : fallback;
-  } catch {
-    return fallback;
-  }
+  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : fallback; } catch { return fallback; }
 };
-const setStored = (key: string, data: any): boolean => {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    emitStorageError(`Could not save "${key}" — browser storage is full. Remove old images/data, then save again.`);
-    return false;
-  }
+const setStored = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify(data));
   void pushToCloud(key, data);
   window.dispatchEvent(new Event('haritech-cac-data-updated'));
-  return true;
 };
 
 const HaritechCACManager: React.FC = () => {
@@ -96,13 +82,11 @@ const HaritechCACManager: React.FC = () => {
   useEffect(() => { setInfo(getCACInfo()); }, []);
 
   const saveAll = () => {
-    const ok =
-      setCACInfo(info) &&
-      setStored(CAC_SERVICES_KEY, services) &&
-      setStored(WHY_REGISTER_KEY, whys) &&
-      setStored(DOCUMENTS_KEY, documents) &&
-      setStored(CAC_FAQ_KEY, faqs);
-    if (!ok) return; // error toast already shown via storage-error event
+    setCACInfo(info);
+    setStored(CAC_SERVICES_KEY, services);
+    setStored(WHY_REGISTER_KEY, whys);
+    setStored(DOCUMENTS_KEY, documents);
+    setStored(CAC_FAQ_KEY, faqs);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

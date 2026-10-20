@@ -1,4 +1,4 @@
-import { pushToCloud, emitStorageError } from './cloudSync';
+import { pushToCloud } from './cloudSync';
 
 export interface PortfolioService {
   id: number;
@@ -147,8 +147,8 @@ export const setStoredPortfolioServices = (data: PortfolioService[]): boolean =>
   if (typeof window === 'undefined') return false;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    emitStorageError('Could not save services — browser storage is full. Remove old images/data, then try again.');
+  } catch (e) {
+    console.warn('[services] save failed — browser storage may be full:', e);
     return false;
   }
   void pushToCloud(STORAGE_KEY, data);

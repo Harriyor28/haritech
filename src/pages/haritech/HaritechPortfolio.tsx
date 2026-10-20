@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ExternalLink, Monitor, Zap } from 'lucide-react';
@@ -24,19 +24,30 @@ const HaritechPortfolio: React.FC = () => {
     <div className="relative overflow-x-hidden">
       <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none" />
 
-      <section className="relative pt-24 pb-16">
+      <section className="relative pt-12 pb-16">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <FadeInView>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
-                <Monitor className="h-4 w-4" /> Our Portfolio
+              <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
+                <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
+                  <Monitor className="h-4 w-4" /> HARITECH PRODUCTION DEPLOYMENT VAULT
+                </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-poppins">
-                Projects We've <span className="gradient-text-pink">Delivered</span>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
+                Projects We've <span className="gradient-text">Engineered & Delivered</span>
               </h1>
-              <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                Browse through our portfolio of completed projects across various industries. Each project reflects our commitment to quality, creativity, and client satisfaction.
+              <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6">
+                Browse through our portfolio of completed projects across software architecture, corporate solutions, and digital transformation.
               </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-haritech-estimator'))}
+                  className="btn-primary text-xs py-2.5 px-6 rounded-xl font-bold flex items-center gap-2"
+                >
+                  <Zap className="h-4 w-4" />
+                  <span>Get Estimate for Similar Project</span>
+                </button>
+              </div>
             </FadeInView>
           </div>
         </div>
@@ -64,16 +75,14 @@ const HaritechPortfolio: React.FC = () => {
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
                       <p className="text-sm text-slate-400 mb-4 leading-relaxed line-clamp-2">{project.description}</p>
                       <div className="flex flex-wrap gap-2 mb-5">
-                        {(project.tags ?? []).map(tag => (
+                        {project.tags.map(tag => (
                           <span key={tag} className="text-xs bg-slate-900 border border-white/5 text-slate-400 px-2.5 py-1 rounded-lg">{tag}</span>
                         ))}
                       </div>
                       <div className="flex gap-3">
-                        {project.liveDemo && (
-                          <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2.5 px-4 rounded-xl transition-all text-xs font-bold border border-cyan-500/20 hover:border-transparent flex items-center justify-center gap-1">
-                            Live Demo <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
+                        <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="flex-1 text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white py-2.5 px-4 rounded-xl transition-all text-xs font-bold border border-cyan-500/20 hover:border-transparent flex items-center justify-center gap-1">
+                          Live Demo <ExternalLink className="h-3 w-3" />
+                        </a>
                         <Link to={`/project/${project.id}`} className="flex-1 text-center bg-slate-900 border border-white/5 text-slate-300 hover:text-white py-2.5 px-4 rounded-xl hover:bg-slate-800 transition-all text-xs font-bold flex items-center justify-center gap-1">
                           Details <ArrowRight className="h-3 w-3" />
                         </Link>
@@ -91,7 +100,7 @@ const HaritechPortfolio: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Want a Project Like These?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Want a Project Like These?</h2>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Let's create something amazing for your business. Get in touch today.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Start Your Project</Link>

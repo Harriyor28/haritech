@@ -34,7 +34,7 @@ const HaritechSolarManager: React.FC = () => {
   useEffect(() => { setSolar(getSolarContent()); }, []);
 
   const handleSave = () => {
-    if (!setSolarContent(solar)) return;
+    setSolarContent(solar);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

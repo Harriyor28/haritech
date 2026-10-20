@@ -3,19 +3,15 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // Stale tsc-emitted .js files sit next to every .ts/.tsx source; Vite's default
+  // order resolves ".js" first, so edits to the TypeScript sources were being
+  // ignored at runtime. Prefer the TypeScript sources.
+  resolve: {
+    extensions: ['.mts', '.ts', '.tsx', '.mjs', '.js', '.jsx', '.json']
+  },
   build: {
     target: 'es2020',
     minify: 'esbuild',
-    sourcemap: false,
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['framer-motion', 'lucide-react'],
-          cloud: ['@supabase/supabase-js'],
-        },
-      },
-    },
-  },
+    sourcemap: false
+  }
 });

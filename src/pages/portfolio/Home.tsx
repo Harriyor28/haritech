@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, Play, Sparkles, FolderKanban, Laptop, ArrowRight } from 'lucide-react';
@@ -56,7 +56,7 @@ const Home: React.FC = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight font-poppins"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-8 tracking-tight font-syne"
             >
               Building Powerful
               <span className="block gradient-text mt-3 pb-3 text-shadow-glow">
@@ -159,7 +159,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
               Our Architectural <span className="gradient-text">Metrics</span>
             </h2>
             <p className="text-lg text-slate-400 max-w-3xl mx-auto">
@@ -187,7 +187,7 @@ const Home: React.FC = () => {
                     <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                       {stat.icon}
                     </div>
-                    <div className="text-4xl md:text-5xl font-black text-white mb-2 font-poppins">
+                    <div className="text-3xl md:text-4xl font-black text-white mb-2 font-syne">
                       {stat.value}
                     </div>
                     <div className="text-slate-400 font-medium text-sm tracking-wide">
@@ -211,7 +211,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-black mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
               Featured <span className="gradient-text-pink">Work</span>
             </h2>
             <p className="text-lg text-slate-400 max-w-3xl mx-auto">
