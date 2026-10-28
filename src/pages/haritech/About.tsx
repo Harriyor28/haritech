@@ -9,7 +9,7 @@ import { getHaritechContent, getTeamMembers, getWhatsAppUrl, HaritechSiteContent
 const coreValues = [
   { title: 'Say what is available', desc: 'If a service, product or item is not ready, we say so instead of accepting a job we cannot deliver.', icon: CheckCircle, color: 'from-cyan-500 to-blue-600' },
   { title: 'Quote before work', desc: 'Costs and assumptions are written down before anything starts, so a change is visible rather than a surprise.', icon: Award, color: 'from-purple-500 to-pink-600' },
-  { title: 'Keep the limits clear', desc: 'Where a task needs a licensed professional or an approval we do not hold, we tell you rather than improvise.', icon: Shield, color: 'from-green-500 to-teal-600' },
+  { title: 'Coordinate the specialists', desc: 'Where a task calls for a specialist, we bring the right professional into the team and keep the work coordinated.', icon: Shield, color: 'from-green-500 to-teal-600' },
   { title: 'Answer in plain terms', desc: 'Plain explanations of what a service involves, what it needs from you and how long each step usually takes.', icon: Heart, color: 'from-blue-500 to-indigo-600' },
   { title: 'Keep the records', desc: 'Enquiries, quotations and documents are kept so the same details are not asked for twice.', icon: Users, color: 'from-pink-500 to-rose-600' },
   { title: 'One point of contact', desc: 'You deal with a named person for the division handling your enquiry.', icon: Sparkles, color: 'from-amber-500 to-orange-600' },

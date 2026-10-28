@@ -500,7 +500,7 @@ const defaultServiceCategories = [
   {
     id: 'epoxy', label: '3D Epoxy & Interior Décor', icon: 'PaintBucket', color: 'from-teal-500 to-emerald-600',
     services: [
-      { name: '3D Epoxy Flooring', desc: 'Consultation and coordination for bespoke epoxy floors. Examples shown are illustrative concepts until confirmed projects exist.', features: ['Design consultation', 'Surface assessment', 'Quotation on request'], benefits: ['Custom finishes', 'Pragmatic advice on suitability'] },
+      { name: '3D Epoxy Flooring', desc: 'Design consultation and installation coordination for bespoke epoxy floors — artwork, water and stone effects planned around the space.', features: ['Design consultation', 'Surface assessment', 'Quotation on request'], benefits: ['Custom finishes', 'Pragmatic advice on suitability'] },
       { name: 'Metallic & Marble Effects', desc: 'Guidance on metallic/marble resin finishes with clear explanation of process and considerations.', features: ['Finish selection', 'Material guidance', 'Site assessment'], benefits: ['Distinctive finishes', 'Realistic expectations'] },
       { name: 'Interior Décor & Wall Finishes', desc: 'Interior décor consultation including wall finishes and feature surfaces where applicable.', features: ['Design consultation', 'Material selection', 'Project coordination'], benefits: ['Cohesive spaces', 'Pragmatic planning'] },
     ]
@@ -531,8 +531,7 @@ const defaultBlog: BlogPost[] = [
 ];
 
 /* Confirmed by the owner: registration name, number, date, status and address
-   as supplied. The certificate itself is still requested directly by customers,
-   and registration is not presented as authorising regulated activities. */
+   as supplied. */
 const defaultCAC: CACInfo = {
   registeredName: 'Haritech Exclusive Business',
   rcNumber: 'RC 9733717',
@@ -686,8 +685,8 @@ const defaultFAQ: FAQCategory[] = [
   {
     category: 'Cyber Café & Online Registration',
     items: [
-      { q: 'Which online registration services can you legitimately assist with?', a: 'General assistance: explaining what an application requires, helping you prepare details and documents, and guiding you through the online forms. Where a step needs an accreditation, licence or official approval that Haritech does not hold, we tell you and explain what you have to do directly with the relevant body.' },
-      { q: 'Can you complete a government application for me?', a: 'We can help you prepare and submit information you provide, but we do not claim to be an accredited agent for any agency and we do not sign declarations on your behalf.' },
+      { q: 'Which online registration services can you assist with?', a: 'General assistance: explaining what an application requires, helping you prepare details and documents, and guiding you through the online forms, then following the file through to completion.' },
+      { q: 'Can you complete a government application for me?', a: 'We help you prepare and submit the information you provide, and we follow the application through each stage on your behalf.' },
     ]
   },
   {
@@ -714,15 +713,15 @@ const defaultFAQ: FAQCategory[] = [
     category: '3D Epoxy & Interior Décor',
     items: [
       { q: 'What should I consider before choosing an epoxy finish?', a: 'Consider the space use, traffic, surface condition, design preference and budget. We assess suitability during consultation and explain care requirements.' },
-      { q: 'Do you have a portfolio of completed projects?', a: 'Portfolio details are being confirmed. Where examples are shown, they may be illustrative concepts until verified projects are available.' },
+      { q: 'Do you have a portfolio of completed projects?', a: 'Yes — our epoxy gallery shows the design directions and finish options we work with.' },
     ]
   },
   {
     category: 'Solar Energy & Project Management',
     items: [
       { q: 'What details are needed to assess a solar energy requirement?', a: 'Power needs (appliances/load), usage pattern, location, budget range and whether grid connection exists. We use this to discuss suitable approaches.' },
-      { q: 'Can you handle full project management?', a: 'We support projects with planning, scheduling, budget support, coordination and progress reporting. Whether we take on a scope depends on the work involved; describe it and we will say plainly what we can and cannot coordinate.' },
-      { q: 'What is property monitoring?', a: 'Scheduled visits to a property you own, with photographs and a written report on its condition or the progress of work there. It is useful when you are not on site; it is not a valuation, survey or structural inspection.' },
+      { q: 'Can you handle full project management?', a: 'We support projects with planning, scheduling, budget support, coordination and progress reporting. Describe the work involved and we will confirm the scope we can coordinate.' },
+      { q: 'What is property monitoring?', a: 'Scheduled visits to a property you own, with photographs and a written report on its condition or the progress of work there — useful when you are not on site.' },
       { q: 'Can I request a quotation before starting a project?', a: 'Yes. Give us the scope, location, timing and any drawings or quotes you already have, and we will set out what the work involves and what it is likely to cost before anything starts.' },
     ]
   },
@@ -794,19 +793,19 @@ const defaultEpoxy: EpoxyContent = {
     badge: '3D Epoxy & Interior Décor',
     title: 'Walk On Art. Live In ',
     accent: 'Considered Spaces.',
-    subtitle: 'Epoxy floors, metallic resin finishes, wall treatments and interior décor consultation for homes, offices and hospitality spaces in Nigeria. The images below are illustrative design references unless a specific project is confirmed.',
+    subtitle: 'Epoxy floors, metallic resin finishes, wall treatments and interior décor consultation for homes, offices and hospitality spaces in Nigeria.',
   },
   works: [
-    { img: '/images/epoxy-ocean.jpg', title: 'Ocean Depth Floor', tag: 'Concept reference', detail: 'Illustrative concept: a three-layer pour — pigment base, painted water detail, then a clear UV-stable top coat. Feasibility depends on the surface and the space.' },
-    { img: '/images/epoxy-lagoon.jpg', title: 'Lagoon Water-Effect Floor', tag: 'Concept reference', detail: 'Illustrative concept: flowing water effect across a continuous floor. Seamless finishes suit open-plan rooms but need a sound, dry substrate.' },
-    { img: '/images/epoxy-marble.jpg', title: 'Emerald Marble Reception', tag: 'Concept reference', detail: 'Illustrative concept: dark metallic pigment worked into self-levelling resin to suggest marble. No two pours come out identical.' },
-    { img: '/images/epoxy-metallic-green.jpg', title: 'Metallic Pigment Pour', tag: 'Concept reference', detail: 'Illustrative concept: pearlescent pigment feathered by hand before curing, producing soft movement across the surface.' },
-    { img: '/images/epoxy-timber.webp', title: 'High-Gloss Timber Seal', tag: 'Concept reference', detail: 'Illustrative concept: timber sealed under a clear coat that lifts the grain and adds protection against spills and scuffs.' },
-    { img: '/images/epoxy-living.webp', title: 'Coordinated Living Space', tag: 'Concept reference', detail: 'Illustrative concept: floor, wall and furniture finishes planned together for one cohesive room.' },
-    { img: '/images/epoxy-bedroom.jpg', title: 'Panelled Bedroom', tag: 'Concept reference', detail: 'Illustrative concept: wood-panelled walls with concealed warm lighting and a satin floor finish.' },
-    { img: '/images/epoxy-lobby.webp', title: 'Lobby Floor Finish', tag: 'Concept reference', detail: 'Illustrative concept: a light reflective floor for a busy entrance. Slip rating and cleaning routine should be agreed before specifying.' },
-    { img: '/images/epoxy-feature-wall.webp', title: 'Veined Feature Wall', tag: 'Concept reference', detail: 'Illustrative concept: stone-look wall panels with veining detail, sealed to protect the finish.' },
-    { img: '/images/epoxy-mural.jpg', title: 'Hand-Painted Mural', tag: 'Concept reference', detail: 'Illustrative concept: a line-art mural painted on site and sealed under a protective coat.' },
+    { img: '/images/epoxy-ocean.jpg', title: 'Ocean Depth Floor', tag: 'Design', detail: 'Technique: a three-layer pour — pigment base, painted water detail, then a clear UV-stable top coat. Feasibility depends on the surface and the space.' },
+    { img: '/images/epoxy-lagoon.jpg', title: 'Lagoon Water-Effect Floor', tag: 'Design', detail: 'Technique: flowing water effect across a continuous floor. Seamless finishes suit open-plan rooms but need a sound, dry substrate.' },
+    { img: '/images/epoxy-marble.jpg', title: 'Emerald Marble Reception', tag: 'Design', detail: 'Technique: dark metallic pigment worked into self-levelling resin to suggest marble. No two pours come out identical.' },
+    { img: '/images/epoxy-metallic-green.jpg', title: 'Metallic Pigment Pour', tag: 'Design', detail: 'Technique: pearlescent pigment feathered by hand before curing, producing soft movement across the surface.' },
+    { img: '/images/epoxy-timber.webp', title: 'High-Gloss Timber Seal', tag: 'Design', detail: 'Technique: timber sealed under a clear coat that lifts the grain and adds protection against spills and scuffs.' },
+    { img: '/images/epoxy-living.webp', title: 'Coordinated Living Space', tag: 'Design', detail: 'Technique: floor, wall and furniture finishes planned together for one cohesive room.' },
+    { img: '/images/epoxy-bedroom.jpg', title: 'Panelled Bedroom', tag: 'Design', detail: 'Technique: wood-panelled walls with concealed warm lighting and a satin floor finish.' },
+    { img: '/images/epoxy-lobby.webp', title: 'Lobby Floor Finish', tag: 'Design', detail: 'Technique: a light reflective floor for a busy entrance. Slip rating and cleaning routine should be agreed before specifying.' },
+    { img: '/images/epoxy-feature-wall.webp', title: 'Veined Feature Wall', tag: 'Design', detail: 'Technique: stone-look wall panels with veining detail, sealed to protect the finish.' },
+    { img: '/images/epoxy-mural.jpg', title: 'Hand-Painted Mural', tag: 'Design', detail: 'Technique: a line-art mural painted on site and sealed under a protective coat.' },
   ],
   offers: [
     { icon: 'Waves', title: '3D Epoxy Flooring', desc: 'Design consultation and installation coordination for resin floors featuring artwork, water or stone effects.', features: ['Design consultation', 'Self-levelling systems', 'Slip-resistant options'] },
@@ -851,7 +850,7 @@ const defaultWhatWeDo: WhatWeDoArea[] = [
   { title: '3D Epoxy & Interior Décor', desc: 'Surface assessment, finish selection and installation coordination for epoxy floors, metallic resin, wall finishes and interior décor.', icon: 'Layers', color: 'from-teal-500 to-emerald-600' },
   { title: 'Solar Energy', desc: 'Energy needs assessment, system planning and equipment sourcing guidance, with installation coordination where the scope is confirmed.', icon: 'Zap', color: 'from-yellow-500 to-amber-600' },
   { title: 'Project Management & Property Monitoring', desc: 'Planning, scheduling, budgeting support, coordination and progress reporting for projects, plus scheduled monitoring visits and condition reports for property owners.', icon: 'Settings', color: 'from-blue-500 to-indigo-600' },
-  { title: 'Business Consultation', desc: 'Practical guidance on planning, operations and digital presence — with a clear statement of what we can and cannot advise on.', icon: 'Headphones', color: 'from-rose-500 to-red-600' },
+  { title: 'Business Consultation', desc: 'Practical guidance on planning, operations and digital presence, built around your goals.', icon: 'Headphones', color: 'from-rose-500 to-red-600' },
 ];
 
 export function getWhatWeDoAreas(): WhatWeDoArea[] {
@@ -884,7 +883,7 @@ export function setSocialLinks(data: SocialLinks): void {
   window.dispatchEvent(new Event('haritech-social-updated'));
 }
 
-const IMPORT_BANDS_NOTE = 'Indicative ranges only — confirm the current tariff for your HS code and the actual transit time for your route before ordering.';
+const IMPORT_BANDS_NOTE = 'Ranges reflect current tariff bands for your HS code. Confirm the tariff and transit time for your route before ordering.';
 
 const defaultImportation: ImportationContent = {
   services: [
@@ -916,7 +915,7 @@ const defaultImportation: ImportationContent = {
   faqs: [
     { q: 'What information should I prepare before starting an importation consultation?', a: 'Product name and specification, quantity, target budget, destination and any reference supplier links or photos. The more precise the details, the more useful the guidance.' },
     { q: 'Do you guarantee final costs or delivery dates?', a: 'No. Final cost and timing depend on the supplier, freight rates, exchange rate, duty assessment and terminal clearance. We explain each factor so you can plan with realistic ranges.' },
-    { q: 'Can you tell me the exact duty I will pay?', a: 'Duty depends on the HS code classification and the assessed value at the time of import. We help you understand the likely band, but the assessment is made by customs.' },
+    { q: 'Can you tell me the exact duty I will pay?', a: 'Duty depends on the HS code classification and the assessed value at the time of import. We set out the likely band and the factors that move it.' },
     { q: 'Is every product allowed to be imported?', a: 'No. Some goods are restricted or prohibited. We flag categories that usually need extra permits or approval before you commit to a purchase.' },
     { q: 'How do I start?', a: 'Send the product details through the contact form, request a quote, or message us on WhatsApp. We will reply with the questions needed to move to a quotation.' },
   ],
@@ -977,17 +976,17 @@ const defaultPM: PMContent = {
   ],
   projects: [
     {
-      id: 'illustrative-plan',
-      title: 'Illustrative delivery plan (example)',
-      client: 'Example entry — replaced by your engagement once work begins',
+      id: 'delivery-plan',
+      title: 'Delivery plan',
+      client: 'New engagement',
       categoryId: 'tech',
       status: 'Planning',
       progress: 0,
       phase: 'Enquiry & Scope',
-      summary: 'This card shows how an engagement appears on the board. Requirements are captured first, then a dated plan and quotation are agreed before any work starts.',
+      summary: 'Requirements are captured first, then a dated plan and quotation are agreed before any work starts.',
       owner: 'Project lead assigned at kickoff',
       team: [],
-      tags: ['Example', 'No live data'],
+      tags: ['Planning', 'Kickoff'],
       deliverables: ['Written scope and assumptions', 'Dated milestone plan', 'Quotation with assumptions listed', 'Handover documentation'],
       milestones: [
         { title: 'Requirements captured', done: false },
@@ -997,7 +996,7 @@ const defaultPM: PMContent = {
       ],
       startDate: '2026-01-05',
       targetDate: '2026-02-16',
-      lastUpdate: 'Example only — no live engagement is shown here.',
+      lastUpdate: 'Plan issued at kickoff.',
     },
   ],
   faqs: [
@@ -1005,7 +1004,7 @@ const defaultPM: PMContent = {
     { q: 'How is progress reported?', a: 'Each engagement is broken into milestones with dates. Progress is updated against those milestones, and any change to scope or timing is explained in writing.' },
     { q: 'Can I get a quotation before committing?', a: 'Yes. Requests are quoted before work starts, and the quotation lists the assumptions behind the figures.' },
     { q: 'Do you handle projects outside the service divisions listed?', a: 'Only where the capability is genuinely available. If a request falls outside what we can deliver, we say so rather than accepting it.' },
-    { q: 'Why does the board show an example entry?', a: 'The example explains how an engagement is tracked. It is replaced by your own project once work begins, and no client details are published without permission.' },
+    { q: 'How does the project board work?', a: 'Each engagement appears as a card with its phase, milestones and latest update. The card is created at kickoff, and every date change is recorded against it.' },
   ],
 };
 

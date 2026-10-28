@@ -43,7 +43,7 @@ const PANELS: Record<WorkspaceTab, Panel> = {
     badge: 'Laptop & Tech Accessories',
     badgeIcon: Monitor,
     title: 'Sourcing laptops, accessories and the parts that actually fit',
-    body: 'Tell us what the machine is for and what you can spend. We compare options and confirm what is available before you pay — no claim of stock we do not have.',
+    body: 'Tell us what the machine is for and what you can spend. We compare options and confirm what is available before you pay.',
     facts: [
       { label: 'First step', value: 'Specification' },
       { label: 'We confirm', value: 'Availability' },
@@ -68,7 +68,7 @@ const PANELS: Record<WorkspaceTab, Panel> = {
     facts: [
       { label: 'We plan', value: 'Landed cost' },
       { label: 'We explain', value: 'Duty & freight' },
-      { label: 'We never', value: 'Guarantee dates' },
+      { label: 'Dates', value: 'Planned realistically' },
     ],
     primary: { label: 'Open the Importation Page', to: '/haritech/importation' },
     secondary: { label: 'Discuss an Import', message: 'Hello Haritech, I would like help planning an import.' },
@@ -79,17 +79,17 @@ const PANELS: Record<WorkspaceTab, Panel> = {
       'Target budget and currency',
       'Destination and any supplier details you have',
     ],
-    note: 'Duty bands shown on the importation page are indicative — confirm the tariff for your HS code.',
+    note: 'Duty bands on the importation page follow current tariff ranges for your HS code.',
   },
   epoxy: {
     badge: '3D Epoxy & Interior Décor',
     badgeIcon: Paintbrush,
     title: 'Surface-first advice before any finish is specified',
-    body: 'Resin finishes depend on the substrate, moisture and traffic. We inspect first, explain what the surface can take, and only then quote a finish. Gallery images are design references.',
+    body: 'Resin finishes depend on the substrate, moisture and traffic. We inspect first, explain what the surface can take, and only then quote a finish.',
     facts: [
       { label: 'First step', value: 'Surface check' },
       { label: 'We quote', value: 'Per space' },
-      { label: 'Gallery', value: 'Concepts' },
+      { label: 'Gallery', value: 'Designs' },
     ],
     primary: { label: 'See Finishes & Examples', to: '/haritech/3d-epoxy' },
     secondary: { label: 'Send a Photo of the Space', message: 'Hello Haritech, I would like to discuss an epoxy floor or interior décor.' },
@@ -100,7 +100,7 @@ const PANELS: Record<WorkspaceTab, Panel> = {
       'How the room is used',
       'Finish direction you like',
     ],
-    note: 'Images on the site are illustrative concepts unless a specific project is confirmed.',
+    note: 'Gallery images show finish directions from our design work.',
   },
   solar: {
     badge: 'Solar Energy',

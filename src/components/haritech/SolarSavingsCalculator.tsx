@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sun, Zap, TrendingUp, Battery, Calculator,
@@ -6,10 +6,15 @@ import {
   LucideIcon
 } from 'lucide-react';
 import { getWhatsAppUrl } from '../../utils/haritechContent';
+import { priceOf } from '../../config/pricing';
+import { formatNaira } from '../../utils/money';
 
-/* ── Solar Savings Calculator ────────────────────────────────────────────
+/* -- Solar Savings Calculator --------------------------------------------
    Interactive tool that estimates monthly savings, payback period, and
-   25-year ROI based on property type, monthly bill, and load profile.  */
+   25-year ROI based on property type, monthly bill, and load profile.
+
+   Package prices come from src/config/pricing.ts and already include
+   installation. The tariff is an editable assumption, never a fixed rate. */
 
 type PropertyType = 'home' | 'office' | 'shop' | 'factory';
 type SystemSize = '1.5kva' | '3.5kva' | '5kva' | '10kva' | '20kva';
@@ -24,28 +29,23 @@ interface SystemSpec {
 }
 
 const SYSTEMS: Record<SystemSize, SystemSpec> = {
-  '1.5kva': { label: '1.5kVA Essential', kva: 1.5, basePriceNgn: 480_000,  avgDailyKwh: 5,  panelCount: 4,  batteryKwh: 2.4 },
-  '3.5kva': { label: '3.5kVA Home Pro',  kva: 3.5, basePriceNgn: 950_000,  avgDailyKwh: 12, panelCount: 8,  batteryKwh: 5   },
-  '5kva':   { label: '5kVA Executive',   kva: 5,   basePriceNgn: 1_400_000, avgDailyKwh: 18, panelCount: 12, batteryKwh: 10  },
-  '10kva':  { label: '10kVA Commercial', kva: 10,  basePriceNgn: 2_200_000, avgDailyKwh: 35, panelCount: 20, batteryKwh: 20  },
-  '20kva':  { label: '20kVA Industrial', kva: 20,  basePriceNgn: 3_800_000, avgDailyKwh: 70, panelCount: 40, batteryKwh: 40  },
+  '1.5kva': { label: '1.5kVA Essential', kva: 1.5, basePriceNgn: priceOf('SOL-001'), avgDailyKwh: 5,  panelCount: 4,  batteryKwh: 2.4 },
+  '3.5kva': { label: '3.5kVA Home Pro',  kva: 3.5, basePriceNgn: priceOf('SOL-002'), avgDailyKwh: 12, panelCount: 8,  batteryKwh: 5   },
+  '5kva':   { label: '5kVA Executive',   kva: 5,   basePriceNgn: priceOf('SOL-003'), avgDailyKwh: 18, panelCount: 12, batteryKwh: 10  },
+  '10kva':  { label: '10kVA Commercial', kva: 10,  basePriceNgn: priceOf('SOL-004'), avgDailyKwh: 35, panelCount: 20, batteryKwh: 20  },
+  '20kva':  { label: '20kVA Industrial', kva: 20,  basePriceNgn: priceOf('SOL-005'), avgDailyKwh: 70, panelCount: 40, batteryKwh: 40  },
 };
 
 const PROPERTY_ICONS: Record<PropertyType, LucideIcon> = {
   home: Home, office: Building2, shop: Zap, factory: Factory,
 };
 
-const DISCOM_RATE = 100; // ₦ per kWh (approximate NEPA/distribution rate)
-
-function fmt(n: number) {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000)     return `₦${(n / 1_000).toFixed(0)}k`;
-  return `₦${n.toFixed(0)}`;
-}
+const DEFAULT_TARIFF_NGN_PER_KWH = 100; // Editable assumption, not a quoted rate
 
 const SolarSavingsCalculator: React.FC = () => {
   const [property, setProperty] = useState<PropertyType>('home');
   const [monthlyBill, setMonthlyBill] = useState(15_000);
+  const [tariffPerKwh, setTariffPerKwh] = useState(DEFAULT_TARIFF_NGN_PER_KWH);
   const [systemSize, setSystemSize] = useState<SystemSize>('3.5kva');
   const [genCostPerMonth, setGenCostPerMonth] = useState(25_000);
   const [showResult, setShowResult] = useState(false);
@@ -53,7 +53,8 @@ const SolarSavingsCalculator: React.FC = () => {
   const spec = SYSTEMS[systemSize];
 
   const result = useMemo(() => {
-    const monthlyKwhUsage    = monthlyBill / DISCOM_RATE;
+    const safeTariff          = Math.max(1, tariffPerKwh);
+    const monthlyKwhUsage    = monthlyBill / safeTariff;
     const solarMonthlyKwh    = spec.avgDailyKwh * 30;
     const coverageRatio      = Math.min(1, solarMonthlyKwh / Math.max(1, monthlyKwhUsage));
     const billSaving         = monthlyBill * coverageRatio;
@@ -74,11 +75,12 @@ const SolarSavingsCalculator: React.FC = () => {
       roi25:        Math.round(roi25),
       co2Saved:     Math.round(co2Saved),
     };
-  }, [monthlyBill, genCostPerMonth, spec]);
+  }, [monthlyBill, genCostPerMonth, tariffPerKwh, spec]);
 
   const waMsg = `Hello Haritech! I used the Solar Savings Calculator.\n\n` +
-    `Property: ${property}\nSystem: ${spec.label}\nMonthly Bill: ${fmt(monthlyBill)}\n` +
-    `Estimated Monthly Saving: ${fmt(result.totalMonthly)}\nPayback: ${result.paybackYears} years\n\n` +
+    `Property: ${property}\nSystem: ${spec.label} (${formatNaira(spec.basePriceNgn)}, installation included)\n` +
+    `Monthly Bill: ${formatNaira(monthlyBill)}\nTariff used: ${formatNaira(tariffPerKwh)}/kWh\n` +
+    `Estimated Monthly Saving: ${formatNaira(result.totalMonthly)}\nPayback: ${result.paybackYears} years\n\n` +
     `Please send me a detailed quote.`;
 
   return (
@@ -155,7 +157,7 @@ const SolarSavingsCalculator: React.FC = () => {
                 <div>
                   <div className="flex justify-between mb-2">
                     <label className="text-sm font-semibold text-slate-300">Monthly NEPA Bill</label>
-                    <span className="text-yellow-400 font-bold font-mono">{fmt(monthlyBill)}</span>
+                    <span className="text-yellow-400 font-bold font-mono">{formatNaira(monthlyBill)}</span>
                   </div>
                   <input
                     type="range"
@@ -169,11 +171,30 @@ const SolarSavingsCalculator: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Electricity tariff assumption */}
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm font-semibold text-slate-300">Electricity Tariff (₦ per kWh)</label>
+                    <span className="text-yellow-400 font-bold font-mono">{formatNaira(tariffPerKwh)}/kWh</span>
+                  </div>
+                  <input
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={tariffPerKwh}
+                    onChange={e => setTariffPerKwh(Math.max(1, Number(e.target.value) || 1))}
+                    className="w-full bg-slate-800 border border-white/15 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-yellow-500/60 text-sm font-mono"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    Editable assumption used to convert your bill into kWh. Check your latest bill for the real band.
+                  </p>
+                </div>
+
                 {/* Monthly Generator Cost */}
                 <div>
                   <div className="flex justify-between mb-2">
                     <label className="text-sm font-semibold text-slate-300">Monthly Generator Cost (fuel + maintenance)</label>
-                    <span className="text-orange-400 font-bold font-mono">{fmt(genCostPerMonth)}</span>
+                    <span className="text-orange-400 font-bold font-mono">{formatNaira(genCostPerMonth)}</span>
                   </div>
                   <input
                     type="range"
@@ -197,7 +218,7 @@ const SolarSavingsCalculator: React.FC = () => {
                       className="w-full appearance-none bg-slate-800 border border-white/15 text-white px-4 py-3 rounded-xl pr-10 focus:outline-none focus:border-yellow-500/60 text-sm font-semibold"
                     >
                       {(Object.entries(SYSTEMS) as [SystemSize, SystemSpec][]).map(([key, s]) => (
-                        <option key={key} value={key}>{s.label} — {fmt(s.basePriceNgn)}</option>
+                        <option key={key} value={key}>{s.label} — {formatNaira(s.basePriceNgn)}</option>
                       ))}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -259,10 +280,13 @@ const SolarSavingsCalculator: React.FC = () => {
                       {/* Monthly savings */}
                       <div className="rounded-xl bg-slate-800/60 border border-white/10 p-5">
                         <div className="text-xs text-slate-400 mb-1 font-semibold uppercase tracking-wider">Monthly Savings</div>
-                        <div className="text-3xl font-black text-green-400 mb-1">{fmt(result.totalMonthly)}</div>
+                        <div className="text-3xl font-black text-green-400 mb-1">{formatNaira(result.totalMonthly)}</div>
                         <div className="flex gap-4 text-xs text-slate-400">
-                          <span>NEPA: <span className="text-green-300">{fmt(result.billSaving)}</span></span>
-                          <span>Gen: <span className="text-orange-300">{fmt(result.genSaving)}</span></span>
+                          <span>NEPA: <span className="text-green-300">{formatNaira(result.billSaving)}</span></span>
+                          <span>Gen: <span className="text-orange-300">{formatNaira(result.genSaving)}</span></span>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-white/10 text-xs text-slate-400">
+                          {spec.label} · <span className="text-white font-semibold">{formatNaira(spec.basePriceNgn)}</span> installed
                         </div>
                       </div>
 
@@ -275,16 +299,16 @@ const SolarSavingsCalculator: React.FC = () => {
                         </div>
                         <div className="rounded-xl bg-slate-800/60 border border-white/10 p-4 text-center">
                           <Battery className="h-5 w-5 text-emerald-400 mx-auto mb-1" />
-                          <div className="text-lg font-black text-white">{fmt(result.annualSaving)}</div>
+                          <div className="text-lg font-black text-white">{formatNaira(result.annualSaving)}</div>
                           <div className="text-xs text-slate-400">Annual Saving</div>
                         </div>
                         <div className="rounded-xl bg-gradient-to-br from-emerald-600/10 to-teal-600/10 border border-emerald-500/20 p-4 text-center">
-                          <div className="text-lg font-black text-emerald-400">{fmt(result.roi25)}</div>
+                          <div className="text-lg font-black text-emerald-400">{formatNaira(result.roi25)}</div>
                           <div className="text-xs text-slate-400">25-yr Net ROI</div>
                         </div>
                         <div className="rounded-xl bg-gradient-to-br from-sky-600/10 to-blue-600/10 border border-sky-500/20 p-4 text-center">
                           <div className="text-lg font-black text-sky-400">{result.co2Saved.toLocaleString()}kg</div>
-                          <div className="text-xs text-slate-400">CO₂ Saved/yr</div>
+                          <div className="text-xs text-slate-400">CO2 Saved/yr</div>
                         </div>
                       </div>
 

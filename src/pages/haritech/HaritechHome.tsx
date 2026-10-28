@@ -636,7 +636,7 @@ const HaritechHome: React.FC = () => {
                 How We <span className="gradient-text">Work</span>
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                The working habits behind every division — no claim of scale, just how enquiries are handled.
+                The working habits behind every division — how enquiries are handled from first message to handover.
               </p>
             </div>
           </FadeInView>

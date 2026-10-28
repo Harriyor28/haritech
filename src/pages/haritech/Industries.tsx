@@ -34,7 +34,7 @@ const Industries: React.FC = () => {
                 The Customers Each <span className="gradient-text">Division</span> Serves
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                Haritech is a small multi-service business, so these are the customer groups its services are built for — not a claim of large corporate accounts or industry partnerships.
+                Haritech is a multi-service business, and these are the customer groups its divisions are built for.
               </p>
             </FadeInView>
           </div>

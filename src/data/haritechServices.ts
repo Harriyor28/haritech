@@ -34,7 +34,7 @@ export const haritechServices: HaritechService[] = [
   {
     id: 'printing',
     title: 'Printing & Branding',
-    description: 'Printing of business documents and promotional items, plus branding advice, subject to the equipment and suppliers available at the time of your enquiry.',
+    description: 'Printing of business documents and promotional items, plus branding advice tailored to your enquiry.',
     icon: 'Printer',
     features: ['Business documents', 'Promotional materials', 'Branded items', 'Design advice'],
     color: 'from-pink-500 to-rose-600',

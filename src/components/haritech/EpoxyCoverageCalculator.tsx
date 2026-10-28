@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Ruler, Calculator, Layers, Home,
@@ -7,14 +7,25 @@ import {
   LucideIcon
 } from 'lucide-react';
 import { getWhatsAppUrl } from '../../utils/haritechContent';
+import {
+  priceOf,
+  EPOXY_STANDALONE_PREP_ID,
+  EPOXY_STANDALONE_TOPCOAT_ID,
+} from '../../config/pricing';
+import { formatNaira } from '../../utils/money';
 
-/* ── 3D Epoxy Coverage & Material Cost Calculator ────────────────────────
+/* -- 3D Epoxy Coverage & Material Cost Calculator ------------------------
    Helps customers estimate material requirements and total cost for
-   their epoxy flooring / surface project before requesting a quote.    */
+   their epoxy flooring / surface project before requesting a quote.
+
+   Standard finish rates already include surface preparation and UV topcoat,
+   so those are never added again. The standalone preparation and topcoat
+   rates apply only when no standard finish is selected. */
 
 type SpaceType = 'floor' | 'wall' | 'countertop' | 'furniture';
 type FinishType = 'metallic' | 'marble' | 'flaked' | 'solid' | 'glow' | '3d_art';
 type Location = 'home' | 'office' | 'commercial' | 'industrial';
+type ServiceMode = 'finish' | 'prep' | 'topcoat';
 
 interface FinishSpec {
   label: string;
@@ -27,13 +38,16 @@ interface FinishSpec {
 }
 
 const FINISHES: Record<FinishType, FinishSpec> = {
-  metallic:  { label: 'Metallic Sheen',    emoji: '✨', pricePerSqm: 18_000, coats: 3, dryHours: 48, durabilityYrs: 10, description: 'Mirror-effect liquid metal pour' },
-  marble:    { label: '3D Marble Vein',    emoji: '🌊', pricePerSqm: 22_000, coats: 3, dryHours: 72, durabilityYrs: 12, description: 'Realistic marble & stone veining' },
-  flaked:    { label: 'Decorative Flake',  emoji: '❄️', pricePerSqm: 12_000, coats: 2, dryHours: 36, durabilityYrs: 8,  description: 'Vinyl flake broadcast system' },
-  solid:     { label: 'Solid Colour Gloss',emoji: '🎨', pricePerSqm: 9_000,  coats: 2, dryHours: 24, durabilityYrs: 7,  description: 'Clean, durable colour finish' },
-  glow:      { label: 'Glow-in-Dark',      emoji: '🌙', pricePerSqm: 28_000, coats: 4, dryHours: 96, durabilityYrs: 8,  description: 'Photoluminescent premium pour' },
-  '3d_art':  { label: '3D Art / Mural',    emoji: '🖼️', pricePerSqm: 45_000, coats: 4, dryHours: 120,durabilityYrs: 10, description: 'Custom 3D illusion artwork' },
+  metallic:  { label: 'Metallic Sheen',    emoji: '✨', pricePerSqm: priceOf('EPO-003'), coats: 3, dryHours: 48, durabilityYrs: 10, description: 'Mirror-effect liquid metal pour' },
+  marble:    { label: '3D Marble Vein',    emoji: '🌊', pricePerSqm: priceOf('EPO-004'), coats: 3, dryHours: 72, durabilityYrs: 12, description: 'Realistic marble & stone veining' },
+  flaked:    { label: 'Decorative Flake',  emoji: '❄️', pricePerSqm: priceOf('EPO-002'), coats: 2, dryHours: 36, durabilityYrs: 8,  description: 'Vinyl flake broadcast system' },
+  solid:     { label: 'Solid Colour Gloss',emoji: '🎨', pricePerSqm: priceOf('EPO-001'), coats: 2, dryHours: 24, durabilityYrs: 7,  description: 'Clean, durable colour finish' },
+  glow:      { label: 'Glow-in-the-Dark',  emoji: '🌙', pricePerSqm: priceOf('EPO-005'), coats: 4, dryHours: 96, durabilityYrs: 8,  description: 'Photoluminescent premium pour' },
+  '3d_art':  { label: '3D Art / Mural',    emoji: '🖼️', pricePerSqm: priceOf('EPO-006'), coats: 4, dryHours: 120,durabilityYrs: 10, description: 'Custom 3D illusion artwork' },
 };
+
+const STANDALONE_PREP_RATE = priceOf(EPOXY_STANDALONE_PREP_ID);
+const STANDALONE_TOPCOAT_RATE = priceOf(EPOXY_STANDALONE_TOPCOAT_ID);
 
 const SPACE_ICONS: Record<SpaceType, LucideIcon> = {
   floor: Home, wall: Layers, countertop: Ruler, furniture: Gem,
@@ -43,14 +57,9 @@ const LOCATION_MULTIPLIER: Record<Location, number> = {
   home: 1, office: 1.1, commercial: 1.2, industrial: 1.35,
 };
 
-function fmt(n: number) {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000)     return `₦${(n / 1_000).toFixed(0)}k`;
-  return `₦${Math.round(n)}`;
-}
-
 const EpoxyCoverageCalculator: React.FC = () => {
   const [space, setSpace] = useState<SpaceType>('floor');
+  const [mode, setMode] = useState<ServiceMode>('finish');
   const [finish, setFinish] = useState<FinishType>('metallic');
   const [location, setLocation] = useState<Location>('home');
   const [length, setLength] = useState(6);
@@ -61,31 +70,50 @@ const EpoxyCoverageCalculator: React.FC = () => {
   const area = length * width;
 
   const result = useMemo(() => {
-    const basePrice    = area * finishSpec.pricePerSqm;
+    const ratePerSqm   = mode === 'finish'
+      ? finishSpec.pricePerSqm
+      : mode === 'prep'
+        ? STANDALONE_PREP_RATE
+        : STANDALONE_TOPCOAT_RATE;
     const locMult      = LOCATION_MULTIPLIER[location];
-    const surfacePrep  = area * 2_500;       // surface grinding & prep
-    const topcoat      = area * 1_500;       // UV top coat
-    const total        = (basePrice + surfacePrep + topcoat) * locMult;
-    const materialKg   = area * 0.8 * finishSpec.coats;  // approx kg of resin
-    const daysToComplete = Math.ceil(finishSpec.dryHours / 24) + 1;
+    const baseTotal    = area * ratePerSqm;
+    const uplift       = baseTotal * (locMult - 1);
+    const total        = baseTotal + uplift;
+    const materialKg   = mode === 'finish' ? area * 0.8 * finishSpec.coats : 0;
+    const daysToComplete = mode === 'finish'
+      ? Math.ceil(finishSpec.dryHours / 24) + 1
+      : mode === 'prep' ? 2 : 3;
     const pricePerSqm  = total / area;
 
     return {
       area,
-      basePrice:    Math.round(basePrice * locMult),
-      surfacePrep:  Math.round(surfacePrep * locMult),
-      topcoat:      Math.round(topcoat * locMult),
+      ratePerSqm,
+      baseTotal:    Math.round(baseTotal),
+      uplift:       Math.round(uplift),
       total:        Math.round(total),
       materialKg:   Math.round(materialKg),
       daysToComplete,
       pricePerSqm:  Math.round(pricePerSqm),
+      locPct:       Math.round((locMult - 1) * 100),
     };
-  }, [area, finishSpec, location]);
+  }, [area, finishSpec, location, mode]);
+
+  const serviceLabel = mode === 'finish'
+    ? finishSpec.label
+    : mode === 'prep'
+      ? 'Surface Preparation (standalone)'
+      : 'UV Topcoat (standalone)';
+
+  const inclusionNote = mode === 'finish'
+    ? 'Surface preparation and UV topcoat are included in this finish rate. They are not added again.'
+    : mode === 'prep'
+      ? 'Standalone preparation rate. This is only used when no standard finish is selected.'
+      : 'Standalone UV topcoat rate. This is only used when no standard finish is selected.';
 
   const waMsg = `Hello Haritech 3D Epoxy Team! I used the Coverage Calculator.\n\n` +
-    `Space: ${space} — ${location}\nFinish: ${finishSpec.label}\n` +
+    `Space: ${space} — ${location}\nService: ${serviceLabel}\n` +
     `Area: ${length}m × ${width}m = ${area}m²\n` +
-    `Estimated Cost: ${fmt(result.total)}\nTimeline: ~${result.daysToComplete} days\n\n` +
+    `Estimated Cost: ${formatNaira(result.total)}\nTimeline: ~${result.daysToComplete} days\n\n` +
     `Please send me a detailed quote.`;
 
   return (
@@ -177,6 +205,32 @@ const EpoxyCoverageCalculator: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Service mode */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-300 mb-3">Service Type</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {([
+                      { key: 'finish', label: 'Standard finish', note: 'Prep + topcoat included' },
+                      { key: 'prep',   label: 'Surface prep only', note: formatNaira(STANDALONE_PREP_RATE) + '/m²' },
+                      { key: 'topcoat',label: 'UV topcoat only', note: formatNaira(STANDALONE_TOPCOAT_RATE) + '/m²' },
+                    ] as { key: ServiceMode; label: string; note: string }[]).map(option => (
+                      <button
+                        key={option.key}
+                        onClick={() => { setMode(option.key); setShowResult(false); }}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          mode === option.key
+                            ? 'bg-teal-500/20 border-teal-500/60 text-teal-300'
+                            : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/25 hover:text-white'
+                        }`}
+                      >
+                        <span className="block text-xs font-bold">{option.label}</span>
+                        <span className="block text-[10px] text-slate-500 mt-0.5">{option.note}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">{inclusionNote}</p>
+                </div>
+
                 {/* Dimensions */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -214,6 +268,7 @@ const EpoxyCoverageCalculator: React.FC = () => {
                 </div>
 
                 {/* Finish Type */}
+                {mode === 'finish' && (
                 <div>
                   <label className="block text-sm font-semibold text-slate-300 mb-3">Finish / Design Type</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -229,12 +284,13 @@ const EpoxyCoverageCalculator: React.FC = () => {
                       >
                         <span className="text-lg">{f.emoji}</span>
                         <span className={`text-xs font-bold ${finish === key ? 'text-violet-300' : 'text-white'}`}>{f.label}</span>
-                        <span className="text-xs text-slate-500">{fmt(f.pricePerSqm)}/m²</span>
+                        <span className="text-xs text-slate-500">{formatNaira(f.pricePerSqm)}/m²</span>
                       </button>
                     ))}
                   </div>
                   <p className="mt-2 text-xs text-slate-500 italic">{finishSpec.description}</p>
                 </div>
+                )}
 
                 {/* Location / Use */}
                 <div>
@@ -275,30 +331,40 @@ const EpoxyCoverageCalculator: React.FC = () => {
                       exit={{ opacity: 0 }}
                       className="h-full flex flex-col gap-3"
                     >
-                      {/* Finish badge */}
+                      {/* Service badge */}
                       <div className="rounded-xl bg-gradient-to-br from-teal-600/20 to-violet-600/15 border border-teal-500/25 p-4 text-center">
-                        <div className="text-3xl mb-1">{finishSpec.emoji}</div>
-                        <div className="text-white font-bold">{finishSpec.label}</div>
-                        <div className="text-xs text-slate-400">{finishSpec.coats} coat system • {finishSpec.durabilityYrs}yr durability</div>
+                        <div className="text-3xl mb-1">{mode === 'finish' ? finishSpec.emoji : '🧪'}</div>
+                        <div className="text-white font-bold">{serviceLabel}</div>
+                        <div className="text-xs text-slate-400">
+                          {mode === 'finish'
+                            ? `${finishSpec.coats} coat system • ${finishSpec.durabilityYrs}yr durability`
+                            : 'Standalone service • outside the standard finish package'}
+                        </div>
                       </div>
 
                       {/* Cost breakdown */}
                       <div className="rounded-xl bg-slate-800/60 border border-white/10 p-4">
                         <div className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-3">Cost Breakdown</div>
                         <div className="space-y-2 text-sm">
-                          {[
-                            { label: 'Epoxy Materials & Application', value: result.basePrice },
-                            { label: 'Surface Grinding & Prep',        value: result.surfacePrep },
-                            { label: 'UV Protective Top Coat',         value: result.topcoat },
-                          ].map((item, i) => (
-                            <div key={i} className="flex justify-between text-slate-400">
-                              <span>{item.label}</span>
-                              <span className="text-white font-semibold">{fmt(item.value)}</span>
+                          <div className="flex justify-between text-slate-400">
+                            <span>{mode === 'finish' ? 'Finish' : 'Service'} ({area.toFixed(1)} m²)</span>
+                            <span className="text-white font-semibold">{formatNaira(result.baseTotal)}</span>
+                          </div>
+                          {mode === 'finish' && (
+                            <div className="flex justify-between text-xs text-teal-400/80">
+                              <span>Surface prep & UV topcoat</span>
+                              <span>Included</span>
                             </div>
-                          ))}
+                          )}
+                          {result.uplift > 0 && (
+                            <div className="flex justify-between text-slate-400">
+                              <span>Location adjustment (+{result.locPct}%)</span>
+                              <span className="text-white font-semibold">{formatNaira(result.uplift)}</span>
+                            </div>
+                          )}
                           <div className="border-t border-white/10 pt-2 mt-2 flex justify-between">
                             <span className="font-bold text-white">Project Total</span>
-                            <span className="text-xl font-black text-teal-400">{fmt(result.total)}</span>
+                            <span className="text-xl font-black text-teal-400">{formatNaira(result.total)}</span>
                           </div>
                         </div>
                       </div>
@@ -307,8 +373,8 @@ const EpoxyCoverageCalculator: React.FC = () => {
                       <div className="grid grid-cols-2 gap-2">
                         {[
                           { label: 'Area', value: `${area.toFixed(1)}m²`, color: 'text-white' },
-                          { label: 'Rate/m²', value: fmt(result.pricePerSqm), color: 'text-teal-400' },
-                          { label: 'Material', value: `~${result.materialKg}kg`, color: 'text-violet-400' },
+                          { label: 'Rate/m²', value: formatNaira(result.pricePerSqm), color: 'text-teal-400' },
+                          { label: 'Material', value: mode === 'finish' ? `~${result.materialKg}kg` : '—', color: 'text-violet-400' },
                           { label: 'Timeline', value: `~${result.daysToComplete}d`, color: 'text-yellow-400' },
                         ].map((s, i) => (
                           <div key={i} className="rounded-xl bg-slate-800/60 border border-white/10 p-3 text-center">

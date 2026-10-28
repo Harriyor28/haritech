@@ -31,6 +31,7 @@ const Importation = lazy(() => import('./pages/haritech/Importation'));
 const ProjectManagement = lazy(() => import('./pages/haritech/ProjectManagement'));
 const ClientPortal = lazy(() => import('./pages/haritech/ClientPortal'));
 const ThreeDEpoxy = lazy(() => import('./pages/haritech/ThreeDEpoxy'));
+const PriceGuide = lazy(() => import('./pages/haritech/PriceGuide'));
 
 const ChatGate: React.FC = () => {
   const { pathname } = useLocation();
@@ -88,6 +89,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="about" element={<About />} />
               <Route path="what-we-do" element={<WhatWeDo />} />
               <Route path="services" element={<Services />} />
+              <Route path="price-guide" element={<PriceGuide />} />
               <Route path="industries" element={<Industries />} />
               <Route path="portfolio" element={<HaritechPortfolio />} />
               <Route path="cac-registration" element={<CACRegistration />} />

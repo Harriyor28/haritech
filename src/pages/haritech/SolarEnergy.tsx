@@ -141,7 +141,7 @@ const SolarEnergy: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-16">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Typical <span className="text-yellow-400">Use Cases</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Where a solar assessment usually starts — nothing here is a claim of completed installations.</p>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Where a solar assessment usually starts.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -200,7 +200,7 @@ const SolarEnergy: React.FC = () => {
             <Sun className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Start With Your Load List</h2>
             <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Send the appliances you run and what must stay on during an outage. We will come back with an indicative size range, equipment options and the assumptions behind the numbers.
+              Send the appliances you run and what must stay on during an outage. We will come back with a size range, equipment options and the assumptions behind the numbers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Send Your Load List</Link>

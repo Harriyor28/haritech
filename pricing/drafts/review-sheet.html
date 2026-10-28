@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Haritech — Draft Price Register Review</title>
+<style>
+  :root {
+    --ink: #10231b; --muted: #5d6f66; --line: #d8e2dc;
+    --gold: #9a7b1f; --gold-soft: #f4ecd6; --bg: #f7f9f8;
+    --green: #14532d; --green-soft: #dcfce7;
+    --amber: #92400e; --amber-soft: #fef3c7;
+    --red: #991b1b; --red-soft: #fee2e2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { background: #0e2a20; color: #f6f3e8; padding: 28px 24px 22px; }
+  header h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: .2px; }
+  header p { margin: 0; color: #c8d5c6; }
+  .banner { background: var(--gold-soft); border-bottom: 1px solid #e3d3a2;
+    color: #5c4708; padding: 10px 24px; font-weight: 600; font-size: 14px; }
+  main { max-width: 1400px; margin: 0 auto; padding: 22px 20px 60px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px; margin-bottom: 20px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card .n { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .card .l { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .conflicts { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--gold);
+    border-radius: 8px; padding: 16px 18px; margin-bottom: 20px; }
+  .conflicts h2 { margin: 0 0 8px; font-size: 17px; }
+  .conflicts ul { margin: 0; padding-left: 20px; }
+  .conflicts li { margin: 4px 0; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
+    position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 2; }
+  .controls input, .controls select { padding: 9px 11px; border: 1px solid #b9c8c0;
+    border-radius: 7px; background: #fff; color: var(--ink); font: inherit; }
+  .controls input { flex: 1 1 260px; }
+  .count { align-self: center; color: var(--muted); font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  thead th { background: #eef3f0; text-align: left; font-size: 12px; letter-spacing: .4px;
+    text-transform: uppercase; color: #40544a; padding: 11px 12px; border-bottom: 1px solid var(--line); }
+  tbody td { padding: 12px; border-bottom: 1px solid #e8efeb; vertical-align: top; }
+  tbody tr:hover { background: #fbfdfc; }
+  .id { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px;
+    color: var(--muted); white-space: nowrap; }
+  .svc { font-weight: 600; }
+  .cat { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .now { color: var(--muted); font-size: 13px; min-width: 150px; }
+  .prop { white-space: nowrap; }
+  .prop strong { font-size: 15.5px; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .b-cost { background: var(--amber-soft); color: var(--amber); }
+  .b-official { background: var(--red-soft); color: var(--red); }
+  .b-ready { background: var(--green-soft); color: var(--green); }
+  .b-draft { background: #e5e7eb; color: #374151; }
+  .b-approved { background: #dbeafe; color: #1e40af; }
+  .warn { color: var(--amber); font-size: 12.5px; font-weight: 600; }
+  .missing { color: var(--red); font-weight: 700; font-size: 12.5px; }
+  .notes { max-width: 420px; color: var(--muted); font-size: 12.5px; }
+  details summary { cursor: pointer; color: #315b49; font-weight: 600; }
+  details ul { margin: 6px 0 8px; padding-left: 18px; }
+  details li { margin: 3px 0; }
+  .qtitle { font-weight: 700; color: var(--ink); font-size: 12px; text-transform: uppercase;
+    letter-spacing: .3px; margin-top: 8px; }
+  .hidden { display: none; }
+  footer { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px;
+    color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 900px) {
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { border-bottom: 3px solid #e8efeb; padding: 6px 0; }
+    td { border: 0; padding: 6px 12px; }
+    td::before { content: attr(data-label); display: block; font-size: 11px;
+      text-transform: uppercase; letter-spacing: .4px; color: #7a8c82; margin-bottom: 2px; }
+    .notes { max-width: none; }
+  }
+  @media print {
+    .controls { display: none; }
+    body { background: #fff; }
+    tr { break-inside: avoid; }
+    details { display: block; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Haritech Exclusive Business — Draft Price Register</h1>
+  <p>Owner review sheet · generated 2026-10-28 · currency NGN · source: owner Phase 3 register</p>
+</header>
+<div class="banner">DRAFT — NOT ACTIVE. No price on this sheet is approved or published. No effective date is set.</div>
+<main>
+  <section class="cards">
+    <div class="card"><div class="n">67</div><div class="l">Services in register</div></div>
+    <div class="card"><div class="n">66</div><div class="l">Priced</div></div>
+    <div class="card"><div class="n">1</div><div class="l">Awaiting an owner price</div></div>
+    <div class="card"><div class="n">40</div><div class="l">Units unconfirmed</div></div>
+    <div class="card"><div class="n">0</div><div class="l">Approved</div></div>
+  </section>
+
+  <section class="conflicts">
+    <h2>Decisions to settle before any activation</h2>
+    <ul>
+      <li><strong>Epoxy inversion:</strong> Solid ₦35,000/m² now exceeds Metallic ₦30,000/m²; Flake ₦40,000/m² exceeds Marble ₦35,000/m² — confirm intent.</li>
+      <li><strong>SCUML:</strong> declared separate but no price supplied — it cannot be published as free.</li>
+      <li><strong>CAC stamp, courier and MFB registration</strong> have no replacement price.</li>
+      <li><strong>Solar maintenance ₦50,000</strong> conflicts with the existing “2-Year Free Maintenance Contract” claim.</li>
+      <li><strong>Import consultation (IMP-006) and business advisory (BUS-003)</strong> are both ₦20,000/session.</li>
+      <li><strong>Epoxy standalone rates</strong> ₦45,000 prep / ₦55,000 topcoat are valid only outside a standard finish.</li>
+      <li><strong>Budget bands</strong> still top out at ₦2.5m, below the ₦6.7m and ₦12m solar packages.</li>
+    </ul>
+  </section>
+
+  <div class="controls">
+    <input id="q" type="search" placeholder="Search by ID, service or category…" aria-label="Search" />
+    <select id="cat" aria-label="Category"><option value="">All categories</option><option value="Web &amp; Digital Services">Web &amp; Digital Services</option><option value="Business Registration &amp; CAC Assistance">Business Registration &amp; CAC Assistance</option><option value="Solar Energy">Solar Energy</option><option value="Epoxy Flooring">Epoxy Flooring</option><option value="Importation &amp; Pre-order">Importation &amp; Pre-order</option><option value="Business Consultation">Business Consultation</option><option value="Printing &amp; Branding">Printing &amp; Branding</option><option value="Computer Services &amp; Cyber Café">Computer Services &amp; Cyber Café</option><option value="Interior Design &amp; Décor">Interior Design &amp; Décor</option><option value="Project Supervision &amp; Procurement">Project Supervision &amp; Procurement</option></select>
+    <select id="stat" aria-label="Evidence status"><option value="">All statuses</option><option value="COST EVIDENCE NEEDED">COST EVIDENCE NEEDED</option><option value="OFFICIAL FEE VERIFICATION NEEDED">OFFICIAL FEE VERIFICATION NEEDED</option><option value="READY FOR OWNER REVIEW">READY FOR OWNER REVIEW</option><option value="DRAFT">DRAFT</option></select>
+    <span class="count" id="count"></span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Service</th><th>Current</th><th>Proposed</th>
+        <th>Unit</th><th>Evidence status</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody id="rows"><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-001 business landing page / brand website web &amp; digital services">
+    <td class="id">WEB-001</td>
+    <td><div class="svc">Business landing page / brand website</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦150,000</td>
+    <td class="prop"><strong>₦350,000</strong></td>
+    <td>project</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price increases 133% with no recorded effort estimate or day rate.</li><li>Free-domain wording in the current tier must not be carried into the new price.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm page limit and revision rounds</li><li>Confirm whether content writing is included</li><li>Confirm domain and hosting treatment</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-002 dynamic corporate portal / e-commerce website web &amp; digital services">
+    <td class="id">WEB-002</td>
+    <td><div class="svc">Dynamic corporate portal / e-commerce website</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦350,000</td>
+    <td class="prop"><strong>₦600,000</strong></td>
+    <td>project</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Scope is open-ended at a fixed price.</li><li>Merchant and licence fees can erode margin on small builds.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm integration list and gateway responsibility</li><li>Confirm support period after launch</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-003 custom saas / cloud architecture web &amp; digital services">
+    <td class="id">WEB-003</td>
+    <td><div class="svc">Custom SaaS / cloud architecture</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦750,000</td>
+    <td class="prop"><strong>₦750,000</strong></td>
+    <td>project</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Bespoke platform work can exceed a fixed ₦750,000 by a wide margin.</li><li>No SLA or support term is defined.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether a discovery phase and change-request process are required</li><li>Confirm SLA terms, if any</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-004 advanced seo / google indexing add-on web &amp; digital services">
+    <td class="id">WEB-004</td>
+    <td><div class="svc">Advanced SEO / Google indexing add-on</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦50,000</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>The current tier already includes basic SEO setup; the add-on must not duplicate it.</li><li>No ranking outcome may be promised.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per project or per month)</li><li>Confirm deliverables and review period</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-005 brand identity / logo kit add-on web &amp; digital services">
+    <td class="id">WEB-005</td>
+    <td><div class="svc">Brand identity / logo kit add-on</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦40,000</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Deliverables are undefined, so the price cannot be checked against effort.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm deliverable count and revision rounds</li><li>Confirm what files are handed over</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-006 maintenance and server backups web &amp; digital services">
+    <td class="id">WEB-006</td>
+    <td><div class="svc">Maintenance and server backups</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦80,000 (one year)</td>
+    <td class="prop"><strong>₦25,000</strong></td>
+    <td>month</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Moving from ₦80,000/year to ₦25,000/month raises the annual cost to ₦300,000 (+275%).</li><li>The current UI labels this as a one-off add-on; the new unit is monthly.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm support hours per month and response time</li><li>Confirm backup frequency and retention</li><li>Confirm renewal and cancellation terms</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Web &amp; Digital Services" data-status="COST EVIDENCE NEEDED" data-text="web-007 fast-track priority delivery add-on web &amp; digital services">
+    <td class="id">WEB-007</td>
+    <td><div class="svc">Fast-track priority delivery add-on</div><div class="cat">Web &amp; Digital Services</div></td>
+    <td class="now">₦60,000 (2x speed claim)</td>
+    <td class="prop"><strong>₦60,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Current copy claims 2x speed while the displayed schedule only shortens by 3 days.</li><li>Do not promise third-party processing speed.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm the compressed delivery timeline the fee buys</li><li>Confirm what happens if Haritech misses it</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-001 business name registration package business registration &amp; cac assistance">
+    <td class="id">CAC-001</td>
+    <td><div class="svc">Business Name registration package</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦35,000 (estimator) / ₦35,000 (₦10,000 government + ₦25,000 service)</td>
+    <td class="prop"><strong>₦30,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Package price embeds an official fee that is not cited or dated.</li><li>The ₦20,000 assistance fee must not be added again.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm the official CAC fee included in the package</li><li>Confirm whether stamp and courier remain chargeable</li><li>Confirm TIN inclusion wording</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-002 limited liability company (llc/ltd) registration package business registration &amp; cac assistance">
+    <td class="id">CAC-002</td>
+    <td><div class="svc">Limited Liability Company (LLC/Ltd) registration package</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦85,000 (estimator) / ₦95,000 (₦30,000 government + ₦65,000 service)</td>
+    <td class="prop"><strong>₦55,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Two current totals exist (₦85,000 and ₦95,000).</li><li>Proposed price is 35–42% below both current totals; confirm the cost basis.</li><li>The old UI listed TIN and SCUML as included while also selling them as add-ons.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm the official CAC fee included</li><li>Confirm SCUML is always separate</li><li>Confirm whether TIN is included for every LLC</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-003 ngo registration package business registration &amp; cac assistance">
+    <td class="id">CAC-003</td>
+    <td><div class="svc">NGO registration package</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦75,000 (₦20,000 government + ₦55,000 service) / ₦195,000 (estimator tier)</td>
+    <td class="prop"><strong>₦95,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Current surfaces disagree by ₦120,000.</li><li>Newspaper publication was previously bundled with no supplier quote.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm newspaper publication is always a separate pass-through</li><li>Confirm the official fee included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-004 incorporated trustees registration package business registration &amp; cac assistance">
+    <td class="id">CAC-004</td>
+    <td><div class="svc">Incorporated Trustees registration package</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦70,000 (₦20,000 government + ₦50,000 service) / ₦195,000 (estimator tier)</td>
+    <td class="prop"><strong>₦120,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Current surfaces disagree by ₦125,000.</li><li>Vetting effort varies with the number of trustees.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm trustee-count limit for the package</li><li>Confirm whether publication is ever included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-005 foreign company registration assistance package business registration &amp; cac assistance">
+    <td class="id">CAC-005</td>
+    <td><div class="svc">Foreign company registration assistance package</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦240,000 (₦90,000 government + ₦150,000 service)</td>
+    <td class="prop"><strong>₦150,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Proposed price is ₦90,000 below the current fee-tool total.</li><li>Eligibility must be confirmed before accepting payment.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm eligibility checks before payment</li><li>Confirm which disbursements are pass-through</li><li>Confirm the official fee included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Registration &amp; CAC Assistance" data-status="OFFICIAL FEE VERIFICATION NEEDED" data-text="cac-006 express processing add-on business registration &amp; cac assistance">
+    <td class="id">CAC-006</td>
+    <td><div class="svc">Express processing add-on</div><div class="cat">Business Registration &amp; CAC Assistance</div></td>
+    <td class="now">₦25,000 flat (estimator) / 40% of service fee (₦10,000–₦100,000 in the fee tool)</td>
+    <td class="prop"><strong>₦30,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-official">OFFICIAL FEE VERIFICATION NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>The current fee tool charges 10%–67% more than ₦30,000 depending on entity.</li><li>Do not guarantee agency processing time.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per application)</li><li>Confirm what the fee actually covers</li><li>Confirm no government speed promise is made</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-001 1.5 kva essential solar package solar energy">
+    <td class="id">SOL-001</td>
+    <td><div class="svc">1.5 kVA Essential solar package</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦480,000</td>
+    <td class="prop"><strong>₦950,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 97.9% with no bill of materials or labour rate.</li><li>Current system list and tier band both quote ₦480,000, so only this size reconciled.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm battery chemistry and capacity</li><li>Confirm inverter rating and panel wattage</li><li>Confirm included accessories and warranty</li><li>Confirm installation scope</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-002 3.5 kva home pro solar package solar energy">
+    <td class="id">SOL-002</td>
+    <td><div class="svc">3.5 kVA Home Pro solar package</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦950,000 (system list) / ₦1,100,000 (estimator band 3.5–5 kVA)</td>
+    <td class="prop"><strong>₦2,500,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 163% against the system list and 127% against the band.</li><li>The new price is 2.5x the 1.5 kVA package; confirm the specification gap justifies it.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm battery chemistry and capacity</li><li>Confirm inverter rating and panel wattage</li><li>Confirm warranty terms</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-003 5 kva executive solar package solar energy">
+    <td class="id">SOL-003</td>
+    <td><div class="svc">5 kVA Executive solar package</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦1,400,000 (system list) / ₦1,100,000 (estimator band 3.5–5 kVA)</td>
+    <td class="prop"><strong>₦3,400,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 143% against the system list and 209% against the band.</li><li>The current band undercuts this size by ₦300,000; the new price ends that conflict.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm battery chemistry and capacity</li><li>Confirm inverter rating and phase</li><li>Confirm warranty terms</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-004 10 kva commercial solar package solar energy">
+    <td class="id">SOL-004</td>
+    <td><div class="svc">10 kVA Commercial solar package</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦2,200,000 (system list) / ₦2,900,000 (estimator band 10–20 kVA)</td>
+    <td class="prop"><strong>₦6,700,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 205% against the system list and 131% against the band.</li><li>Commercial install risk (switchgear, permits) is excluded and unpriced.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether three-phase is included</li><li>Confirm battery and inverter specification</li><li>Confirm site-survey requirement</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-005 20 kva industrial solar package solar energy">
+    <td class="id">SOL-005</td>
+    <td><div class="svc">20 kVA Industrial solar package</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦3,800,000 (system list) / ₦2,900,000 (estimator band 10–20 kVA)</td>
+    <td class="prop"><strong>₦12,000,000</strong></td>
+    <td>package</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 216% against the system list and 314% against the band.</li><li>Industrial installation risk is not priced and no BOM exists.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm industrial specification and site-survey requirement</li><li>Confirm what structural work is excluded</li><li>Confirm warranty and maintenance terms</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="READY FOR OWNER REVIEW" data-text="sol-006 site survey / energy assessment solar energy">
+    <td class="id">SOL-006</td>
+    <td><div class="svc">Site survey / energy assessment</div><div class="cat">Solar Energy</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦10,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>New service; no current code location.</li><li>If deducted later, the estimator needs a credit rule.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per visit or per system)</li><li>Confirm whether the fee is deducted from a subsequent installation invoice</li><li>Confirm travel treatment</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="READY FOR OWNER REVIEW" data-text="sol-007 solar system maintenance solar energy">
+    <td class="id">SOL-007</td>
+    <td><div class="svc">Solar system maintenance</div><div class="cat">Solar Energy</div></td>
+    <td class="now">Not priced (a 2-year free maintenance contract is claimed inside the 10–20 kVA tier)</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>A paid maintenance price conflicts with the existing free-contract claim unless the claim is removed.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per visit, per system or per contract)</li><li>Confirm what maintenance covers</li><li>Confirm the free-maintenance claim in the enterprise tier</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-008 lithium battery upgrade solar energy">
+    <td class="id">SOL-008</td>
+    <td><div class="svc">Lithium battery upgrade</div><div class="cat">Solar Energy</div></td>
+    <td class="now">₦250,000</td>
+    <td class="prop"><strong>₦500,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Doubles the current add-on price.</li><li>Must not be charged where a package already includes a lithium battery.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether hardware is included</li><li>Confirm capacity in kWh</li><li>Confirm which packages already include lithium</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-009 inverter upgrade / replacement service solar energy">
+    <td class="id">SOL-009</td>
+    <td><div class="svc">Inverter upgrade / replacement service</div><div class="cat">Solar Energy</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦500,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>New service; the price cannot be interpreted without a specification.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether hardware is included</li><li>Confirm inverter rating covered</li><li>Confirm removal and disposal treatment</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Solar Energy" data-status="COST EVIDENCE NEEDED" data-text="sol-010 solar panel upgrade / addition solar energy">
+    <td class="id">SOL-010</td>
+    <td><div class="svc">Solar panel upgrade / addition</div><div class="cat">Solar Energy</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦200,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>A flat price cannot represent panel count or roof access.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether hardware is included</li><li>Confirm panel count, wattage and mounting</li><li>Confirm minimum order</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-001 solid colour gloss finish epoxy flooring">
+    <td class="id">EPO-001</td>
+    <td><div class="svc">Solid Colour Gloss finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦9,000/m² plus ₦2,500 prep plus ₦1,500 topcoat</td>
+    <td class="prop"><strong>₦35,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 289% before prep and topcoat, which are now included.</li><li>Solid now costs more than Metallic (₦35,000 vs ₦30,000) — the register deliberately inverts the old order; confirm this is intended.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm minimum project size</li><li>Confirm the treatment of repairs and moisture mitigation</li><li>Confirm travel and special-surface charges</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-002 decorative flake finish epoxy flooring">
+    <td class="id">EPO-002</td>
+    <td><div class="svc">Decorative Flake finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦12,000/m² plus prep and topcoat</td>
+    <td class="prop"><strong>₦40,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 233%.</li><li>Flake now costs more than Marble (₦40,000 vs ₦35,000); confirm this is intended.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm minimum project size</li><li>Confirm flake specification</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-003 metallic sheen finish epoxy flooring">
+    <td class="id">EPO-003</td>
+    <td><div class="svc">Metallic Sheen finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦18,000/m² plus prep and topcoat</td>
+    <td class="prop"><strong>₦30,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 67% but is now the cheapest finish, below Solid at ₦35,000.</li><li>The old metallic pigment add-on must not be charged on top.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm minimum project size</li><li>Confirm pigment scope</li><li>Confirm whether Metallic should sit below Solid</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-004 3d marble vein finish epoxy flooring">
+    <td class="id">EPO-004</td>
+    <td><div class="svc">3D Marble Vein finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦22,000/m² plus prep and topcoat</td>
+    <td class="prop"><strong>₦35,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 59% but is now below Flake at ₦40,000.</li><li>Artwork effort is not proportional to area.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm minimum project size</li><li>Confirm artwork scope</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-005 glow-in-the-dark finish epoxy flooring">
+    <td class="id">EPO-005</td>
+    <td><div class="svc">Glow-in-the-Dark finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦28,000/m² plus prep and topcoat</td>
+    <td class="prop"><strong>₦40,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 43%.</li><li>Photoluminescent pigment is a specialist input with no recorded cost.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm minimum project size</li><li>Confirm pigment grade and afterglow performance</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-006 3d art / mural finish epoxy flooring">
+    <td class="id">EPO-006</td>
+    <td><div class="svc">3D Art / Mural finish</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦45,000/m² plus prep and topcoat</td>
+    <td class="prop"><strong>₦65,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price rises 44%.</li><li>Per-m² pricing under-recovers effort on small, intricate murals.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether design is included or charged separately</li><li>Confirm minimum project size</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-007 surface grinding / preparation (standalone) epoxy flooring">
+    <td class="id">EPO-007</td>
+    <td><div class="svc">Surface grinding / preparation (standalone)</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦2,500/m² added to every finish</td>
+    <td class="prop"><strong>₦45,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>18x the old per-m² prep rate, but only outside a standard package.</li><li>Must be blocked when a finish is selected or the job will be double-charged.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm this is charged only when no finish is selected</li><li>Confirm what a standalone preparation job includes</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Epoxy Flooring" data-status="COST EVIDENCE NEEDED" data-text="epo-008 uv topcoat (standalone) epoxy flooring">
+    <td class="id">EPO-008</td>
+    <td><div class="svc">UV topcoat (standalone)</div><div class="cat">Epoxy Flooring</div></td>
+    <td class="now">₦1,500/m² added to every finish</td>
+    <td class="prop"><strong>₦55,000</strong></td>
+    <td>m²</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>36.7x the old per-m² topcoat rate, but only as a standalone service.</li><li>Must be blocked when a standard finish is selected.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm this is charged only outside a standard package</li><li>Confirm coats and product</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-001 product sourcing service importation &amp; pre-order">
+    <td class="id">IMP-001</td>
+    <td><div class="svc">Product sourcing service</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦10,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>New fee; may overlap with IMP-002 on the same order.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per order, per supplier or per shipment)</li><li>Confirm overlap with pre-order handling</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-002 pre-order / order handling importation &amp; pre-order">
+    <td class="id">IMP-002</td>
+    <td><div class="svc">Pre-order / order handling</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced (pre-order slots are empty)</td>
+    <td class="prop"><strong>₦5,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>No pre-order record currently exists, so there is nothing to reconcile.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per slot, per order or per unit)</li><li>Confirm refund and forfeiture terms</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-003 supplier verification importation &amp; pre-order">
+    <td class="id">IMP-003</td>
+    <td><div class="svc">Supplier verification</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦10,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>A verification fee may be read as a guarantee of supplier performance; wording matters.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit</li><li>Confirm what verification covers and what it does not guarantee</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-004 cargo consolidation coordination importation &amp; pre-order">
+    <td class="id">IMP-004</td>
+    <td><div class="svc">Cargo consolidation coordination</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Coordination effort scales with the number of suppliers, not a flat fee.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per shipment or per consignment)</li><li>Confirm minimum volume</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-005 goods inspection coordination importation &amp; pre-order">
+    <td class="id">IMP-005</td>
+    <td><div class="svc">Goods inspection coordination</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Third-party inspection fees must not be absorbed into the ₦20,000 coordination fee.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit</li><li>Confirm whether a third-party inspector is used and how that fee is passed through</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-006 importation consultation / advisory importation &amp; pre-order">
+    <td class="id">IMP-006</td>
+    <td><div class="svc">Importation consultation / advisory</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td>session</td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Same price and similar name as BUS-003; charging both for one session would double-charge.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm session length</li><li>Confirm whether this is the same service as BUS-003</li><li>Confirm deliverables</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Importation &amp; Pre-order" data-status="COST EVIDENCE NEEDED" data-text="imp-007 clearing coordination for large or complex shipments importation &amp; pre-order">
+    <td class="id">IMP-007</td>
+    <td><div class="svc">Clearing coordination for large or complex shipments</div><div class="cat">Importation &amp; Pre-order</div></td>
+    <td class="now">Not modelled (current estimator uses ₦450,000 sea / ₦260,000 air plus 1% of CIF)</td>
+    <td class="prop"><strong>₦500,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-cost">COST EVIDENCE NEEDED</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Must never be applied automatically to ordinary shipments.</li><li>Must not be presented as a customs duty or government charge.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Define the shipment categories that qualify</li><li>Confirm who authorises the fee</li><li>Confirm what coordination includes</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Consultation" data-status="READY FOR OWNER REVIEW" data-text="bus-001 basic business consultation business consultation">
+    <td class="id">BUS-001</td>
+    <td><div class="svc">Basic business consultation</div><div class="cat">Business Consultation</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td>session</td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>No current code location; new price surface required.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm session length</li><li>Confirm deliverables and follow-up</li><li>Confirm whether online has a different rate</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Consultation" data-status="READY FOR OWNER REVIEW" data-text="bus-002 business plan preparation business consultation">
+    <td class="id">BUS-002</td>
+    <td><div class="svc">Business plan preparation</div><div class="cat">Business Consultation</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td>plan</td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>₦20,000 for a full business plan is far below the ₦150,000 proposal price; confirm the scope difference is intentional.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm page count and financial-model depth</li><li>Confirm revision rounds</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Consultation" data-status="READY FOR OWNER REVIEW" data-text="bus-003 importation advisory business consultation">
+    <td class="id">BUS-003</td>
+    <td><div class="svc">Importation advisory</div><div class="cat">Business Consultation</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td>session</td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Duplicate-name risk with IMP-006 at the same price.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm whether this is distinct from IMP-006</li><li>If distinct, state the different deliverable</li><li>Confirm session length</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Consultation" data-status="READY FOR OWNER REVIEW" data-text="bus-004 business documents / proposal preparation business consultation">
+    <td class="id">BUS-004</td>
+    <td><div class="svc">Business documents / proposal preparation</div><div class="cat">Business Consultation</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><strong>₦150,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>7.5x the business-plan price with no stated scope difference.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per document or per project)</li><li>Confirm page count and revision rounds</li><li>Confirm the boundary with BUS-002</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Business Consultation" data-status="DRAFT" data-text="bus-005 online consultation business consultation">
+    <td class="id">BUS-005</td>
+    <td><div class="svc">Online consultation</div><div class="cat">Business Consultation</div></td>
+    <td class="now">Not priced</td>
+    <td class="prop"><span class="missing">OWNER PRICE REQUIRED</span></td>
+    <td>session</td>
+    <td><span class="badge b-draft">DRAFT</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Price deliberately blank. It must not default to ₦20,000.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Owner must supply a price different from the standard consultation rate</li><li>Confirm session length and platform</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-001 business card design/printing printing &amp; branding">
+    <td class="id">PRT-001</td>
+    <td><div class="svc">Business card design/printing</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦500</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>₦500 cannot be a per-card price for a normal run; the unit is essential.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per card, pack or design)</li><li>Confirm whether design and printing are both included</li><li>Confirm minimum quantity</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-002 flyer design/printing printing &amp; branding">
+    <td class="id">PRT-002</td>
+    <td><div class="svc">Flyer design/printing</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦200</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Unit is unconfirmed and the price is below typical production cost.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per flyer, pack or design)</li><li>Confirm design/print split</li><li>Confirm minimum quantity</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-003 poster design/printing printing &amp; branding">
+    <td class="id">PRT-003</td>
+    <td><div class="svc">Poster design/printing</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦1,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Size drives cost; a flat starting price needs a size assumption.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit and standard size</li><li>Confirm design/print split</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-004 banner design/printing printing &amp; branding">
+    <td class="id">PRT-004</td>
+    <td><div class="svc">Banner design/printing</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦1,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Banner pricing is normally per square metre; ₦1,000 is a starting reference only.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per m² or per banner)</li><li>Confirm standard size</li><li>Confirm design/print split</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-005 branded t-shirt printing &amp; branding">
+    <td class="id">PRT-005</td>
+    <td><div class="svc">Branded T-shirt</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦2,500</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Garment and print costs are not recorded.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per shirt)</li><li>Confirm garment quality and print method</li><li>Confirm minimum quantity</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-006 logo design printing &amp; branding">
+    <td class="id">PRT-006</td>
+    <td><div class="svc">Logo design</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Overlaps with WEB-005 brand kit at ₦50,000; confirm the difference in deliverables.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per logo)</li><li>Confirm concept count and revisions</li><li>Confirm file formats delivered</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Printing &amp; Branding" data-status="READY FOR OWNER REVIEW" data-text="prt-007 large-format printing printing &amp; branding">
+    <td class="id">PRT-007</td>
+    <td><div class="svc">Large-format printing</div><div class="cat">Printing &amp; Branding</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Large-format pricing is area-based; a flat starting price needs a size assumption.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per m² or per job)</li><li>Confirm material and size included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-001 typing computer services &amp; cyber café">
+    <td class="id">CYB-001</td>
+    <td><div class="svc">Typing</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦500</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Unit is essential; a long document at ₦500 would be loss-making.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per page or per document)</li><li>Confirm page length assumption</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-002 black-and-white printing / photocopying computer services &amp; cyber café">
+    <td class="id">CYB-002</td>
+    <td><div class="svc">Black-and-white printing / photocopying</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦300</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Per-side versus per-sheet changes the effective price.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per page or per side)</li><li>Confirm paper size</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-003 colour printing computer services &amp; cyber café">
+    <td class="id">CYB-003</td>
+    <td><div class="svc">Colour printing</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦500</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Ink coverage drives cost; state the assumption.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per page or per side)</li><li>Confirm coverage assumption</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-004 scanning computer services &amp; cyber café">
+    <td class="id">CYB-004</td>
+    <td><div class="svc">Scanning</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦500</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Unit is unconfirmed.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per page or per document)</li><li>Confirm file delivery method</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-005 internet / computer use computer services &amp; cyber café">
+    <td class="id">CYB-005</td>
+    <td><div class="svc">Internet / computer use</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦2,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Hour versus session changes the effective rate materially.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per hour or per session)</li><li>Confirm session length</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-006 online registration assistance computer services &amp; cyber café">
+    <td class="id">CYB-006</td>
+    <td><div class="svc">Online registration assistance</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦3,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Must be broken down separately from official fees.</li><li>Potential overlap with CAC packages if used for business registration.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per application)</li><li>Confirm which registrations are covered</li><li>Confirm official fees are always separate</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Computer Services &amp; Cyber Café" data-status="READY FOR OWNER REVIEW" data-text="cyb-007 cv preparation computer services &amp; cyber café">
+    <td class="id">CYB-007</td>
+    <td><div class="svc">CV preparation</div><div class="cat">Computer Services &amp; Cyber Café</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦5,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>No current code location.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per CV)</li><li>Confirm revision rounds</li><li>Confirm whether a cover letter is included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Interior Design &amp; Décor" data-status="READY FOR OWNER REVIEW" data-text="int-001 interior design consultation interior design &amp; décor">
+    <td class="id">INT-001</td>
+    <td><div class="svc">Interior design consultation</div><div class="cat">Interior Design &amp; Décor</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦10,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Third-party purchases must remain separate.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per session or per room)</li><li>Confirm deliverables</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Interior Design &amp; Décor" data-status="READY FOR OWNER REVIEW" data-text="int-002 space planning / layout design interior design &amp; décor">
+    <td class="id">INT-002</td>
+    <td><div class="svc">Space planning / layout design</div><div class="cat">Interior Design &amp; Décor</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦10,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>May be bundled into a design package; avoid charging twice.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per room or per project)</li><li>Confirm revision rounds</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Interior Design &amp; Décor" data-status="READY FOR OWNER REVIEW" data-text="int-003 3d interior visualisation / rendering interior design &amp; décor">
+    <td class="id">INT-003</td>
+    <td><div class="svc">3D interior visualisation / rendering</div><div class="cat">Interior Design &amp; Décor</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Render count drives effort; a flat price needs a view limit.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per render or per room)</li><li>Confirm number of views and revisions included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Interior Design &amp; Décor" data-status="READY FOR OWNER REVIEW" data-text="int-004 interior installation / project coordination interior design &amp; décor">
+    <td class="id">INT-004</td>
+    <td><div class="svc">Interior installation / project coordination</div><div class="cat">Interior Design &amp; Décor</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Overlaps with PRJ-001; do not charge both for the same work.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per project or per visit)</li><li>Confirm scope versus PRJ-001 project supervision</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Interior Design &amp; Décor" data-status="READY FOR OWNER REVIEW" data-text="int-005 wall décor / feature-wall design interior design &amp; décor">
+    <td class="id">INT-005</td>
+    <td><div class="svc">Wall décor / feature-wall design</div><div class="cat">Interior Design &amp; Décor</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Distinct from epoxy wall finishes; avoid charging both for the same surface.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per wall or per design)</li><li>Confirm whether installation is included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Project Supervision &amp; Procurement" data-status="READY FOR OWNER REVIEW" data-text="prj-001 project supervision project supervision &amp; procurement">
+    <td class="id">PRJ-001</td>
+    <td><div class="svc">Project supervision</div><div class="cat">Project Supervision &amp; Procurement</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>A project can run for months; ₦50,000 needs a time basis.</li><li>Overlaps with INT-004 coordination.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per day, visit, report or project)</li><li>Confirm duration covered</li><li>Confirm travel treatment</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Project Supervision &amp; Procurement" data-status="READY FOR OWNER REVIEW" data-text="prj-002 procurement coordination project supervision &amp; procurement">
+    <td class="id">PRJ-002</td>
+    <td><div class="svc">Procurement coordination</div><div class="cat">Project Supervision &amp; Procurement</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Third-party goods and delivery must remain separate.</li><li>May overlap with IMP-001 sourcing.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per order or per project)</li><li>Confirm percentage or flat model</li><li>Confirm supplier payment handling</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Project Supervision &amp; Procurement" data-status="READY FOR OWNER REVIEW" data-text="prj-003 feasibility study project supervision &amp; procurement">
+    <td class="id">PRJ-003</td>
+    <td><div class="svc">Feasibility study</div><div class="cat">Project Supervision &amp; Procurement</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>A genuine feasibility study can exceed ₦50,000 in staff time.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per study)</li><li>Confirm report depth and site visits included</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Project Supervision &amp; Procurement" data-status="READY FOR OWNER REVIEW" data-text="prj-004 project planning / scheduling project supervision &amp; procurement">
+    <td class="id">PRJ-004</td>
+    <td><div class="svc">Project planning / scheduling</div><div class="cat">Project Supervision &amp; Procurement</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦50,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Scope depends on project size and duration.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per project)</li><li>Confirm deliverable format</li></ul>
+      </details>
+    </td>
+  </tr><tr data-cat="Project Supervision &amp; Procurement" data-status="READY FOR OWNER REVIEW" data-text="prj-005 site visit / inspection project supervision &amp; procurement">
+    <td class="id">PRJ-005</td>
+    <td><div class="svc">Site visit / inspection</div><div class="cat">Project Supervision &amp; Procurement</div></td>
+    <td class="now">Not displayed</td>
+    <td class="prop"><strong>₦20,000</strong></td>
+    <td><span class="warn">unconfirmed</span></td>
+    <td><span class="badge b-ready">READY FOR OWNER REVIEW</span></td>
+    <td class="notes">
+      <details><summary>Notes &amp; questions</summary>
+        <ul><li>Travel is excluded but not priced; do not invent a travel fee.</li></ul>
+        <div class="qtitle">Owner confirmation</div>
+        <ul><li>Confirm unit (per visit)</li><li>Confirm travel treatment</li><li>Confirm report deliverable</li></ul>
+      </details>
+    </td>
+  </tr></tbody>
+  </table>
+</main>
+<footer>
+  Generated from <code>pricing/drafts/proposed-prices.json</code>. This page is static and is not part of the website build.
+  Prices are reproduced exactly from the owner register and remain unapproved until signed off service by service.
+</footer>
+<script>
+  const q = document.getElementById('q');
+  const cat = document.getElementById('cat');
+  const stat = document.getElementById('stat');
+  const count = document.getElementById('count');
+  const rows = [...document.querySelectorAll('#rows tr')];
+  function apply() {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    for (const row of rows) {
+      const okText = !term || row.dataset.text.includes(term);
+      const okCat = !cat.value || row.dataset.cat === cat.value;
+      const okStat = !stat.value || row.dataset.status === stat.value;
+      const ok = okText && okCat && okStat;
+      row.classList.toggle('hidden', !ok);
+      if (ok) shown++;
+    }
+    count.textContent = shown + ' of ' + rows.length + ' shown';
+  }
+  q.addEventListener('input', apply);
+  cat.addEventListener('change', apply);
+  stat.addEventListener('change', apply);
+  apply();
+</script>
+</body>
+</html>

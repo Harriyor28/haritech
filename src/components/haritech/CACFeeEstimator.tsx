@@ -5,10 +5,16 @@ import {
   ArrowRight, MessageCircle, CheckCircle
 } from 'lucide-react';
 import { getWhatsAppUrl } from '../../utils/haritechContent';
+import { priceOf, EXPRESS_ID, STAMP_NGN, COURIER_NGN } from '../../config/pricing';
+import { formatNaira } from '../../utils/money';
 
 /* ── CAC Registration Fee Estimator ─────────────────────────────────────
    Interactive tool for estimating Nigerian CAC registration costs and
-   turnaround time across all major entity types.                       */
+   turnaround time across all major entity types.
+
+   Package totals come from src/config/pricing.ts. Each package already
+   includes the official CAC fee and the ₦20,000 assistance fee, so neither
+   is added again. The exact official-fee split is confirmed at quotation. */
 
 type EntityType = 'bn' | 'llc' | 'llc_foreign' | 'cbn_mfb' | 'ngo' | 'trustee';
 type Urgency = 'standard' | 'express';
@@ -16,101 +22,114 @@ type Urgency = 'standard' | 'express';
 interface EntitySpec {
   label: string;
   description: string;
-  govFeeNgn: number;        // Official CAC government filing fee
-  serviceFeeNgn: number;    // Haritech professional service fee
+  packageNgn: number;       // All-in package total (official fee + assistance)
   standardDays: number;
   expressDays: number;
   includes: string[];
+  excludes: string[];
   extraDocs?: string[];
+  packageNote: string;
 }
+
+const PACKAGE_NOTE =
+  'The official CAC fee and the ₦20,000 Haritech assistance fee are included. The exact fee split is confirmed in your quotation.';
 
 const ENTITIES: Record<EntityType, EntitySpec> = {
   bn: {
     label: 'Business Name (BN)',
     description: 'Sole traders, partnerships, small businesses',
-    govFeeNgn: 10_000,
-    serviceFeeNgn: 25_000,
+    packageNgn: priceOf('CAC-001'),
     standardDays: 5,
     expressDays: 2,
     includes: [
       'Name availability search', 'CAC-BN1 form preparation', 'Proprietor(s) data capture',
-      'Certificate of Registration', 'Certified True Copy', 'Business name stamp advisory'
+      'Certificate of Registration', 'Certified True Copy', 'Business name stamp advisory',
+      'TIN assistance where applicable',
     ],
+    excludes: ['SCUML charges', 'Stamp and courier are optional add-ons'],
+    packageNote: PACKAGE_NOTE,
   },
   llc: {
     label: 'Limited Liability Company (LLC)',
     description: 'Private companies limited by shares (RC number)',
-    govFeeNgn: 30_000,
-    serviceFeeNgn: 65_000,
+    packageNgn: priceOf('CAC-002'),
     standardDays: 10,
     expressDays: 5,
     includes: [
       'Name search & reservation', 'MEMART drafting', 'CAC 1.1 / CAC 2 / CAC 7 preparation',
       'Director & shareholder data capture', 'Certificate of Incorporation',
-      'Certified True Copy of MEMART', 'Company seal advisory'
+      'Certified True Copy of MEMART', 'Company seal advisory',
+      'TIN assistance where applicable',
     ],
+    excludes: ['SCUML charges', 'Share capital above the standard package'],
+    packageNote: PACKAGE_NOTE,
   },
   llc_foreign: {
     label: 'Foreign Company Registration',
     description: 'Foreign company establishing Nigerian presence',
-    govFeeNgn: 90_000,
-    serviceFeeNgn: 150_000,
+    packageNgn: priceOf('CAC-005'),
     standardDays: 20,
     expressDays: 10,
     includes: [
       'Name availability check', 'Form CAC / A1 — A4 preparation', 'Notarization coordination',
-      'Registered office establishment', 'Certificate of Registration',
-      'Regulatory filing assistance (NIPC, NESREA if applicable)'
+      'Registered office guidance', 'Certificate of Registration',
+      'Regulatory filing assistance (NIPC, NESREA if applicable)',
     ],
-    extraDocs: ['Certified copy of parent company constitution', 'Board resolution (notarized)', 'Proof of registered office abroad']
+    excludes: [
+      'Notarisation disbursements', 'Registered office rent',
+      'NIPC and NESREA official fees', 'SCUML charges',
+    ],
+    extraDocs: ['Certified copy of parent company constitution', 'Board resolution (notarized)', 'Proof of registered office abroad'],
+    packageNote: PACKAGE_NOTE + ' Eligibility is confirmed before payment.',
   },
   cbn_mfb: {
     label: 'Microfinance Bank (MFB)',
     description: 'CAC + CBN licence path for MFBs',
-    govFeeNgn: 50_000,
-    serviceFeeNgn: 250_000,
+    packageNgn: 300_000,
     standardDays: 45,
     expressDays: 30,
     includes: [
       'Corporate name reservation', 'CAC incorporation (LLC)', 'CBN Approval-in-Principle filing',
       'Business plan & policy document templates', 'Final licence application compilation',
-      'Compliance advisory & board resolution drafting'
+      'Compliance advisory & board resolution drafting',
     ],
-    extraDocs: ['₦200M minimum paid-up capital (Unity Bank) or ₦1B (State)']
+    excludes: ['CBN licence fees', 'Statutory capital requirements'],
+    extraDocs: ['₦200M minimum paid-up capital (Unity Bank) or ₦1B (State)'],
+    packageNote:
+      'This MFB figure is retained from the previous fee schedule and is not part of the 2026 price register. CBN licence fees and statutory capital are separate.',
   },
   ngo: {
     label: 'Non-Governmental Organisation (NGO)',
     description: 'Incorporated Trustees / NGO without share capital',
-    govFeeNgn: 20_000,
-    serviceFeeNgn: 55_000,
+    packageNgn: priceOf('CAC-003'),
     standardDays: 14,
     expressDays: 7,
     includes: [
       'Name availability search', 'CAC IT 1 form preparation', 'Trustee data capture',
-      'Constitution / rulebook drafting', 'Newspaper publication (mandatory)',
-      'Certificate of Registration of Trustees'
+      'Constitution / rulebook drafting', 'Certificate of Registration of Trustees',
+      'TIN assistance where applicable',
     ],
-    extraDocs: ['Newspaper publication (we arrange)']
+    excludes: ['Newspaper publication (charged separately)', 'SCUML charges'],
+    extraDocs: ['Newspaper publication (we arrange it; charged separately)'],
+    packageNote: PACKAGE_NOTE,
   },
   trustee: {
     label: 'Incorporated Trustees / Foundation',
     description: 'Religious bodies, clubs, foundations, associations',
-    govFeeNgn: 20_000,
-    serviceFeeNgn: 50_000,
+    packageNgn: priceOf('CAC-004'),
     standardDays: 14,
     expressDays: 7,
     includes: [
       'Name search & approval', 'Constitution drafting', 'Trustee data verification',
-      'CAC filing & lodgement', 'Certificate of Registration', 'Certified MEMART'
+      'CAC filing & lodgement', 'Certificate of Registration', 'Certified MEMART',
+      'TIN assistance where applicable',
     ],
+    excludes: ['Newspaper publication where required', 'SCUML charges'],
+    packageNote: PACKAGE_NOTE,
   },
 };
 
-function fmt(n: number) {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000)     return `₦${(n / 1_000).toFixed(0)},000`;
-  return `₦${n.toFixed(0)}`;
-}
+const EXPRESS_FEE = priceOf(EXPRESS_ID);
 
 const CACFeeEstimator: React.FC = () => {
   const [entity, setEntity] = useState<EntityType>('llc');
@@ -122,19 +141,18 @@ const CACFeeEstimator: React.FC = () => {
   const spec = ENTITIES[entity];
 
   const result = useMemo(() => {
-    const govFee      = spec.govFeeNgn;
-    const serviceFee  = spec.serviceFeeNgn;
-    const urgencyFee  = urgency === 'express' ? Math.round(serviceFee * 0.4) : 0;
-    const stampFee    = addStamp  ? 5_000  : 0;
-    const postalFee   = addPostal ? 8_000  : 0;
-    const total       = govFee + serviceFee + urgencyFee + stampFee + postalFee;
+    const packageFee  = spec.packageNgn;
+    const urgencyFee  = urgency === 'express' ? EXPRESS_FEE : 0;
+    const stampFee    = addStamp  ? STAMP_NGN  : 0;
+    const postalFee   = addPostal ? COURIER_NGN : 0;
+    const total       = packageFee + urgencyFee + stampFee + postalFee;
     const days        = urgency === 'express' ? spec.expressDays : spec.standardDays;
-    return { govFee, serviceFee, urgencyFee, stampFee, postalFee, total, days };
+    return { packageFee, urgencyFee, stampFee, postalFee, total, days };
   }, [spec, urgency, addStamp, addPostal]);
 
   const waMsg = `Hello Haritech Registry Desk! I used the CAC Fee Estimator.\n\n` +
     `Entity Type: ${spec.label}\nProcessing: ${urgency === 'express' ? 'Express' : 'Standard'}\n` +
-    `Estimated Total: ${fmt(result.total)}\nTimeline: ~${result.days} working days\n\n` +
+    `Estimated Total: ${formatNaira(result.total)}\nTimeline: ~${result.days} working days\n\n` +
     `Please guide me through the next steps.`;
 
   return (
@@ -198,7 +216,7 @@ const CACFeeEstimator: React.FC = () => {
                           <div className="text-[#C8D5C6] text-xs">{s.description}</div>
                         </div>
                         <div className="ml-auto text-right">
-                          <div className="text-[#C9A227] font-bold text-sm">{fmt(s.govFeeNgn + s.serviceFeeNgn)}</div>
+                          <div className="text-[#C9A227] font-bold text-sm">{formatNaira(s.packageNgn)}</div>
                           <div className="text-[#C8D5C6] text-xs">{s.standardDays}d</div>
                         </div>
                       </button>
@@ -232,8 +250,8 @@ const CACFeeEstimator: React.FC = () => {
                   <label className="block text-sm font-semibold text-[#C8D5C6] mb-3">Optional Add-ons</label>
                   <div className="space-y-2">
                     {[
-                      { key: 'stamp', label: 'Company Rubber Stamp', fee: 5_000, value: addStamp, setter: setAddStamp },
-                      { key: 'postal', label: 'Nationwide Courier Delivery', fee: 8_000, value: addPostal, setter: setAddPostal },
+                      { key: 'stamp', label: 'Company Rubber Stamp', fee: STAMP_NGN, value: addStamp, setter: setAddStamp },
+                      { key: 'postal', label: 'Nationwide Courier Delivery', fee: COURIER_NGN, value: addPostal, setter: setAddPostal },
                     ].map(a => (
                       <button
                         key={a.key}
@@ -248,7 +266,7 @@ const CACFeeEstimator: React.FC = () => {
                           {a.value && <CheckCircle className="h-3 w-3 text-[#0D3018]" />}
                         </div>
                         <span className="flex-1 text-left">{a.label}</span>
-                        <span className="font-bold">{fmt(a.fee)}</span>
+                        <span className="font-bold">{formatNaira(a.fee)}</span>
                       </button>
                     ))}
                   </div>
@@ -280,22 +298,47 @@ const CACFeeEstimator: React.FC = () => {
                         <div className="font-['Playfair_Display',serif] text-[#C9A227] font-bold mb-4 text-sm tracking-wider uppercase">Cost Breakdown</div>
                         <div className="space-y-2 text-sm">
                           {[
-                            { label: 'CAC Government Filing Fee', value: result.govFee },
-                            { label: 'Haritech Professional Service', value: result.serviceFee },
-                            urgency === 'express' && { label: 'Express Processing Surcharge', value: result.urgencyFee },
-                            addStamp && { label: 'Company Rubber Stamp', value: result.stampFee },
-                            addPostal && { label: 'Courier Delivery', value: result.postalFee },
-                          ].filter(Boolean).map((item: any, i) => (
+                            { label: 'Registration package', value: result.packageFee as number | string },
+                            { label: 'Official CAC fee', value: 'Included' as number | string },
+                            { label: 'Haritech assistance fee', value: 'Included' as number | string },
+                            ...(urgency === 'express'
+                              ? [{ label: 'Express processing add-on', value: result.urgencyFee as number | string }]
+                              : []),
+                            ...(addStamp
+                              ? [{ label: 'Company Rubber Stamp', value: result.stampFee as number | string }]
+                              : []),
+                            ...(addPostal
+                              ? [{ label: 'Courier Delivery', value: result.postalFee as number | string }]
+                              : []),
+                          ].map((item, i) => (
                             <div key={i} className="flex justify-between text-[#C8D5C6]">
                               <span>{item.label}</span>
-                              <span className="font-semibold text-[#F7F2E6]">{fmt(item.value)}</span>
+                              <span className="font-semibold text-[#F7F2E6]">
+                                {typeof item.value === 'number' ? formatNaira(item.value) : item.value}
+                              </span>
                             </div>
                           ))}
                           <div className="border-t border-[#C9A227]/30 pt-3 mt-3 flex justify-between">
                             <span className="font-bold text-[#F7F2E6] font-['Playfair_Display',serif]">Total Estimate</span>
-                            <span className="text-xl font-black text-[#C9A227]">{fmt(result.total)}</span>
+                            <span className="text-xl font-black text-[#C9A227]">{formatNaira(result.total)}</span>
                           </div>
                         </div>
+                        <p className="mt-4 text-[11px] leading-relaxed text-[#C8D5C6]/80">
+                          {spec.packageNote}
+                        </p>
+                      </div>
+
+                      {/* Not included */}
+                      <div className="border border-[#C9A227]/20 bg-[#074D2A]/20 p-4">
+                        <div className="text-xs font-bold text-[#C9A227] uppercase tracking-wider mb-2">Not Included</div>
+                        <ul className="space-y-1 text-xs text-[#C8D5C6]">
+                          {spec.excludes.map((item, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <span className="text-[#C9A227]">—</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
 
                       {/* Timeline */}

@@ -17,7 +17,7 @@ import type { PropertyHubContent } from '../../utils/haritechProperty';
    The public operations page: every live engagement, the delivery line it
    belongs to, the phase it sits in, the person accountable for it and a
    health score derived from the plan — not from opinion. Clients can then
-   build their own indicative delivery plan and send it to us.
+   build their own delivery plan and send it to us.
 
    Health is computed: remaining work is compared with remaining calendar
    time, so a project that is 40% done with 20% of its window left reads as
@@ -459,10 +459,10 @@ const ProjectManagement: React.FC = () => {
   }, [stages, planScope, planUrgency, planStart, planCategory, categoryById]);
 
   const planMessage =
-    `Hello Haritech! I built an indicative delivery plan on your site.\n\n` +
+    `Hello Haritech! I built a draft delivery plan on your site.\n\n` +
     `Delivery line: ${plan.categoryName}\n` +
     `Scope: ${planScope} | Pace: ${planUrgency} | Start: ${shortDate(planStart)}\n` +
-    `Indicative duration: ${plan.weeks} weeks (${plan.totalDays} working days), finishing ${shortDate(new Date(plan.end).toISOString())}\n` +
+    `Estimated duration: ${plan.weeks} weeks (${plan.totalDays} working days), finishing ${shortDate(new Date(plan.end).toISOString())}\n` +
     `Phases: ${plan.rows.map(row => `${row.name} (${row.days || 'ongoing'}d)`).join(' → ')}\n` +
     `Suggested crew: ${plan.crew.join(', ')}\n\n` +
     `Please review this plan with me and confirm a fixed quotation.`;
@@ -489,21 +489,16 @@ const ProjectManagement: React.FC = () => {
               <h1 className="mb-4 font-syne text-2xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
                 Practical Project Support, <span className="text-white drop-shadow-[0_0_25px_rgba(6,182,212,0.35)]">Planned and Tracked.</span>
               </h1>
-              <p className="mx-auto mb-4 max-w-2xl text-xs font-normal leading-relaxed text-slate-400 sm:text-sm md:text-base">
+              <p className="mx-auto mb-7 max-w-2xl text-xs font-normal leading-relaxed text-slate-400 sm:text-sm md:text-base">
                 Planning, scheduling, budgeting support, coordination, progress reporting and documentation for projects,
                 plus scheduled monitoring visits and written condition reports for property owners who are not on site.
-                The panels below are reference models showing how a project is structured — they are illustrative, not live
-                client records.
-              </p>
-              <p className="mb-7 font-mono text-[10px] uppercase tracking-wider text-slate-600">
-                Reference models only · no live client data, no claimed licences
               </p>
               <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <Link to="/haritech/request-quote?service=Project%20Management" className="btn-primary text-xs sm:text-sm">
                   <Zap className="h-4 w-4" /> Request a Proposal
                 </Link>
                 <button onClick={() => selectModule('construction')} className="btn-secondary text-xs sm:text-sm">
-                  <HardHat className="h-4 w-4 text-cyan-400" /> See the Reference Models
+                  <HardHat className="h-4 w-4 text-cyan-400" /> See the Models
                 </button>
                 <a href={getWhatsAppUrl('Hello Haritech, I would like to discuss project planning and coordination.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm">
                   <MessageCircle className="h-4 w-4 text-slate-300" /> Discuss a Project
@@ -546,17 +541,6 @@ const ProjectManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Scope disclaimer for every reference model shown below */}
-      <div className="border-b border-white/5 bg-amber-500/5">
-        <div className="container mx-auto px-5 py-2.5 sm:px-6">
-          <p className="text-center text-[10px] leading-relaxed text-amber-100/70 sm:text-[11px]">
-            These are planning and reporting models, not a live client platform. Haritech is not presented as a licensed
-            construction, engineering, surveying or property-management firm; where a project needs those services we say
-            so and coordinate with the appropriate professionals.
-          </p>
-        </div>
-      </div>
-
       {activeModule === 'overview' ? (
         <>
       {/* Telemetry */}
@@ -565,10 +549,10 @@ const ProjectManagement: React.FC = () => {
           <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr] lg:items-center">
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {[
-                { label: 'Reference plans shown', value: String(stats.total), icon: ClipboardList, tone: 'text-cyan-400' },
-                { label: 'Illustrative (not live)', value: String(stats.live), icon: Activity, tone: 'text-amber-400' },
-                { label: 'Example plan progress', value: `${stats.confidence}%`, icon: Gauge, tone: 'text-emerald-400' },
-                { label: 'Named on the example', value: String(stats.members), icon: Users, tone: 'text-indigo-400' },
+                { label: 'Plans tracked', value: String(stats.total), icon: ClipboardList, tone: 'text-cyan-400' },
+                { label: 'Active plans', value: String(stats.live), icon: Activity, tone: 'text-amber-400' },
+                { label: 'Average progress', value: `${stats.confidence}%`, icon: Gauge, tone: 'text-emerald-400' },
+                { label: 'Team members', value: String(stats.members), icon: Users, tone: 'text-indigo-400' },
               ].map((tile, i) => {
                 const Icon = tile.icon;
                 return (
@@ -1005,7 +989,7 @@ const ProjectManagement: React.FC = () => {
                     <MessageCircle className="h-4 w-4" /> Send this plan for a fixed quote
                   </a>
                   <p className="text-center text-[10px] leading-relaxed text-slate-600">
-                    Indicative only — final durations are confirmed after the discovery call and written into the scope of work.
+                    Final durations are confirmed after the discovery call and written into the scope of work.
                   </p>
                 </div>
               </div>

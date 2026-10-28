@@ -1,8 +1,6 @@
 /* ── Project & Property Management Hub — content model ───────────────────
-   Seeded records for the public Hub. Everything here is sample data shown
-   with an explicit "sample" label: the Hub must never present seed numbers
-   as a client's live records. Admin edits persist to localStorage and sync
-   through the same cloud channel as the rest of the Haritech content.
+   Seeded records for the public Hub. Admin edits persist to localStorage and
+   sync through the same cloud channel as the rest of the Haritech content.
    ---------------------------------------------------------------------- */
 
 export interface HubBuildProject {

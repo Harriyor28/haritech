@@ -109,7 +109,7 @@ const ThreeDEpoxy: React.FC = () => {
                 Try <span className={ACCENT}>Finishes</span> Before You Commit
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto mt-2 text-xs sm:text-sm">
-                Preview palette combinations for a room and use them as a starting point for a conversation. Palettes are illustrative — site conditions decide what can actually be installed.
+                Preview palette combinations for a room and use them as a starting point for a conversation.
               </p>
             </div>
           </FadeInView>

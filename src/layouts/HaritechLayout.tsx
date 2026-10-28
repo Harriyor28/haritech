@@ -37,6 +37,7 @@ const navGroups: NavGroup[] = [
       { label: 'About', path: '/haritech/about', icon: FileText },
       { label: 'What We Do', path: '/haritech/what-we-do', icon: Globe },
       { label: 'Our Services', path: '/haritech/services', icon: Monitor },
+      { label: 'Price Guide', path: '/haritech/price-guide', icon: Calculator },
       { label: 'Industries', path: '/haritech/industries', icon: Layout },
     ],
   },

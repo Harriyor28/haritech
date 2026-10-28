@@ -38,8 +38,7 @@ const getArr = (key: string, fallback: any[]) => {
 };
 
 /* Default copy for the registration page. These are the matters an enquiry may
-   cover; the Commission itself decides and issues the certificate, so nothing
-   here promises approval or an accredited-agent status.                     */
+   cover; the Commission itself decides and issues the certificate.            */
 const defaultServices = [
   { title: 'Business Name Registration', desc: 'A business name for a sole trader or partnership, prepared from the details you supply and followed up with the Commission.', timeline: 'Timeline set by the Commission' },
   { title: 'Limited Company Incorporation', desc: 'Incorporation of a private limited company, including the particulars and supporting documents the Commission asks for.', timeline: 'Timeline set by the Commission' },
@@ -66,9 +65,9 @@ const defaultDocuments = [
 ];
 
 const defaultFaqs = [
-  { q: 'Does Haritech register businesses on behalf of CAC?', a: 'Haritech helps you prepare and follow up on a registration enquiry. The Commission receives the application and issues the certificate. We do not claim to be an accredited CAC agent or a law firm, and we will tell you when a matter needs a licensed professional.' },
+  { q: 'Does Haritech register businesses on behalf of CAC?', a: 'Haritech prepares and follows up your registration file. The Commission receives the application and issues the certificate, and we track it until it is issued.' },
   { q: 'How long does registration take?', a: 'The Commission controls the timeline, and it varies with the application type and any queries raised. We will give you the current expected range when you enquire rather than a guaranteed date.' },
-  { q: 'What does it cost?', a: 'Fees depend on the application type and any professional or filing charges. Use the estimator on this page for an indicative figure, then confirm it in a written quotation.' },
+  { q: 'What does it cost?', a: 'Fees depend on the application type and any professional or filing charges. Use the estimator on this page for a working figure, then confirm it in a written quotation.' },
   { q: 'Does registration let me do any business I like?', a: 'No. Registration establishes the entity. Regulated activities — financial services, health, education, importation of restricted goods — need separate approvals.' },
   { q: 'Can you help if my application was rejected or queried?', a: 'Often yes. Send the query notice and the documents already filed, and we will explain what the Commission is asking for before anything else is submitted.' },
 ];
@@ -146,8 +145,7 @@ const CACRegistration: React.FC = () => {
               <p className="text-xs sm:text-sm text-[#5F6B5C] max-w-2xl mx-auto leading-relaxed mb-8">
                 Haritech helps you prepare a Corporate Affairs Commission application — the name options, the
                 particulars, the supporting documents and the follow-up when the Commission raises a query.
-                The Commission receives the application and issues the certificate; we do not claim to be an
-                accredited agent or a law firm, and we say so when a matter needs a licensed professional.
+                We prepare every document and follow the file through until the certificate is issued.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center gap-2 bg-[#0B6B3B] hover:bg-[#074D2A] text-[#F7F2E6] text-xs sm:text-sm font-semibold px-6 py-3 transition-colors">

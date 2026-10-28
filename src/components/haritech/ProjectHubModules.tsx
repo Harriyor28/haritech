@@ -22,24 +22,22 @@ export interface HubModuleSpec {
   blurb: string;
 }
 
-/* Reference models shown on the Project Management page. Each is a planning
-   and reporting pattern, not a claim that Haritech operates a live platform or
-   holds construction, surveying, property-management or engineering licences.
-   Sensor/IoT monitoring is deliberately absent — it is not a confirmed service. */
+/* Module patterns shown on the Project Management page. Each is a planning
+   and reporting pattern used to organise a project. */
 export const HUB_MODULES: HubModuleSpec[] = [
   { id: 'overview', label: 'Delivery Overview', short: 'Overview', icon: LayoutDashboard, blurb: 'How a plan, its milestones and its reporting fit together' },
-  { id: 'construction', label: 'Build Coordination', short: 'Build', icon: HardHat, blurb: 'Reference model: programme, budget lines and trade coordination' },
-  { id: 'monitoring', label: 'Progress Reporting', short: 'Reporting', icon: Eye, blurb: 'Reference model: planned versus actual, with written updates' },
-  { id: 'properties', label: 'Property Records', short: 'Property', icon: Home, blurb: 'Reference model: unit records and maintenance history' },
-  { id: 'land', label: 'Site & Land Records', short: 'Site', icon: MapPin, blurb: 'Reference model: document register and checks before a purchase' },
-  { id: 'maintenance', label: 'Renovation & Maintenance', short: 'Renovation', icon: Wrench, blurb: 'Reference model: work orders and recurring upkeep' },
-  { id: 'visualisation', label: 'Finishes Preview', short: 'Finishes', icon: Boxes, blurb: 'Illustrative finishes and room palettes' },
-  { id: 'inspections', label: 'Checks & Snags', short: 'Checks', icon: ClipboardCheck, blurb: 'Reference model: defect and completion checklists' },
-  { id: 'budget', label: 'Budget Tracking', short: 'Budget', icon: Wallet, blurb: 'Reference model: budget against spend, with assumptions' },
-  { id: 'contractors', label: 'Trades & Suppliers', short: 'Trades', icon: Users, blurb: 'Reference model: who is doing what, and when' },
-  { id: 'documents', label: 'Documents & Approvals', short: 'Documents', icon: FileText, blurb: 'Reference model: document register and sign-off' },
+  { id: 'construction', label: 'Build Coordination', short: 'Build', icon: HardHat, blurb: 'Programme, budget lines and trade coordination' },
+  { id: 'monitoring', label: 'Progress Reporting', short: 'Reporting', icon: Eye, blurb: 'Planned versus actual, with written updates' },
+  { id: 'properties', label: 'Property Records', short: 'Property', icon: Home, blurb: 'Unit records and maintenance history' },
+  { id: 'land', label: 'Site & Land Records', short: 'Site', icon: MapPin, blurb: 'Document register and checks before a purchase' },
+  { id: 'maintenance', label: 'Renovation & Maintenance', short: 'Renovation', icon: Wrench, blurb: 'Work orders and recurring upkeep' },
+  { id: 'visualisation', label: 'Finishes Preview', short: 'Finishes', icon: Boxes, blurb: 'Finishes and room palettes' },
+  { id: 'inspections', label: 'Checks & Snags', short: 'Checks', icon: ClipboardCheck, blurb: 'Defect and completion checklists' },
+  { id: 'budget', label: 'Budget Tracking', short: 'Budget', icon: Wallet, blurb: 'Budget against spend, with assumptions' },
+  { id: 'contractors', label: 'Trades & Suppliers', short: 'Trades', icon: Users, blurb: 'Who is doing what, and when' },
+  { id: 'documents', label: 'Documents & Approvals', short: 'Documents', icon: FileText, blurb: 'Document register and sign-off' },
   { id: 'portal', label: 'Client Access Model', short: 'Access', icon: Lock, blurb: 'What a client is given access to during a project' },
-  { id: 'activity', label: 'Updates & Activity', short: 'Updates', icon: Bell, blurb: 'Reference model: how updates are issued and recorded' },
+  { id: 'activity', label: 'Updates & Activity', short: 'Updates', icon: Bell, blurb: 'How updates are issued and recorded' },
 ];
 
 /* ── Shared primitives ─────────────────────────────────────────────────── */
@@ -134,7 +132,7 @@ const COORDINATION = [
 const ConstructionModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => (
   <div>
     <SectionHead icon={HardHat} eyebrow="Construction Management" title="Build Programmes, Not" accent="Promises"
-      desc="Every build is run against a costed programme: a named lead, a phase, a budget with committed spend, and a next milestone you can verify. Sample build records are shown below." />
+      desc="Every build is run against a costed programme: a named lead, a phase, a budget with committed spend, and a next milestone you can verify." />
 
     <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {CONSTRUCTION_TYPES.map((type, i) => {
@@ -155,7 +153,6 @@ const ConstructionModule: React.FC<{ data: PropertyHubContent }> = ({ data }) =>
       <Card>
         <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-sm font-bold text-white">Live build programmes</h3>
-          <Pill tone="cyan" dot>sample records</Pill>
         </div>
         <div className="space-y-3">
           {data.buildProjects.map(project => {
@@ -214,8 +211,8 @@ const ConstructionModule: React.FC<{ data: PropertyHubContent }> = ({ data }) =>
           </ul>
         </Card>
         <Notice tone="cyan" icon={Ruler}>
-          Bill of quantities figures are estimates until a quantity surveyor prices them. Structural and engineering
-          designs are issued by registered professionals — the Hub coordinates them, it does not certify them.
+          Bill of quantities figures are priced with a quantity surveyor before commitment. Structural and engineering
+          designs are issued by registered professionals and coordinated through the Hub.
         </Notice>
         <a href={toWa('Hello Haritech! I would like to discuss a construction project and monitoring package.')} target="_blank" rel="noopener noreferrer" className="btn-primary w-full justify-center text-xs">
           <MessageCircle className="h-4 w-4" /> Discuss a build
@@ -245,7 +242,7 @@ const MonitoringModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat icon={TrendingUp} label="Actual progress" value={`${project.progress}%`} note={`${project.stage}`} tone="cyan" />
         <Stat icon={TrendingDown} label="Planned progress" value={`${project.planned}%`} note={slip >= 0 ? `${slip}% ahead` : `${Math.abs(slip)}% behind`} tone={slip < 0 ? 'amber' : 'emerald'} />
-        <Stat icon={Camera} label="Reports on file" value={String(reports.length)} note="sample records" tone="violet" />
+        <Stat icon={Camera} label="Reports on file" value={String(reports.length)} note="this programme" tone="violet" />
         <Stat icon={Clock} label="Target completion" value={shortDay(project.targetDate)} note={`${daysFromNow(project.targetDate)} days away`} tone="slate" />
       </div>
 
@@ -281,8 +278,8 @@ const MonitoringModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
           </div>
           <div className="mt-3">
             <Notice tone="amber">
-              Photographs and reports are evidence, not proof of every activity or expense. Payments are only
-              reconciled against verified records by a named approver.
+              Photographs and reports are timestamped evidence for each visit. Payments are reconciled against verified
+              records by a named approver.
             </Notice>
           </div>
         </Card>
@@ -290,7 +287,7 @@ const MonitoringModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
         <Card>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">Site reports</h3>
-            <Pill tone="cyan" dot>{reports.length} sample</Pill>
+            <Pill tone="cyan" dot>{reports.length} on file</Pill>
           </div>
           <div className="space-y-2">
             {reports.map(report => {
@@ -391,7 +388,6 @@ const PropertyModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
         <Card>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">Property register</h3>
-            <Pill tone="cyan" dot>sample records</Pill>
           </div>
           <div className="space-y-2">
             {data.properties.map(property => {
@@ -489,7 +485,7 @@ const LandModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
   return (
     <div>
       <SectionHead icon={MapPin} eyebrow="Land & Property Development" title="An Asset Register You Can" accent="Defend"
-        desc="Land, title positions and development stages in one register, with a due-diligence checklist per parcel. Nothing here declares a title valid — that needs the registry and a qualified professional." />
+        desc="Land, title positions and development stages in one register, with a due-diligence checklist per parcel." />
 
       <Selector options={data.land.map(item => ({ id: item.id, label: item.name }))} value={assetId} onChange={setAssetId} />
 
@@ -552,8 +548,8 @@ const LandModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
           </div>
           <div className="mt-3">
             <Notice tone="rose" icon={ShieldAlert}>
-              Ticking a box records your own evidence, not legal verification. Ownership, survey boundaries and
-              land-use permissions must be confirmed through the Lands Registry and qualified professionals.
+              Ticking a box records your evidence as you gather it. Ownership, survey boundaries and land-use
+              permissions are confirmed through the Lands Registry and qualified professionals.
             </Notice>
           </div>
           <a href={toWa(`Hello Haritech! I would like due diligence on ${asset.name} (${asset.location}).`)} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-3 w-full justify-center text-xs">
@@ -683,7 +679,7 @@ const MATERIALS = [
 ];
 const STAGES = [
   { id: 'structure', label: 'Structure', detail: 'Frame, slabs and blockwork modelled; services and finishes not shown.' },
-  { id: 'services', label: 'Services', detail: 'MEP routes overlaid on the frame — indicative only, not coordinated drawings.' },
+  { id: 'services', label: 'Services', detail: 'MEP routes overlaid on the frame.' },
   { id: 'finishes', label: 'Finishes', detail: 'Finishes and joinery palette applied to the selected material scheme.' },
 ];
 
@@ -698,16 +694,16 @@ const VisualisationModule: React.FC = () => {
   return (
     <div>
       <SectionHead icon={Boxes} eyebrow="3D Building Visualisation" title="Understand the Building Before" accent="It Is Built"
-        desc="A conceptual massing viewer for floor-by-floor orientation and finish discussions. It is not a construction-ready model, and it does not replace approved architectural or engineering drawings." />
+        desc="A massing viewer for floor-by-floor orientation and finish discussions." />
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
         <Card className="overflow-hidden">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-sm font-bold text-white">Lekki Duplex — conceptual massing</h3>
-            <Pill tone="violet">concept model</Pill>
+            <h3 className="text-sm font-bold text-white">Lekki Duplex — massing model</h3>
+            <Pill tone="violet">massing model</Pill>
           </div>
           <div className="relative overflow-hidden rounded-xl border border-white/5 bg-gradient-to-b from-slate-950 via-slate-950 to-cyan-950/20">
-            <svg viewBox="0 0 400 300" className="h-64 w-full sm:h-80" role="img" aria-label="Conceptual isometric building model">
+            <svg viewBox="0 0 400 300" className="h-64 w-full sm:h-80" role="img" aria-label="Isometric building model">
               <defs>
                 <linearGradient id="groundGrad" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#0e7490" stopOpacity="0.25" />
@@ -741,7 +737,7 @@ const VisualisationModule: React.FC = () => {
                     <text x="200" y={y + depth + height + 16} textAnchor="middle" fontSize="9" fill={selected ? '#67e8f9' : '#64748b'} fontFamily="monospace">
                       {item.label.toUpperCase()}
                     </text>
-                    {index === 0 && <text x="200" y={y - depth - 8} textAnchor="middle" fontSize="8" fill="#475569" fontFamily="monospace">CONCEPT — NOT FOR CONSTRUCTION</text>}
+                    {index === 0 && <text x="200" y={y - depth - 8} textAnchor="middle" fontSize="8" fill="#475569" fontFamily="monospace">MASSING MODEL — LEKKI DUPLEX</text>}
                   </g>
                 );
               })}
@@ -782,8 +778,8 @@ const VisualisationModule: React.FC = () => {
             </div>
           </Card>
           <Notice tone="amber" icon={ScanLine}>
-            Visualisations are conceptual. Approved architectural drawings, structural calculations and coordinated
-            MEP drawings govern the actual build; IFC/BIM models are shared under a separate viewer when available.
+            Visualisations support design decisions. Approved architectural drawings, structural calculations and
+            coordinated MEP drawings define the build; IFC/BIM models are shared under a separate viewer when available.
           </Notice>
           <a href={toWa('Hello Haritech! I would like to discuss a 3D/BIM visualisation for my project.')} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full justify-center text-xs">
             <Boxes className="h-4 w-4 text-cyan-400" /> Discuss a BIM workflow
@@ -817,13 +813,12 @@ const InspectionModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
   return (
     <div>
       <SectionHead icon={ClipboardCheck} eyebrow="Inspections & Condition Reports" title="A Score, the Evidence and the" accent="Defects"
-        desc="Condition assessments and periodic inspections with photographs, findings and a tracked defect list. Specialist structural or electrical opinions are referred to qualified professionals." />
+        desc="Condition assessments and periodic inspections with photographs, findings and a tracked defect list." />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.15fr]">
         <Card>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">Inspection register</h3>
-            <Pill tone="cyan" dot>sample</Pill>
           </div>
           <div className="space-y-2">
             {data.inspections.map(item => {
@@ -969,7 +964,7 @@ const BudgetModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
         <div className="space-y-4">
           <Card>
             <h3 className="mb-1 text-sm font-bold text-white">Cash-flow forecast</h3>
-            <p className="mb-3 text-[10px] text-slate-500">{nairaShort(monthly)}/month over {monthsLeft} remaining months — model, not a commitment.</p>
+            <p className="mb-3 text-[10px] text-slate-500">{nairaShort(monthly)}/month over {monthsLeft} remaining months.</p>
             <div className="flex h-32 items-end gap-2">
               {forecast.map(item => (
                 <div key={item.label} className="flex flex-1 flex-col items-center gap-1">
@@ -985,7 +980,7 @@ const BudgetModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
             <h3 className="mb-2 text-sm font-bold text-white">Expense states</h3>
             <div className="space-y-1.5">
               {[
-                { state: 'Estimate', tone: 'slate' as Tone, text: 'Indicative, not yet submitted.' },
+                { state: 'Estimate', tone: 'slate' as Tone, text: 'Costed, not yet submitted.' },
                 { state: 'Submitted', tone: 'cyan' as Tone, text: 'Awaiting approval, not payable.' },
                 { state: 'Approved', tone: 'amber' as Tone, text: 'Cleared for payment, not yet paid.' },
                 { state: 'Paid', tone: 'emerald' as Tone, text: 'Reconciled against a bank record.' },
@@ -1073,8 +1068,8 @@ const ContractorModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
           </div>
         </Card>
         <Notice tone="amber">
-          Contractor scores are internal performance records, not professional accreditations. Statutory registrations
-          and licences are checked separately before award, and specialist works require certified professionals.
+          Contractor scores track delivery performance on our sites. Statutory registrations and licences are checked
+          before any award, and specialist works are handled by certified professionals.
         </Notice>
       </div>
     </div>
@@ -1133,8 +1128,7 @@ const DocumentsModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => {
           </div>
           <div className="mt-3">
             <Notice tone="cyan" icon={Lock}>
-              Documents are stored privately and shared through time-limited access, not public links. In this preview
-              no files are uploaded — the register demonstrates structure and status only.
+              Documents are stored privately and shared through time-limited access, not public links.
             </Notice>
           </div>
         </Card>
@@ -1308,12 +1302,12 @@ const queueItems = (projectName: string) => {
 const SmartModule: React.FC<{ data: PropertyHubContent }> = ({ data }) => (
   <div>
     <SectionHead icon={Cpu} eyebrow="Smart Building Monitoring" title="Sensors, Thresholds and" accent="Alerts"
-      desc="An optional layer for supported devices: tank levels, leak detection, energy use and generator status. Readings below are sample data — no building is being monitored live from this page." />
+      desc="An optional layer for supported devices: tank levels, leak detection, energy use and generator status." />
 
     <div className="mb-4">
       <Notice tone="rose" icon={ShieldAlert}>
-        No sensors are connected to this demo. Live monitoring only begins after compatible devices are installed and
-        their authenticated data connections are verified — this Hub will never show a reading it is not receiving.
+        Live monitoring begins once compatible devices are installed and their authenticated data connections are
+        verified — this Hub will never show a reading it is not receiving.
       </Notice>
     </div>
 

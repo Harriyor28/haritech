@@ -10,9 +10,7 @@ interface CacModalProps {
   onClose: () => void;
 }
 
-/* Business details panel. Carries the registration details the owner confirmed.
-   It still makes no accreditation claim and does not present registration as
-   authorising regulated activities. */
+/* Business details panel. Carries the registration details the owner confirmed. */
 export const CacVerificationModal: React.FC<CacModalProps> = ({ isOpen, onClose }) => {
   const cac = getCACInfo();
   return (
@@ -103,9 +101,8 @@ export const CacVerificationModal: React.FC<CacModalProps> = ({ isOpen, onClose 
             <div className="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-2.5 mb-6">
               <Info className="h-4 w-4 text-amber-300 mt-0.5 shrink-0" />
               <p className="text-[11px] leading-relaxed text-amber-100/80">
-                A CAC certificate confirms a business is registered. It does not by itself authorise
-                regulated activities — those need separate approvals. Haritech will tell you plainly
-                which services it can handle directly and which need a licensed professional.
+                A CAC certificate confirms a business is registered. Regulated activities are handled under
+                their own separate approvals, and we help you identify them.
               </p>
             </div>
 
