@@ -182,3 +182,16 @@ where key in ('haritech-cac-services','haritech-cac-why','haritech-cac-docs','ha
 ```
 
 The application also remains correct without any writes, because unapproved content, projects, testimonials, blog posts and unconfirmed CAC rows are not displayed.
+
+## Cloud Rows Verified (after admin sign-in)
+
+The signed-in app replaced the Supabase rows. Read back through the public API: 9 rows remain (from 13).
+
+- `haritech-content` — corrected hero, story, mission and vision; phone `+2348168438328` and email kept; address corrected from the garbled `elememem port harcult` to `Port Harcourt, Rivers State` (consistent with the confirmed CAC address, "Around Port Harcourt"). Correct it in the admin contact panel if the certificate prints a fuller address.
+- `haritech-blog` — the five practical posts, stamped approved.
+- `haritech-projects` — empty array; `haritech-testimonials` — empty array.
+- `haritech-cac` — `RC 9733717`, "Haritech Exclusive Business", January 2024, Active, "Around Port Harcourt", `confirmed: true`.
+- `haritech-cac-services`, `haritech-cac-why`, `haritech-cac-docs`, `haritech-cac-faq` — deleted, and removed from local storage.
+- `haritech-settings`, `haritech-social`, `haritech-brand-logo`, `portfolio-brand-logo` — untouched.
+
+Browser checks after the write: home shows the corrected headline and the international-markets line with no fake names or projects; About carries the owner story and vision; blog lists the five new posts with no old trend articles; the CAC page shows RC 9733717 / January 2024 / Active with no "1–2 weeks" claims; contact shows the corrected address and the stored phone number. No console errors.

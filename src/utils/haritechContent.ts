@@ -25,7 +25,7 @@ import { getSupabase } from './supabaseClient';
  */
 const LEGACY_BACKUP_KEY = 'haritech-legacy-content-backup';
 const LEGACY_MIGRATION_KEY = 'haritech-content-migration';
-const LEGACY_MIGRATION_VERSION = '2';
+const LEGACY_MIGRATION_VERSION = '4';
 
 const LEGACY_SEEDED_KEYS = [
   'haritech-team',
@@ -70,8 +70,11 @@ export async function republishCorrectedHaritechContent(): Promise<void> {
       .from('site_data')
       .select('value')
       .eq('key', HARITECH_CONTENT_KEY)
-      .maybeSingle();
-    const previous = (existing?.value || {}) as Partial<HaritechSiteContent>;
+      .maybeSingle();    const previous = (existing?.value || {}) as Partial<HaritechSiteContent>;
+    // A garbled address should not be carried forward just because it exists.
+    const previousAddress = previous.address && !/harcult|elememem/i.test(previous.address)
+      ? previous.address
+      : defaultContent.address;
 
     const rows: { key: string; value: unknown }[] = [
       {
@@ -81,7 +84,7 @@ export async function republishCorrectedHaritechContent(): Promise<void> {
           email: previous.email || defaultContent.email,
           phone: previous.phone || defaultContent.phone,
           whatsapp: previous.whatsapp || defaultContent.whatsapp,
-          address: previous.address || defaultContent.address,
+          address: previousAddress,
         },
       },
       { key: HARITECH_BLOG_KEY, value: defaultBlog.map(post => ({ ...post, approved: true })) },
@@ -97,12 +100,14 @@ export async function republishCorrectedHaritechContent(): Promise<void> {
       if (error) throw error;
     }
 
-    await sb.from('site_data').delete().in('key', [
+    const legacyLists = [
       'haritech-cac-services',
       'haritech-cac-why',
       'haritech-cac-docs',
       'haritech-cac-faq',
-    ]);
+    ];
+    await sb.from('site_data').delete().in('key', legacyLists);
+    legacyLists.forEach(key => window.localStorage.removeItem(key));
 
     window.localStorage.setItem(REPUBLISH_FLAG, LEGACY_MIGRATION_VERSION);
     console.log('[content] corrected content published to Supabase');
@@ -418,7 +423,7 @@ const defaultContent: HaritechSiteContent = {
   whatsapp: '234800000000',
   email: 'info@haritech.com',
   phone: '+234 XXX XXX XXXX',
-  address: 'Nigeria',
+  address: 'Port Harcourt, Rivers State',
   stats: [
     { value: '—', label: 'Service Divisions' },
     { value: '—', label: 'Enquiries Handled' },
