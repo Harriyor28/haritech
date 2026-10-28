@@ -121,7 +121,7 @@ const HaritechFAQManager: React.FC = () => {
                         <button type="button" onClick={() => setFormData(prev => ({ ...prev, items: prev.items.filter((_, j) => j !== i) }))} className="absolute top-3 right-3 p-1 text-slate-600 hover:text-red-400 transition-colors"><X className="h-3.5 w-3.5" /></button>
                         <div>
                           <label className={labelClass}>Question {i + 1} *</label>
-                          <input type="text" required value={item.q} onChange={e => updateItem(i, 'q', e.target.value)} className={inputClass} placeholder="What is Haritech Exclusive Services?" />
+                          <input type="text" required value={item.q} onChange={e => updateItem(i, 'q', e.target.value)} className={inputClass} placeholder="What is Haritech Exclusive Business?" />
                         </div>
                         <div>
                           <label className={labelClass}>Answer *</label>

@@ -15,6 +15,7 @@ const KEY_EVENTS: Record<string, string> = {
   'haritech-service-cats': 'haritech-services-updated',
   'haritech-faq': 'haritech-faq-updated',
   'haritech-solar': 'haritech-solar-updated',
+  'haritech-importation': 'haritech-importation-updated',
   'haritech-epoxy': 'haritech-epoxy-updated',
   'haritech-whatwedo': 'haritech-whatwedo-updated',
   'haritech-social': 'haritech-social-updated',

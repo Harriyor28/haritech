@@ -27,12 +27,12 @@ const SolarEnergy: React.FC = () => {
 
   const { services: solarServices, whySolar, applications, stats } = solar;
   const processSteps = [
-    { step: '01', title: 'Consultation & Assessment', desc: 'We evaluate your energy needs, property, and goals.' },
-    { step: '02', title: 'System Design', desc: 'Our engineers design a customized solar system for you.' },
-    { step: '03', title: 'Proposal & Approval', desc: 'Receive a detailed proposal with costs and ROI projections.' },
-    { step: '04', title: 'Installation', desc: 'Professional installation by certified solar technicians.' },
-    { step: '05', title: 'Testing & Commissioning', desc: 'Thorough testing to ensure optimal performance.' },
-    { step: '06', title: 'Monitoring & Support', desc: 'Ongoing monitoring and maintenance for peak efficiency.' },
+    { step: '01', title: 'Enquiry & Load List', desc: 'You list the appliances you run, for how long, and what must stay on during an outage.' },
+    { step: '02', title: 'Assessment', desc: 'The load is totalled and your backup priorities are agreed in writing.' },
+    { step: '03', title: 'Options & Budget', desc: 'System options are compared, with costs and the assumptions behind them stated.' },
+    { step: '04', title: 'Sourcing', desc: 'Equipment specifications are reviewed before any purchase is made.' },
+    { step: '05', title: 'Installation Coordination', desc: 'Where installation is needed, it is coordinated with qualified installers and responsibilities are agreed up front.' },
+    { step: '06', title: 'Handover & Checks', desc: 'The installed system is checked and basic operating and maintenance guidance is given.' },
   ];
 
   return (
@@ -49,14 +49,14 @@ const SolarEnergy: React.FC = () => {
                 <Sun className="h-4 w-4 text-amber-400" /> Solar Energy Solutions
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight font-syne">
-                Power Your World with <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">Clean Solar Energy</span>
+                Solar Energy <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">Consultation & Guidance</span>
               </h1>
               <p className="text-xs sm:text-sm md:text-base text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed font-normal">
-                From residential rooftops to industrial solar farms — Haritech provides end-to-end solar energy solutions that cut costs, ensure energy independence, and protect the environment.
+                We start with what you actually want to power: the appliances, how long you need them to run, and your budget. From there we help you understand the size of system that would suit it, compare equipment options, and coordinate installation \u2014 and we say plainly when something falls outside what we can support.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Get Solar Quote</Link>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Sun className="h-4 w-4 text-slate-300" /> Free Consultation</a>
+                <a href={getWhatsAppUrl('Hello Haritech, I would like to discuss a solar energy requirement.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Sun className="h-4 w-4 text-slate-300" /> Discuss Your Requirement</a>
               </div>
             </FadeInView>
           </div>
@@ -86,8 +86,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Our Solar <span className="text-yellow-400">Services</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Comprehensive solar energy solutions tailored to your needs.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">What We <span className="text-yellow-400">Help With</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Sizing, equipment guidance and installation coordination — with the limits of each stage stated.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -114,8 +114,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Why Go <span className="text-yellow-400">Solar?</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">The benefits of switching to solar energy extend far beyond cost savings.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">What Solar <span className="text-yellow-400">Can and Cannot Do</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Realistic expectations, including the costs and maintenance that come with a system.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -140,8 +140,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Solar Applications <span className="text-yellow-400">We Serve</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Solar solutions for every sector and application.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Typical <span className="text-yellow-400">Use Cases</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Where a solar assessment usually starts — nothing here is a claim of completed installations.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -170,8 +170,8 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Our <span className="text-yellow-400">Process</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">From consultation to commissioning — we handle everything.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">How an Enquiry <span className="text-yellow-400">Proceeds</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Each step is confirmed before the next one begins.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -198,13 +198,13 @@ const SolarEnergy: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
             <Sun className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Ready to Harness the Power of the Sun?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Start With Your Load List</h2>
             <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Take control of your energy future. Contact Haritech today for a free consultation and customized solar solution.
+              Send the appliances you run and what must stay on during an outage. We will come back with an indicative size range, equipment options and the assumptions behind the numbers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Get a Free Quote</Link>
-              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><Sun className="h-4 w-4 text-yellow-400" /> Speak to an Expert</a>
+              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Send Your Load List</Link>
+              <a href={getWhatsAppUrl('Hello Haritech, I would like to discuss a solar energy requirement.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><Sun className="h-4 w-4 text-yellow-400" /> Ask a Question</a>
             </div>
           </FadeInView>
         </div>

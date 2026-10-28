@@ -20,15 +20,16 @@ const Projects: React.FC = () => {
     };
   }, []);
 
+  const safeProjects = Array.isArray(projects) ? projects : [];
   const filteredProjects =
-    activeCategory === 'All' ? projects : projects.filter((p) => p.category === activeCategory);
+    activeCategory === 'All' ? safeProjects : safeProjects.filter((p: any) => p?.category === activeCategory);
 
-  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category).filter(Boolean)))];
+  const categories = ['All', ...Array.from(new Set(safeProjects.map((p: any) => p?.category).filter(Boolean)))];
 
   // Keep the active filter valid when the project list changes
   useEffect(() => {
     if (!categories.includes(activeCategory)) setActiveCategory('All');
-  }, [projects]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [safeProjects]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="pt-24">
@@ -73,7 +74,7 @@ const Projects: React.FC = () => {
 
           <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project) => (
+              {(filteredProjects as any[]).map((project: any) => (
                 <motion.div
                   key={project.id}
                   layout
@@ -106,7 +107,7 @@ const Projects: React.FC = () => {
                           {project.description}
                         </p>
                         <div className="flex flex-wrap gap-2 mb-6">
-                          {(project.tags ?? []).map((tag) => (
+                          {((project as any).tags ?? []).map((tag: any) => (
                             <span key={tag} className="text-xs bg-slate-900 border border-white/5 text-slate-400 px-2.5 py-1 rounded-lg">
                               {tag}
                             </span>

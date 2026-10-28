@@ -4,21 +4,24 @@ import { Link } from 'react-router-dom';
 import { Target, Eye, Heart, Shield, Award, Users, Zap, CheckCircle, ArrowRight, Sparkles, Quote, Mail, MessageCircle } from 'lucide-react';
 import { getHaritechContent, getTeamMembers, getWhatsAppUrl, HaritechSiteContent, TeamMember } from '../../utils/haritechContent';
 
+/* Working principles rather than slogans: each one describes a habit a
+   customer can actually notice, not a claim about scale or awards.      */
 const coreValues = [
-  { title: 'Innovation', desc: 'We stay ahead with cutting-edge technologies and creative solutions.', icon: Sparkles, color: 'from-cyan-500 to-blue-600' },
-  { title: 'Excellence', desc: 'We deliver nothing short of exceptional quality in every project.', icon: Award, color: 'from-purple-500 to-pink-600' },
-  { title: 'Integrity', desc: 'Honesty and transparency form the foundation of every relationship.', icon: Shield, color: 'from-green-500 to-teal-600' },
-  { title: 'Reliability', desc: 'We deliver on our promises, every time, on time.', icon: CheckCircle, color: 'from-blue-500 to-indigo-600' },
-  { title: 'Customer Satisfaction', desc: 'Your success is our ultimate measure of achievement.', icon: Heart, color: 'from-pink-500 to-rose-600' },
-  { title: 'Professionalism', desc: 'We maintain the highest standards of conduct and expertise.', icon: Users, color: 'from-amber-500 to-orange-600' },
+  { title: 'Say what is available', desc: 'If a service, product or item is not ready, we say so instead of accepting a job we cannot deliver.', icon: CheckCircle, color: 'from-cyan-500 to-blue-600' },
+  { title: 'Quote before work', desc: 'Costs and assumptions are written down before anything starts, so a change is visible rather than a surprise.', icon: Award, color: 'from-purple-500 to-pink-600' },
+  { title: 'Keep the limits clear', desc: 'Where a task needs a licensed professional or an approval we do not hold, we tell you rather than improvise.', icon: Shield, color: 'from-green-500 to-teal-600' },
+  { title: 'Answer in plain terms', desc: 'Plain explanations of what a service involves, what it needs from you and how long each step usually takes.', icon: Heart, color: 'from-blue-500 to-indigo-600' },
+  { title: 'Keep the records', desc: 'Enquiries, quotations and documents are kept so the same details are not asked for twice.', icon: Users, color: 'from-pink-500 to-rose-600' },
+  { title: 'One point of contact', desc: 'You deal with a named person for the division handling your enquiry.', icon: Sparkles, color: 'from-amber-500 to-orange-600' },
 ];
 
 const objectives = [
-  'Empower businesses with affordable, high-quality digital solutions',
-  'Bridge the technology gap for SMEs in emerging markets',
-  'Create lasting partnerships built on trust and delivered value',
-  'Drive digital transformation across all industries we serve',
-  'Foster innovation through continuous learning and adaptation',
+  'Make useful technology easier to access for individuals, businesses and organisations in Nigeria',
+  'Help businesses grow with practical support for their operations, sourcing and digital presence',
+  'Provide several genuinely useful services through one company, so a customer does not start over each time',
+  'Explain importation costs and risks clearly enough that customers can budget realistically',
+  'Help customers size solar and project requirements before they spend money',
+  'Grow beyond individual services into a technology-driven company serving multiple industries, and eventually international markets',
 ];
 
 const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => (
@@ -51,14 +54,16 @@ const About: React.FC = () => {
             <FadeInView>
               <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
                 <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
-                  <Award className="h-4 w-4" /> HARITECH CORPORATE DOSSIER • BN 3829104
+                  <Award className="h-4 w-4" /> Haritech Exclusive Business • Smart Tech, Smart Living.
                 </span>
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
-                Empowering Enterprises Through <span className="gradient-text">Architectural Excellence</span>
+                Technology Access, Business Growth, One Company
               </h1>
               <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6">
-                Haritech Exclusive Services is a premier multi-disciplinary enterprise delivering bespoke software engineering, 24/7 solar micro-grids, luxury 3D epoxy flooring, and corporate CAC governance solutions.
+                Haritech Exclusive Business is a Nigerian multi-service company, operating in person and online. We bring technology products
+                and computer services, online registration assistance, printing and branding, importation consultation, business consultation,
+                solar energy, project management and property monitoring, and epoxy and interior décor together under one roof.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
@@ -66,7 +71,7 @@ const About: React.FC = () => {
                   className="px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold font-mono flex items-center gap-2 transition-colors"
                 >
                   <Shield className="h-4 w-4 text-purple-400" />
-                  <span>Verify Federal Republic of Nigeria CAC (BN 3829104)</span>
+                  <span>Business details</span>
                 </button>
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent('open-haritech-estimator'))}
@@ -98,8 +103,8 @@ const About: React.FC = () => {
                 <div className="aspect-square rounded-2xl bg-gradient-to-br from-cyan-500/20 via-purple-500/10 to-blue-500/20 border border-white/10 p-8 flex items-center justify-center">
                   <div className="text-center">
                     <Quote className="h-12 w-12 text-cyan-400/30 mx-auto mb-4" />
-                    <p className="text-lg text-slate-300 italic max-w-sm">"We don't just build websites — we build digital ecosystems that drive real business growth."</p>
-                    <div className="mt-6 text-sm text-slate-500 font-medium">— Haritech Team</div>
+                    <p className="text-lg text-slate-300 italic max-w-sm">"Smart Tech, Smart Living."</p>
+                    <div className="mt-6 text-sm text-slate-500 font-medium">— Haritech Exclusive Business</div>
                   </div>
                 </div>
               </div>
@@ -164,10 +169,19 @@ const About: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Meet Our <span className="gradient-text">Team</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">The passionate experts behind Haritech Exclusive Services.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Who You Will <span className="gradient-text">Deal With</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Team details are published only for real, consenting members of staff.</p>
             </div>
           </FadeInView>
+          {team.length === 0 && (
+            <div className="card p-8 max-w-2xl mx-auto text-center">
+              <Users className="h-8 w-8 text-cyan-400/50 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-white mb-2">Team profiles not published yet</h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Rather than invent employees or biographies, this section stays empty until verified team details are supplied. Enquiries are answered by the division handling them.
+              </p>
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member, i) => (
               <FadeInView key={member.id} delay={i * 0.08}>
@@ -203,7 +217,7 @@ const About: React.FC = () => {
                   <div className="text-center">
                     <Target className="h-16 w-16 text-cyan-400/30 mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-white">Our Objectives</h3>
-                    <p className="text-sm text-slate-500 mt-2">Strategic goals that drive our mission forward</p>
+                    <p className="text-sm text-slate-500 mt-2">What we are working towards as a business</p>
                   </div>
                 </div>
               </div>
@@ -228,11 +242,11 @@ const About: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight font-syne">Let's Work Together</h2>
-            <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto">Ready to take your business to the next level? Partner with Haritech and experience the difference.</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight font-syne">Start With a Conversation</h2>
+            <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto">Tell us what you need and we will explain what the work involves, what it costs and whether it is something we can deliver.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Get Started</Link>
-              <Link to="/haritech/services" className="btn-secondary text-xs sm:text-sm px-6 py-3">Explore Services <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
+              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Make an Enquiry</Link>
+              <Link to="/haritech/services" className="btn-secondary text-xs sm:text-sm px-6 py-3">See the Divisions <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
             </div>
           </FadeInView>
         </div>

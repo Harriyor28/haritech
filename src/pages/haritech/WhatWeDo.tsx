@@ -38,10 +38,10 @@ const WhatWeDo: React.FC = () => {
                 <Globe className="h-4 w-4" /> What We Do
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
-                Comprehensive <span className="gradient-text">Digital Solutions</span> for Modern Businesses
+                Eight <span className="gradient-text">Service Divisions</span> Under One Business
               </h1>
               <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                At Haritech Exclusive Services, we help businesses establish, grow, and manage their digital presence by providing professional, end-to-end technology solutions tailored to your unique needs.
+                Haritech Exclusive Business covers practical technology, digital support, printing and branding, importation consultation, 3D epoxy and interior décor, solar energy, project management and business consultation. Each division is explained on its own page, with the details and limits written plainly.
               </p>
             </FadeInView>
           </div>
@@ -54,10 +54,10 @@ const WhatWeDo: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center">
             <FadeInView>
               <p className="text-xl text-slate-300 leading-relaxed">
-                From concept to launch and beyond — we provide everything you need to build a powerful digital presence. Our team of skilled designers, developers, and strategists work collaboratively to deliver solutions that not only look great but drive measurable results.
+                Start with the problem you actually have — a laptop that needs sourcing, documents to print, goods to bring in, a floor to finish, power to plan or a project to coordinate. We explain what the work involves, what information we need from you, and what it will cost before anything starts.
               </p>
               <div className="mt-8">
-                <Link to="/haritech/request-quote" className="btn-primary inline-flex items-center gap-2 px-8 py-3.5">Start Your Project <ArrowRight className="h-4 w-4" /></Link>
+                <Link to="/haritech/request-quote" className="btn-primary inline-flex items-center gap-2 px-8 py-3.5">Describe Your Enquiry <ArrowRight className="h-4 w-4" /></Link>
               </div>
             </FadeInView>
           </div>
@@ -69,8 +69,8 @@ const WhatWeDo: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">Our <span className="gradient-text-pink">Expertise</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">23 specialized areas of digital excellence</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">Our <span className="gradient-text-pink">Divisions</span></h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">What each part of the business handles, and what a customer can expect</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -98,10 +98,10 @@ const WhatWeDo: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <FadeInView>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Need a Specific Solution?</h2>
-              <p className="text-lg text-slate-300 mb-8">We tailor every project to your unique requirements. Let's discuss how we can help.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Not Sure Which Division Fits?</h2>
+              <p className="text-lg text-slate-300 mb-8">Describe the need and we will point you to the right service — or say plainly if it is outside what we can do.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4">Request a Quote</Link>
+                <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4">Make an Enquiry</Link>
                 <Link to="/haritech/services" className="btn-secondary text-base px-10 py-4">View All Services <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
               </div>
             </FadeInView>

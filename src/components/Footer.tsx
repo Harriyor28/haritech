@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, ArrowUp, Twitter, Linkedin, Facebook, Instagram, Github, Dribbble, Code2 } from 'lucide-react';
+import { Mail, ArrowUp, Twitter, Linkedin, Facebook, Instagram, Github, Dribbble, Code2, Loader2, CheckCircle } from 'lucide-react';
 import { getStoredBrandLogo, subscribeToBrandLogo } from '../utils/brand';
 import { getStoredSettings } from '../utils/settings';
 import type { SiteSettings } from '../utils/settings';
+import { submitNewsletterEmail } from '../utils/contactMessages';
+import { trackEvent } from '../utils/analytics';
 
 const footerLinks = {
   company: [
@@ -190,22 +192,50 @@ const Footer: React.FC = () => {
             <p className="text-slate-400 mb-8 text-sm">
               Subscribe for architecture breakdowns, case studies, and premium web dev insights.
             </p>
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" action="#" method="POST">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-5 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm"
-                required
-              />
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="btn-primary px-8 py-3.5 rounded-xl text-sm"
-              >
-                Subscribe
-              </motion.button>
-            </form>
+            {(() => {
+              const [newsEmail, setNewsEmail] = useState('');
+              const [newsState, setNewsState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+              return (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (newsState === 'busy') return;
+                    setNewsState('busy');
+                    submitNewsletterEmail(newsEmail.trim()).then((r) => {
+                      setNewsState(r.ok ? 'done' : 'error');
+                      if (r.ok) {
+                        setNewsEmail('');
+                        trackEvent('enquiry_submitted', 'newsletter');
+                      }
+                    });
+                  }}
+                  className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+                >
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={newsEmail}
+                    onChange={(e) => setNewsEmail(e.target.value)}
+                    className="flex-1 px-5 py-3.5 rounded-xl bg-slate-950/60 border border-white/5 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 text-white placeholder-slate-600 text-sm"
+                    required
+                  />
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={newsState === 'busy'}
+                    className="btn-primary px-8 py-3.5 rounded-xl text-sm"
+                  >
+                    {newsState === 'busy' ? (<Loader2 className="h-4 w-4 animate-spin mx-auto" />) : newsState === 'done' ? (<CheckCircle className="h-4 w-4 mx-auto" />) : 'Subscribe'}
+                  </motion.button>
+                  {(newsState === 'done' || newsState === 'error') && (
+                    <p className={`text-xs mt-2 ${newsState === 'done' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                      {newsState === 'done' ? 'You are subscribed!' : 'Could not save — please try again shortly.'}
+                    </p>
+                  )}
+                </form>
+              );
+            })()}
             <p className="text-slate-600 text-xs mt-4 font-mono">No spam. Unsubscribe anytime.</p>
           </div>
         </motion.div>

@@ -11,6 +11,18 @@ const Underground3DBackground: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Device budget: phones and tablets get fewer particles, a coarser grid and
+    // a 30fps cap so the background never competes with scrolling for frames.
+    // Visitors who ask for reduced motion get one still frame instead of a loop.
+    const lowPower =
+      typeof window.matchMedia === 'function' &&
+      (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 900);
+    const reducedMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const frameBudget = lowPower ? 1000 / 30 : 0;
+    let lastFrame = 0;
+
     const mouse = { x: 0, y: 0, ix: 0, iy: 0 };
 
     const project = (p: Vec3, w: number, h: number): { x: number; y: number; s: number } => {
@@ -107,9 +119,9 @@ const Underground3DBackground: React.FC = () => {
       ];
 
       gridLines = [];
-      for (let z = 50; z < 1200; z += 60) gridLines.push(new GridLine(z));
+      for (let z = 50; z < 1200; z += lowPower ? 120 : 60) gridLines.push(new GridLine(z));
 
-      particles = Array.from({ length: 80 }, () => ({
+      particles = Array.from({ length: lowPower ? 36 : 80 }, () => ({
         pos: { x: (Math.random() - 0.5) * 1200, y: (Math.random() - 0.5) * 600, z: 50 + Math.random() * 1000 },
         vx: (Math.random() - 0.5) * 0.2,
         vy: (Math.random() - 0.5) * 0.15,
@@ -171,7 +183,7 @@ const Underground3DBackground: React.FC = () => {
     };
 
     const animId = { current: 0 };
-    const animate = () => {
+    const drawFrame = () => {
       const w = canvas.width;
       const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
@@ -181,8 +193,15 @@ const Underground3DBackground: React.FC = () => {
 
       words3d.sort((a, b) => b.pos.z - a.pos.z);
       words3d.forEach(fw => { fw.update(); fw.draw(ctx, w, h); });
+    };
 
+    const animate = (now: number = 0) => {
       animId.current = requestAnimationFrame(animate);
+      if (frameBudget && now - lastFrame < frameBudget) return;
+      lastFrame = now;
+      // Browsers already throttle hidden tabs; skip work on the way out too.
+      if (document.hidden) return;
+      drawFrame();
     };
 
     const handleResize = () => {
@@ -200,7 +219,11 @@ const Underground3DBackground: React.FC = () => {
     };
 
     init();
-    animate();
+    if (reducedMotion) {
+      drawFrame();
+    } else {
+      animate();
+    }
 
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouse);
@@ -217,6 +240,7 @@ const Underground3DBackground: React.FC = () => {
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
       style={{ zIndex: 0, opacity: 0.35 }}
+      aria-hidden="true"
     />
   );
 };

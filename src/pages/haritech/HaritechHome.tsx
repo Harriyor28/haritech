@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Sparkles, Shield, Zap, TrendingUp, Users, 
-  Code2, ShoppingCart, Smartphone, Search, 
+  Code2, Smartphone, Search, 
   MessageCircle, Star, Quote, Sun, Paintbrush, 
   FileText, CheckCircle2, Award, ArrowUpRight, 
-  Check, Calculator
+  Check, Calculator, Ship, Briefcase
 } from 'lucide-react';
 import { getStoredProjects } from '../../utils/projects';
 import type { ProjectData } from '../../utils/projects';
@@ -17,68 +17,68 @@ import { HaritechCostEstimator } from '../../components/haritech/HaritechCostEst
 
 const featuredServices = [
   { 
-    title: 'Custom Web & Cloud Systems', 
-    desc: 'High-speed portals, corporate dashboards, SaaS platforms, and bespoke web apps built for maximum conversions.', 
-    icon: Code2, 
+    title: 'Laptop & Tech Accessories', 
+    desc: 'Guidance on sourcing laptops, computers and tech accessories based on your needs and budget.', 
+    icon: Smartphone, 
     color: 'from-cyan-500 to-blue-600',
     link: '/haritech/services',
-    tag: 'Digital Core'
+    tag: 'Tech'
   },
   { 
-    title: 'Solar & Renewable Micro-Grids', 
-    desc: 'Tier-1 hybrid solar inverters, lithium LiFePO4 battery banks, and commercial solar arrays for 24/7 power autonomy.', 
-    icon: Sun, 
-    color: 'from-yellow-500 to-amber-600',
-    link: '/haritech/solar-energy',
-    tag: 'Clean Energy'
-  },
-  { 
-    title: '3D Epoxy & Luxury Coatings', 
-    desc: 'Seamless 12,500 PSI industrial resin, Italian metallic marble effects, and artistic 3D floors that outclass tiling.', 
-    icon: Paintbrush, 
-    color: 'from-teal-500 to-emerald-600',
-    link: '/haritech/3d-epoxy',
-    tag: 'Architecture'
-  },
-  { 
-    title: 'CAC Corporate Registration', 
-    desc: 'Government-accredited business name and limited liability company (LLC) incorporation with TIN & bank resolution.', 
-    icon: FileText, 
-    color: 'from-purple-500 to-indigo-600',
-    link: '/haritech/cac-registration',
-    tag: 'Legal Compliance'
-  },
-  { 
-    title: 'Mobile Applications (iOS/Android)', 
-    desc: 'Native & cross-platform mobile apps with fluid UX, real-time push notifications, and offline capability.', 
-    icon: Smartphone, 
-    color: 'from-orange-500 to-red-600',
+    title: 'Cyber Café & Online Registration', 
+    desc: 'Practical computer and internet assistance, plus guidance on online registration processes with clear requirements.', 
+    icon: Code2, 
+    color: 'from-indigo-500 to-purple-600',
     link: '/haritech/services',
-    tag: 'App Dev'
+    tag: 'Digital Support'
   },
   { 
-    title: 'E-Commerce Infrastructure', 
-    desc: 'Full-featured online stores with multi-currency payment gateways, automated inventory, and logistics hooks.', 
-    icon: ShoppingCart, 
-    color: 'from-blue-500 to-indigo-600',
-    link: '/haritech/services',
-    tag: 'Commerce'
-  },
-  { 
-    title: 'Corporate Brand Identity', 
-    desc: 'Precision logos, 3D brand guidelines, corporate profiles, and marketing collateral designed to establish dominance.', 
+    title: 'Printing & Branding', 
+    desc: 'Printing and branding for business documents, promotional materials and branded items as capabilities allow.', 
     icon: Sparkles, 
-    color: 'from-pink-500 to-rose-600',
+    color: 'from-purple-500 to-pink-600',
     link: '/haritech/services',
     tag: 'Branding'
   },
   { 
-    title: 'Cybersecurity & High-Availability', 
-    desc: 'Enterprise-grade SSL, penetration testing, automated database snapshots, and DDoS mitigation.', 
-    icon: Shield, 
-    color: 'from-emerald-500 to-teal-600',
+    title: 'Importation Consultation', 
+    desc: 'Guidance on sourcing, supplier communication, shipping options, duties and total landed cost planning.', 
+    icon: Ship, 
+    color: 'from-teal-500 to-cyan-600',
+    link: '/haritech/importation',
+    tag: 'Importation'
+  },
+  { 
+    title: '3D Epoxy & Interior Décor', 
+    desc: 'Consultation and coordination for bespoke epoxy finishes and interior décor projects.', 
+    icon: Paintbrush, 
+    color: 'from-teal-500 to-emerald-600',
+    link: '/haritech/3d-epoxy',
+    tag: 'Interiors'
+  },
+  { 
+    title: 'Business Consultation', 
+    desc: 'Pragmatic business planning and guidance to help small businesses make informed decisions.', 
+    icon: Briefcase, 
+    color: 'from-amber-500 to-orange-600',
     link: '/haritech/services',
-    tag: 'Security'
+    tag: 'Consultation'
+  },
+  { 
+    title: 'Solar Energy', 
+    desc: 'Guidance on solar energy requirements, system planning and equipment sourcing where applicable.', 
+    icon: Sun, 
+    color: 'from-yellow-500 to-amber-600',
+    link: '/haritech/solar-energy',
+    tag: 'Solar'
+  },
+  { 
+    title: 'Project Management', 
+    desc: 'Project support including planning, coordination, budgeting guidance and progress tracking within confirmed capabilities.', 
+    icon: FileText, 
+    color: 'from-blue-500 to-indigo-600',
+    link: '/haritech/project-management',
+    tag: 'Projects'
   },
 ];
 
@@ -156,7 +156,7 @@ const HaritechHome: React.FC = () => {
             <div className="stone-frame-box px-5 py-2.5 rounded-full border border-white/15 bg-white/5 backdrop-blur-md">
               <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] text-slate-300 uppercase flex items-center justify-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                HARITECH ENTERPRISE CORE • MULTI-DISCIPLINARY ARCHITECTURE
+                HARITECH EXCLUSIVE BUSINESS • Smart Tech, Smart Living.
                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
               </span>
             </div>
@@ -169,9 +169,7 @@ const HaritechHome: React.FC = () => {
             transition={{ duration: 0.8 }} 
             className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white max-w-4xl mx-auto tracking-tight font-syne leading-[1.15] mb-5"
           >
-            ENGINEERING PREMIER <span className="gradient-text">DIGITAL SYSTEMS,</span>{' '}
-            <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)]">CLEAN SOLAR</span> &{' '}
-            <span className="text-slate-300">3D EPOXY</span> SURFACES
+            Technology, Business Support & Practical Solutions for Everyday Life
           </motion.h1>
 
           {/* Subtitle */}
@@ -181,7 +179,7 @@ const HaritechHome: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.15 }} 
             className="text-sm sm:text-base text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed font-normal"
           >
-            From custom high-conversion web platforms and 24/7 off-grid solar inverters, to luxury 3D epoxy flooring and federal CAC incorporation — Haritech is your verified turnkey execution partner.
+            Haritech Exclusive Business is a Nigerian multi-service company built around a simple vision: making technology more accessible, helping businesses grow, and bringing useful services together under one roof — from laptops and computer services to importation consultation, printing and branding, business support, solar energy, project management and interior décor.
           </motion.p>
 
           {/* Hero Action Buttons */}
@@ -206,7 +204,7 @@ const HaritechHome: React.FC = () => {
             </Link>
 
             <a 
-              href={getWhatsAppUrl('Hello Haritech Exclusive Services, I would like to consult on an upcoming enterprise project.')} 
+              href={getWhatsAppUrl('Hello Haritech Exclusive Business, I would like to ask about one of your services.')} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn-secondary text-xs sm:text-sm px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2"
@@ -242,12 +240,12 @@ const HaritechHome: React.FC = () => {
               className="p-4 rounded-2xl bg-white/[0.02] border border-white/5"
             >
               <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono mb-1">
-                450+
+                8
               </div>
               <div className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-0.5">
-                Turnkey Projects
+                Service Divisions
               </div>
-              <div className="text-[11px] text-slate-400">Web, Solar & 3D Epoxy Systems</div>
+              <div className="text-[11px] text-slate-400">Tech, Cyber Café, Printing, Importation, Business, Solar, Projects, Epoxy</div>
             </motion.div>
 
             <motion.div 
@@ -258,12 +256,12 @@ const HaritechHome: React.FC = () => {
               className="p-4 rounded-2xl bg-white/[0.02] border border-white/5"
             >
               <div className="text-2xl sm:text-3xl font-extrabold text-yellow-400 font-mono mb-1">
-                99.8%
+                —
               </div>
               <div className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-0.5">
-                Precision & Uptime
+                Projects
               </div>
-              <div className="text-[11px] text-slate-400">Zero Blackout Guarantee</div>
+              <div className="text-[11px] text-slate-400">Ask for examples</div>
             </motion.div>
 
             <motion.div 
@@ -275,13 +273,13 @@ const HaritechHome: React.FC = () => {
               className="p-4 rounded-2xl bg-white/[0.02] border border-purple-500/20 cursor-pointer hover:border-purple-500/50 transition-colors"
             >
               <div className="text-2xl sm:text-3xl font-extrabold text-purple-400 font-mono mb-1">
-                BN 3829104
+                CAC
               </div>
               <div className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-0.5 flex items-center justify-center gap-1">
-                <span>CAC Accredited</span>
+                <span>Registration</span>
                 <CheckCircle2 className="h-3.5 w-3.5 text-green-400" />
               </div>
-              <div className="text-[11px] text-slate-400">Federal Republic of Nigeria</div>
+              <div className="text-[11px] text-slate-400">Ask for current details</div>
             </motion.div>
 
             <motion.div 
@@ -292,12 +290,12 @@ const HaritechHome: React.FC = () => {
               className="p-4 rounded-2xl bg-white/[0.02] border border-white/5"
             >
               <div className="text-2xl sm:text-3xl font-extrabold text-teal-400 font-mono mb-1">
-                48-Hour
+                Enquiry
               </div>
               <div className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-0.5">
-                Rapid SLA Turnaround
+                First Approach
               </div>
-              <div className="text-[11px] text-slate-400">Fast-Track Technical Dispatch</div>
+              <div className="text-[11px] text-slate-400">Tell us your needs</div>
             </motion.div>
 
           </div>
@@ -313,10 +311,10 @@ const HaritechHome: React.FC = () => {
                 <Sparkles className="h-3.5 w-3.5" /> HARITECH INTEGRATED CAPABILITIES
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                Engineering <span className="gradient-text">Without Limits</span>
+                Eight Services, One Business
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                Unified expertise spanning software technology, clean green power, durable luxury surfaces, and corporate governance.
+                Technology products and computer services, online registration assistance, printing and branding, importation consultation, business consultation, solar energy, project management and property monitoring, and epoxy and interior décor — each service has its own page explaining what it involves and how to enquire.
               </p>
             </div>
           </FadeInView>
@@ -371,7 +369,7 @@ const HaritechHome: React.FC = () => {
                 className="btn-secondary text-xs sm:text-sm px-8 py-3.5 rounded-xl font-semibold inline-flex items-center gap-2"
               >
                 <Calculator className="h-4 w-4 text-cyan-400" />
-                <span>Estimate Custom Requirement</span>
+                <span>Open the Cost Estimator</span>
               </button>
             </div>
           </FadeInView>
@@ -391,18 +389,18 @@ const HaritechHome: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono font-medium mb-3">
-                <Award className="h-3.5 w-3.5" /> PROVEN TRACK RECORD
+                <Award className="h-3.5 w-3.5" /> WORK & EXAMPLES
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                Our Premier <span className="gradient-text">Showcase</span>
+                Selected <span className="gradient-text">Examples</span>
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                Real-world deployments engineered for industry leaders, modern residences, and enterprise operations.
+                Work appears here only when the customer agrees and the details can be checked. Nothing is published as a completed project until then.
               </p>
 
               {/* Portfolio Filters */}
               <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
-                {['All', 'Business', 'Corporate', 'E-commerce', 'School', 'Restaurant'].map(filter => (
+                {['All', 'Tech', 'Importation', 'Interiors', 'Printing', 'Solar'].map(filter => (
                   <button
                     key={filter}
                     onClick={() => setActivePortfolioFilter(filter)}
@@ -420,6 +418,14 @@ const HaritechHome: React.FC = () => {
           </FadeInView>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProjects.length === 0 && (
+              <div className="md:col-span-2 lg:col-span-3 stone-card rounded-2xl p-8 text-center">
+                <h3 className="text-base font-bold text-white mb-2">Nothing published in this category yet</h3>
+                <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
+                  Completed work is added only with the customer's permission and verifiable details. Ask us directly for examples relevant to your enquiry.
+                </p>
+              </div>
+            )}
             {filteredProjects.map((project, i) => (
               <FadeInView key={project.id} delay={i * 0.08}>
                 <div className="stone-card rounded-2xl overflow-hidden group flex flex-col justify-between h-full">
@@ -496,13 +502,13 @@ const HaritechHome: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono font-medium mb-3">
-                <Shield className="h-3.5 w-3.5" /> ISO-STYLE DELIVERY DISCIPLINE
+                <Shield className="h-3.5 w-3.5" /> HOW AN ENQUIRY WORKS
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                Our Execution <span className="gradient-text">Blueprint</span>
+                How an Enquiry <span className="gradient-text">Runs</span>
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                How Haritech transforms complex scopes into flawless turnkey realities.
+                The same four steps whichever division you contact — with nothing started before the previous step is agreed.
               </p>
             </div>
           </FadeInView>
@@ -511,29 +517,29 @@ const HaritechHome: React.FC = () => {
             {[
               {
                 step: '01',
-                title: 'Architectural Audit',
-                desc: 'In-depth consultation, feasibility study, power audit, or codebase inspection to define exact project targets.',
+                title: 'Enquiry & Scope',
+                desc: 'You describe the need — a device, a print run, goods to import, a floor, a power requirement or a project. We list the questions still open.',
                 accent: 'text-cyan-400',
                 border: 'border-cyan-500/20'
               },
               {
                 step: '02',
-                title: 'Precision Formulation',
-                desc: 'Component selection, Tier-1 hardware specification, or cloud architectural wireframing with transparent pricing.',
+                title: 'Options & Quotation',
+                desc: 'Options are compared with the costs and assumptions written down, so the figure you receive can be checked against the work.',
                 accent: 'text-blue-400',
                 border: 'border-blue-500/20'
               },
               {
                 step: '03',
-                title: 'High-Velocity Build',
-                desc: 'Execution by accredited specialists — certified developers, solar electricians, resin artisans, or corporate attorneys.',
+                title: 'Delivery & Coordination',
+                desc: 'Work is carried out or coordinated with the right trades, with progress reported as the agreed milestones are reached.',
                 accent: 'text-yellow-400',
                 border: 'border-yellow-500/20'
               },
               {
                 step: '04',
-                title: 'Commissioning & SLA',
-                desc: 'Rigorous stress testing, official CAC document delivery, live inverter synchronization, and lifelong warranty.',
+                title: 'Handover & Follow-up',
+                desc: 'You receive the documents, records and care instructions for what was delivered, plus a named contact for questions afterwards.',
                 accent: 'text-teal-400',
                 border: 'border-teal-500/20'
               }
@@ -554,7 +560,7 @@ const HaritechHome: React.FC = () => {
                   </div>
                   <div className="mt-6 pt-3 border-t border-white/5 flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
                     <CheckCircle2 className={`h-3.5 w-3.5 ${p.accent}`} />
-                    <span>Guaranteed Milestone</span>
+                    <span>Agreed before the next step</span>
                   </div>
                 </div>
               </FadeInView>
@@ -569,18 +575,25 @@ const HaritechHome: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono font-medium mb-3">
-                <Star className="h-3.5 w-3.5" /> VERIFIED REPUTATION
+                <Star className="h-3.5 w-3.5" /> CUSTOMER FEEDBACK
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                Trusted by <span className="gradient-text">Forward-Thinking Leaders</span>
+                Reviews, <span className="gradient-text">Only With Permission</span>
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                Hear directly from business founders, homeowners, and corporate teams powered by Haritech.
+                Customer comments are published only with consent and in their own words.
               </p>
             </div>
-          </FadeInView>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          </FadeInView>            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.length === 0 && (
+              <div className="md:col-span-3 stone-card p-8 rounded-2xl text-center">
+                <Quote className="h-8 w-8 text-cyan-400/40 mx-auto mb-4" />
+                <h3 className="text-base font-bold text-white mb-2">No testimonials published yet</h3>
+                <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
+                  We publish a review only with the customer's permission and after checking the wording. Until then this space stays empty rather than filled with invented quotes.
+                </p>
+              </div>
+            )}
             {testimonials.map((t, i) => (
               <FadeInView key={i} delay={i * 0.1}>
                 <div className="stone-card p-8 rounded-2xl h-full flex flex-col justify-between">
@@ -620,10 +633,10 @@ const HaritechHome: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-16">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                The Haritech <span className="gradient-text">Competitive Edge</span>
+                How We <span className="gradient-text">Work</span>
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm mt-2">
-                Why forward-thinking enterprises choose Haritech Exclusive Services over fragmented contractors.
+                The working habits behind every division — no claim of scale, just how enquiries are handled.
               </p>
             </div>
           </FadeInView>
@@ -640,13 +653,29 @@ const HaritechHome: React.FC = () => {
                       <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
                     </div>
                     <div className="mt-4 pt-2 text-[10px] font-mono text-cyan-400 flex items-center gap-1">
-                      <Check className="h-3 w-3" /> Standard Operating Procedure
+                      <Check className="h-3 w-3" /> How enquiries are handled
                     </div>
                   </div>
                 </FadeInView>
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* ── 8b. LONG-TERM VISION ── */}
+      <section className="py-10 border-y border-white/5 bg-slate-950/30">
+        <div className="container mx-auto px-6">
+          <FadeInView>
+            <div className="max-w-3xl mx-auto text-center">
+              <span className="text-[11px] font-mono font-bold tracking-widest text-cyan-400 uppercase">Where We Are Going</span>
+              <p className="mt-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Haritech Exclusive Business is currently operating and serving customers in Nigeria, both in person and online.
+                Our long-term vision is to grow beyond individual services into a technology-driven company serving multiple industries
+                and expanding into international markets.
+              </p>
+            </div>
+          </FadeInView>
         </div>
       </section>
 
@@ -657,13 +686,13 @@ const HaritechHome: React.FC = () => {
           <FadeInView>
             <div className="stone-frame-box p-8 md:p-12 rounded-3xl">
               <span className="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase mb-3 inline-block">
-                COMMENCE PRECISION EXECUTION
+                START AN ENQUIRY
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
-                Ready to Bring High-Impact Excellence to Your Enterprise?
+                Tell Us What You Need
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Whether deploying a high-availability digital portal, equipping your property with uninterrupted solar energy, laying diamond-grade 3D epoxy, or securing CAC corporate registration — our team is on standby.
+                A laptop sourced, documents printed, goods imported, a floor finished, a solar requirement sized or a project coordinated — describe the need and we will explain what is involved, what it costs and whether we can deliver it.
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4">
@@ -671,10 +700,10 @@ const HaritechHome: React.FC = () => {
                   onClick={triggerEstimator}
                   className="btn-primary text-xs sm:text-sm px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-cyan-500/20"
                 >
-                  <Calculator className="h-4 w-4" /> Calculate Project Scope Now
+                  <Calculator className="h-4 w-4" /> Open the Cost Estimator
                 </button>
                 <a 
-                  href={getWhatsAppUrl('Hello Haritech Exclusive Services, I am ready to get started.')}
+                  href={getWhatsAppUrl('Hello Haritech, I would like to make an enquiry.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary text-xs sm:text-sm px-6 py-3 rounded-xl font-bold flex items-center gap-2 text-green-400"

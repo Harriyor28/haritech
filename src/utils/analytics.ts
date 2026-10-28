@@ -77,6 +77,42 @@ export const trackPageView = (path: string): void => {
   }, TRACK_DEBOUNCE_MS);
 };
 
+/* ── Aggregate events (chat opened, whatsapp clicked, enquiry submitted …) ── */
+
+const EVENTS_TABLE = 'site_events';
+const EVENT_DUP_MS = 5000;
+let lastEventKey = '';
+let lastEventAt = 0;
+
+/** Anonymous, privacy-safe event counters — no message content or contact details. */
+export const trackEvent = (event: string, label?: string): void => {
+  if (typeof window === 'undefined') return;
+  if (!isCloudConfigured()) return;
+  const key = `${event}:${label ?? ''}`;
+  const now = Date.now();
+  if (key === lastEventKey && now - lastEventAt < EVENT_DUP_MS) return;
+  lastEventKey = key;
+  lastEventAt = now;
+  const safeEvent = String(event).slice(0, 60);
+  if (!/^[a-z0-9_.:-]+$/i.test(safeEvent)) return;
+  const sb = getSupabase();
+  if (!sb) return;
+  void sb
+    .from(EVENTS_TABLE)
+    .insert({ event: safeEvent, label: (label ?? '').slice(0, 60) })
+    .then(({ error }) => {
+      if (error && isMissingEventTable(error.message)) {
+        console.warn(
+          `[analytics] paused: table public.${EVENTS_TABLE} does not exist yet. ` +
+            'Run supabase/schema.sql (site_events section) in the Supabase SQL editor, then reload.'
+        );
+      }
+    });
+};
+
+const isMissingEventTable = (message: string): boolean =>
+  message.includes('Could not find the table') && message.includes(EVENTS_TABLE);
+
 export interface AnalyticsSummary {
   total: number;
   today: number;
@@ -100,8 +136,7 @@ const startOfDay = (d: Date): number => {
   return c.getTime();
 };
 
-/** Aggregate the last 30 days of views into dashboard numbers. Returns null when unavailable. */
-export const getAnalyticsSummary = async (): Promise<AnalyticsSummary | null> => {
+/** Aggregate the last 30 days of views into dashboard numbers. Returns null when unavailable. */export const getAnalyticsSummary = async (): Promise<AnalyticsSummary | null> => {
   if (!isCloudConfigured()) return null;
   if (Date.now() < unavailableUntil()) return null;
   const sb = getSupabase();

@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Code2, Palette, Megaphone, Briefcase, ArrowRight, CheckCircle, Zap, ChevronDown, Monitor, PaintBucket, BarChart3, Server } from 'lucide-react';
+import { Code2, Palette, Megaphone, Briefcase, ArrowRight, CheckCircle, Zap, ChevronDown, Monitor, PaintBucket, BarChart3, Server, Globe, Sun, ClipboardList } from 'lucide-react';
 import { getServiceCategories } from '../../utils/haritechContent';
 import type { ServiceCategory } from '../../utils/haritechContent';
 
@@ -11,11 +11,11 @@ const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ c
   </motion.div>
 );
 
-const iconMap: Record<string, React.FC<any>> = { Code2, Palette, Megaphone, Briefcase, Monitor, PaintBucket, BarChart3, Server };
+const iconMap: Record<string, React.FC<any>> = { Code2, Palette, Megaphone, Briefcase, Monitor, PaintBucket, BarChart3, Server, Globe, Sun, ClipboardList };
 
 const Services: React.FC = () => {
   const [categories, setCategories] = useState<ServiceCategory[]>(() => getServiceCategories());
-  const [activeCategory, setActiveCategory] = useState('web');
+  const [activeCategory, setActiveCategory] = useState('tech');
   const [expandedService, setExpandedService] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,14 +37,14 @@ const Services: React.FC = () => {
             <FadeInView>
               <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
                 <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
-                  <Code2 className="h-4 w-4" /> HARITECH INTEGRATED CAPABILITIES MATRIX
+                  <Code2 className="h-4 w-4" /> HARITECH SERVICE DIVISIONS
                 </span>
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
-                Everything You Need to <span className="gradient-text">Dominate & Grow</span>
+                What Each <span className="gradient-text">Division</span> Does
               </h1>
               <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6">
-                From web development to branding, solar energy grids, 3D epoxy flooring, and corporate CAC governance — we offer a complete multi-disciplinary ecosystem under one roof.
+                Laptops and tech accessories, cyber café and online registration assistance, printing and branding, importation consultation, 3D epoxy and interior décor, business consultation, solar energy and project management — explained in plain terms, with the practical details you need before enquiring.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
@@ -52,7 +52,7 @@ const Services: React.FC = () => {
                   className="btn-primary text-xs py-3 px-6 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-cyan-500/20"
                 >
                   <Zap className="h-4 w-4" />
-                  <span>Configure Scope in Estimator</span>
+                  <span>Open the Cost Estimator</span>
                 </button>
               </div>
             </FadeInView>
@@ -114,7 +114,7 @@ const Services: React.FC = () => {
                               <div>
                                 <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-2">Features</h4>
                                 <div className="space-y-1.5">
-                                  {(svc.features?.length ? svc.features : ['Responsive Design', 'SEO Optimized']).map((f: string) => (
+                                  {(svc.features?.length ? svc.features : ['Discussed with you before any work starts']).map((f: string) => (
                                     <div key={f} className="flex items-center gap-2 text-xs text-slate-400"><CheckCircle className="h-3 w-3 text-cyan-400 shrink-0" />{f}</div>
                                   ))}
                                 </div>
@@ -122,7 +122,7 @@ const Services: React.FC = () => {
                               <div>
                                 <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-2">Benefits</h4>
                                 <div className="space-y-1.5">
-                                  {(svc.benefits?.length ? svc.benefits : ['Increased Visibility', 'Higher Engagement']).map((b: string) => (
+                                  {(svc.benefits?.length ? svc.benefits : ['Quoted in writing so you can check it']).map((b: string) => (
                                     <div key={b} className="flex items-center gap-2 text-xs text-slate-400"><CheckCircle className="h-3 w-3 text-green-400 shrink-0" />{b}</div>
                                   ))}
                                 </div>
@@ -147,9 +147,9 @@ const Services: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Not Sure Which Service You Need?</h2>
-            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Contact us today and our experts will help you find the perfect solution for your business.</p>
+            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Describe the need and we will tell you which division handles it, what information we need from you, and what the next step involves.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Get a Free Consultation</Link>
+              <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Send an Enquiry</Link>
               <Link to="/haritech/contact" className="btn-secondary text-base px-10 py-4">Contact Us <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
             </div>
           </FadeInView>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, FolderOpen, MessageSquare, Settings, Plus, Edit, Trash2, Eye, Search, Save, X, Check, AlertCircle, BarChart3, FileText, Code2, TrendingUp, Activity, ArrowUpRight, Upload, Image as ImageIcon, Building2, Menu, LogOut, Palette, Mail, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, MessageSquare, Settings, Plus, Edit, Trash2, Eye, Search, Save, X, Check, AlertCircle, BarChart3, FileText, Code2, TrendingUp, Activity, ArrowUpRight, Upload, Image as ImageIcon, Building2, Menu, LogOut, Palette, Mail, RefreshCw, Kanban } from 'lucide-react';
 import { getStoredProjects, setStoredProjects } from '../utils/projects';
 import type { ProjectData } from '../utils/projects';
 import { getStoredBrandLogo, setStoredBrandLogo } from '../utils/brand';
@@ -21,11 +21,15 @@ import HaritechLogoManager from '../components/admin/HaritechLogoManager';
 import HaritechContactManager from '../components/admin/HaritechContactManager';
 import HaritechFAQManager from '../components/admin/HaritechFAQManager';
 import HaritechSolarManager from '../components/admin/HaritechSolarManager';
+import HaritechImportationManager from '../components/admin/HaritechImportationManager';
+import HaritechProjectManager from '../components/admin/HaritechProjectManager';
+import HaritechClientProjectsManager from '../components/admin/HaritechClientProjectsManager';
+import HaritechPortalManager from '../components/admin/HaritechPortalManager';
 import HaritechEpoxyManager from '../components/admin/HaritechEpoxyManager';
 import HaritechWhatWeDoManager from '../components/admin/HaritechWhatWeDoManager';
 import HaritechDesignManager from '../components/admin/HaritechDesignManager';
 
-type Tab = 'dashboard' | 'projects' | 'testimonials' | 'services' | 'settings' | 'haritech' | 'design' | 'messages';
+type Tab = 'dashboard' | 'projects' | 'testimonials' | 'services' | 'settings' | 'haritech' | 'design' | 'messages' | 'projecthub';
 
 interface ContactMessageRow {
   id: number;
@@ -39,6 +43,13 @@ interface ContactMessageRow {
   timeline: string;
   contact_method: string;
   created_at: string;
+  category?: string;
+  consent_marketing?: boolean;
+  source_page?: string;
+  status: string;
+  notification_status: string;
+  notification_error?: string;
+  notified_at?: string;
 }
 
 // Mini SVG Chart Component
@@ -104,6 +115,8 @@ const handleLogout = async () => {
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesError, setMessagesError] = useState<string | null>(null);
   const [messagesVersion, setMessagesVersion] = useState(0);
+  const [messagesSearch, setMessagesSearch] = useState('');
+  const [messagesStatusFilter, setMessagesStatusFilter] = useState('all');
 
   useEffect(() => {
     setLogoUrl(getStoredBrandLogo());
@@ -120,24 +133,44 @@ const handleLogout = async () => {
     let cancelled = false;
     setMessagesLoading(true);
     setMessagesError(null);
-    sb.from('contact_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50)
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error) {
-          const missing = /does not exist|schema cache/i.test(error.message);
+    // Ask for every column the current schema defines. If the live table
+    // predates the migration PostgREST rejects the whole select (42703), so
+    // fall back to whatever columns the table does have instead of blanking.
+    const FULL_SELECT = '*, status, notification_status, notification_error, notified_at, category, consent_marketing, source_page, user_agent';
+    const load = async () => {
+      let res = await sb
+        .from('contact_messages')
+        .select(FULL_SELECT)
+        .order('created_at', { ascending: false })
+        .limit(200);
+      let schemaOutdated = false;
+      if (res.error && (res.error.code === 'PGRST205' || /does not exist|schema cache/i.test(res.error.message))) {
+        schemaOutdated = true;
+        res = await sb
+          .from('contact_messages')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(200);
+      }
+      if (cancelled) return;
+      if (res.error) {
+        const missing = /does not exist|schema cache/i.test(res.error.message);
+        setMessagesError(
+          missing
+            ? 'Table "contact_messages" is missing — run the contact_messages section of supabase/schema.sql in the Supabase SQL editor.'
+            : res.error.message
+        );
+      } else {
+        setMessages((res.data as ContactMessageRow[]) ?? []);
+        if (schemaOutdated) {
           setMessagesError(
-            missing
-              ? 'Table "contact_messages" is missing — run the contact_messages section of supabase/schema.sql in the Supabase SQL editor.'
-              : error.message
+            'Your contact_messages table is missing its newer columns (status, notification_status, category, consent_marketing, source_page, user_agent). Run the "upgrade path" ALTER statements from supabase/schema.sql in the Supabase SQL editor, then hit Refresh. Messages below are still listed with safe defaults.'
           );
-        } else {
-          setMessages((data as ContactMessageRow[]) ?? []);
         }
-        setMessagesLoading(false);
-      });
+      }
+      setMessagesLoading(false);
+    };
+    void load();
     return () => {
       cancelled = true;
     };
@@ -148,12 +181,58 @@ const handleLogout = async () => {
     if (!sb) return;
     const { error } = await sb.from('contact_messages').delete().eq('id', id);
     if (error) {
-      showNotification('error', `Could not delete: ${error.message}`);
+      showNotification('error', /does not exist/i.test(error.message)
+        ? 'Delete failed: your contact_messages table is missing columns — run the schema.sql upgrade in Supabase first.'
+        : `Could not delete: ${error.message}`);
       return;
     }
     setMessages((prev) => prev.filter((m) => m.id !== id));
     showNotification('success', 'Message deleted');
   };
+
+  const updateMessageStatus = async (id: number, status: string) => {
+    const sb = getSupabase();
+    if (!sb) return;
+    const { error } = await sb.from('contact_messages').update({ status }).eq('id', id);
+    if (error) {
+      showNotification('error', /does not exist/i.test(error.message)
+        ? 'Status update failed: your contact_messages table has no status column — run the schema.sql upgrade in Supabase first.'
+        : `Could not update: ${error.message}`);
+      return;
+    }
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
+    showNotification('success', status === 'spam' ? 'Marked as spam' : 'Status updated');
+  };
+
+  const exportMessagesCsv = () => {
+    const head = ['id', 'form', 'category', 'name', 'email', 'phone', 'subject', 'budget', 'timeline', 'contact_method', 'consent_marketing', 'source_page', 'status', 'notification_status', 'created_at'];
+    const rows = filteredMessages.map((m) => [
+      m.id, m.form, m.category ?? '', m.name, m.email, m.phone, m.subject, m.budget, m.timeline,
+      m.contact_method, m.consent_marketing ? 'yes' : 'no', m.source_page ?? '', m.status,
+      m.notification_status, new Date(m.created_at).toISOString(),
+    ]
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+      .join(','));
+    const csv = [head.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `haritech-enquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+    URL.revokeObjectURL(url);
+    a.click();
+    showNotification('success', 'CSV exported');
+  };
+
+  const filteredMessages = messages.filter((m) => {
+    if (messagesStatusFilter !== 'all') {
+      if (messagesStatusFilter !== m.status) return false;
+    }
+    const q = messagesSearch.trim().toLowerCase();
+    if (!q) return true;
+    return [m.name, m.email, m.phone, m.subject, m.category, m.message, m.budget]
+      .some((v) => String(v ?? '').toLowerCase().includes(q));
+  });
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -222,6 +301,7 @@ const handleLogout = async () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'projects', label: 'Projects', icon: FolderOpen },
+    { id: 'projecthub', label: 'Project Manager', icon: Kanban },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
     { id: 'services', label: 'Services', icon: Settings },
     { id: 'haritech', label: 'Haritech', icon: Building2 },
@@ -320,7 +400,7 @@ const handleLogout = async () => {
               </button>
               <div className="min-w-0">
                 <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight truncate">
-                  {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                  {activeTab === 'projecthub' ? 'Project Manager' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
                 </h1>
                 <p className="text-slate-500 text-xs sm:text-sm mt-1 font-mono">Manage your portfolio content and configuration</p>
               </div>
@@ -613,11 +693,35 @@ const handleLogout = async () => {
           {/* Messages Tab */}
           {activeTab === 'messages' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-black text-white tracking-tight">Messages</h1>
-                  <p className="text-slate-500 text-sm mt-1 font-mono">Contact & quote requests submitted from the site</p>
+              <div>
+                <h1 className="text-3xl font-black text-white tracking-tight">Messages</h1>
+                <p className="text-slate-500 text-sm mt-1 font-mono">{filteredMessages.length} of {messages.length} enquiries — contact & quote requests from the site</p>
+              </div>
+              <div className="card p-4 flex flex-wrap items-center gap-3 bg-[#0e1326]/80 border-white/5">
+                <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-slate-950/60 rounded-xl border border-white/5 px-3 py-2">
+                  <Search className="h-3.5 w-3.5 text-slate-500" />
+                  <input
+                    type="text"
+                    value={messagesSearch}
+                    onChange={(e) => setMessagesSearch(e.target.value)}
+                    placeholder="Search name, email, message…"
+                    className="flex-1 bg-transparent text-xs text-white placeholder-slate-600 outline-none"
+                  />
                 </div>
+                <select
+                  value={messagesStatusFilter}
+                  onChange={(e) => setMessagesStatusFilter(e.target.value)}
+                  className="px-3 py-2 rounded-xl bg-slate-950/60 border border-white/5 text-xs text-slate-300 outline-none"
+                >
+                  <option value="all">All statuses</option>
+                  <option value="new">New</option>
+                  <option value="in_progress">In progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="spam">Spam</option>
+                </select>
+                <button onClick={exportMessagesCsv} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-slate-400 hover:text-white text-xs font-bold transition-colors">
+                  <FileText className="h-3.5 w-3.5" /> Export CSV
+                </button>
                 <button
                   onClick={() => setMessagesVersion((v) => v + 1)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-white/5 text-slate-400 hover:text-white text-xs font-bold transition-colors"
@@ -645,35 +749,93 @@ const handleLogout = async () => {
                 </div>
               )}
 
-              {messages.length > 0 && (
+              {filteredMessages.length > 0 && (
                 <div className="space-y-4">
-                  {messages.map((m) => (
-                    <div key={m.id} className="card p-6 bg-[#0e1326]/80 border-white/5">
+                  {filteredMessages.map((m) => {
+                    // Columns added by later migrations may be absent on older
+                    // tables — a missing value must never blank the whole tab.
+                    const status = m.status ?? 'new';
+                    const notif = m.notification_status ?? 'pending';
+                    const stamp = m.created_at ? new Date(m.created_at) : null;
+                    const stampLabel = stamp && !Number.isNaN(stamp.getTime()) ? stamp.toLocaleString() : '—';
+                    return (
+                    <div key={m.id} className={`card p-6 bg-[#0e1326]/80 border-white/5 ${status === 'spam' ? 'opacity-60' : ''}`}>
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex items-center gap-3 flex-wrap">
                           <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${m.form === 'quote' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'}`}>
                             {m.form === 'quote' ? 'Quote Request' : 'Contact'}
                           </span>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${
+                            status === 'new' ? 'bg-white/5 text-white border-white/20'
+                            : status === 'in_progress' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                            : status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                            : 'bg-red-500/10 text-red-400 border-red-500/30'
+                          }`}>{status.replace('_', ' ')}</span>
+                          <span
+                            title={`Email delivery: ${notif}${m.notification_error ? ` — ${m.notification_error}` : ''}`}
+                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                              notif === 'sent' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
+                              : notif === 'failed' ? 'bg-red-500/10 text-red-400 border-red-500/25'
+                              : notif === 'disabled' ? 'bg-slate-700/40 text-slate-400 border-white/10'
+                              : 'bg-white/5 text-slate-400 border-white/15'
+                            }`}
+                          >
+                            {notif === 'sent' ? 'email sent' : notif === 'failed' ? 'email FAILED' : notif}
+                          </span>
                           <span className="text-white font-bold text-sm">{m.name || 'Anonymous'}</span>
                           <a href={`mailto:${m.email}`} className="text-cyan-400 hover:text-cyan-300 text-xs">{m.email}</a>
                           {m.phone && <a href={`tel:${m.phone}`} className="text-slate-400 hover:text-white text-xs">{m.phone}</a>}
+                          {m.consent_marketing && <span className="text-[9px] text-violet-300 bg-violet-500/10 border border-violet-500/25 px-2 py-0.5 rounded-full">marketing OK</span>}
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
-                          <span className="text-slate-600 text-[10px] font-mono">{new Date(m.created_at).toLocaleString()}</span>
+                          <span className="text-slate-600 text-[10px] font-mono">{stampLabel}</span>
+                          <select
+                            value={status}
+                            onChange={(e) => updateMessageStatus(m.id, e.target.value)}
+                            className="px-2 py-1.5 rounded-lg bg-slate-950/70 border border-white/10 text-[10px] text-slate-300 outline-none"
+                            aria-label="Enquiry status"
+                          >
+                            <option value="new">New</option>
+                            <option value="in_progress">In progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="spam">Spam</option>
+                          </select>
                           <button onClick={() => deleteMessage(m.id)} className="p-2 text-slate-600 hover:text-red-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5" aria-label="Delete message">
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       </div>
+                      {m.category && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Category:</span> {m.category}</p>}
                       {m.subject && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Subject:</span> {m.subject}</p>}
                       {m.budget && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Budget:</span> {m.budget}</p>}
                       {m.timeline && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Timeline:</span> {m.timeline}</p>}
-                      {m.contact_method && <p className="text-xs text-slate-400 mb-2"><span className="text-slate-600">Preferred contact:</span> {m.contact_method}</p>}
+                      {m.contact_method && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Preferred contact:</span> {m.contact_method}</p>}
+                      {m.source_page && <p className="text-xs text-slate-400 mb-2"><span className="text-slate-600">Source page:</span> {m.source_page}</p>}
+                      {notif === 'failed' && m.notification_error && (
+                        <p className="text-xs text-red-400/80 mb-2 font-mono border border-red-500/20 bg-red-500/5 rounded-lg px-3 py-2">Delivery error: {m.notification_error}</p>
+                      )}
                       <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line border-t border-white/5 pt-3">{m.message}</p>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
+              {filteredMessages.length === 0 && messages.length > 0 && (
+                <div className="card p-10 text-center text-slate-500 text-sm">No messages match your search/filter.</div>
+              )}
+            </div>
+          )}
+
+          {/* Project Manager tab — full control over the hub board + client assignments */}
+          {activeTab === 'projecthub' && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-black text-white tracking-tight">Project Manager</h1>
+                <p className="text-slate-500 text-sm mt-1 font-mono">Delivery board, phases, projects and client portal assignments — total control</p>
+              </div>
+              <HaritechProjectManager />
+              <HaritechClientProjectsManager />
+              <HaritechPortalManager />
             </div>
           )}
 
@@ -682,7 +844,7 @@ const handleLogout = async () => {
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-black text-white tracking-tight">Haritech Management</h1>
-                <p className="text-slate-500 text-sm mt-1 font-mono">Manage all Haritech Exclusive Services content</p>
+                <p className="text-slate-500 text-sm mt-1 font-mono">Manage all Haritech Exclusive Business content</p>
               </div>
 
               {/* Sub-tabs */}
@@ -693,7 +855,9 @@ const handleLogout = async () => {
                   { id: 'team', label: 'Team' },
                   { id: 'whatwedo', label: 'What We Do' },
                   { id: 'solar', label: 'Solar Energy' },
-                  { id: 'epoxy', label: '3D Epoxy' },
+                  { id: 'import', label: 'Importation' },
+                  { id: 'projects', label: 'Project Management' },
+                  { id: 'epoxy', label: 'Epoxy & Décor' },
                   { id: 'industries', label: 'Industries' },
                   { id: 'faq', label: 'FAQ' },
                   { id: 'blog', label: 'Blog' },
@@ -712,6 +876,13 @@ const handleLogout = async () => {
               {haritechSubTab === 'team' && <HaritechTeamManager />}
               {haritechSubTab === 'whatwedo' && <HaritechWhatWeDoManager />}
               {haritechSubTab === 'solar' && <HaritechSolarManager />}
+              {haritechSubTab === 'import' && <HaritechImportationManager />}
+              {haritechSubTab === 'projects' && (
+                <div className="space-y-6">
+                  <HaritechProjectManager />
+                  <HaritechClientProjectsManager />
+                </div>
+              )}
               {haritechSubTab === 'epoxy' && <HaritechEpoxyManager />}
               {haritechSubTab === 'industries' && <HaritechIndustriesManager />}
               {haritechSubTab === 'faq' && <HaritechFAQManager />}

@@ -5,12 +5,13 @@ import { Paintbrush, Droplets, Gem, Sofa, Brush, Wrench, Layers, Ruler, Hammer, 
 import { getWhatsAppUrl, getEpoxyContent, EpoxyContent } from '../../utils/haritechContent';
 import EpoxyCoverageCalculator from '../../components/haritech/EpoxyCoverageCalculator';
 import Epoxy3DRoomStudio from '../../components/haritech/Epoxy3DRoomStudio';
+import Interior3DRoomStudio from '../../components/haritech/Interior3DRoomStudio';
 import Interactive3DTiltCard from '../../components/haritech/Interactive3DTiltCard';
 
-/* ── 3D Epoxy & Interior Design ────────────────────────────────────────────
+/* ── 3D Epoxy & Interior Home Decoration ──────────────────────────────────
    Signature identity within the Haritech site: deep resin teal → violet
-   gloss. Structure mirrors the Solar / CAC service pages, with a work-
-   example gallery (lightbox) as the centrepiece.                          */
+   gloss. Structure mirrors the Solar / CAC service pages, with twin 3D
+   studios (epoxy surfaces + interior décor) and a work-example gallery.   */
 
 const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => (
   <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay }}>
@@ -102,18 +103,40 @@ const ThreeDEpoxy: React.FC = () => {
           <FadeInView>
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-mono font-bold mb-3">
-                <Sparkles className="h-3.5 w-3.5" /> PREMIER 3D VIRTUAL STUDIO
+                <Sparkles className="h-3.5 w-3.5" /> INTERIOR PALETTE STUDIO
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                Simulate Your <span className={ACCENT}>3D Surface</span> in Real-Time
+                Try <span className={ACCENT}>Finishes</span> Before You Commit
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto mt-2 text-xs sm:text-sm">
-                Interact with high-tensile epoxy formulas, specular reflections, and camera perspectives before pouring a single drop.
+                Preview palette combinations for a room and use them as a starting point for a conversation. Palettes are illustrative — site conditions decide what can actually be installed.
               </p>
             </div>
           </FadeInView>
           <FadeInView delay={0.1}>
             <Epoxy3DRoomStudio />
+          </FadeInView>
+        </div>
+      </section>
+
+      {/* Interactive 3D Interior Decoration Studio */}
+      <section className="py-12 relative">
+        <div className="container mx-auto px-6">
+          <FadeInView>
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 text-xs font-mono font-bold mb-3">
+                <Sofa className="h-3.5 w-3.5" /> COMPLETE INTERIOR HOME DECORATION
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                Style Your <span className="text-cyan-300">Whole Interior</span> Around Your Floor
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto mt-2 text-xs sm:text-sm">
+                Full-space decoration — furniture, wall finishes, lighting and soft décor — designed to follow the same 3D epoxy floor. Pick a style and preview it live.
+              </p>
+            </div>
+          </FadeInView>
+          <FadeInView delay={0.1}>
+            <Interior3DRoomStudio />
           </FadeInView>
         </div>
       </section>
@@ -280,8 +303,8 @@ const ThreeDEpoxy: React.FC = () => {
         <div className="container mx-auto">
           <FadeInView>
             <div className="text-center mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Why <span className={ACCENT}>Epoxy?</span></h2>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Beyond the wow factor, a properly installed epoxy system is one of the hardest-wearing finishes you can put on a surface.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">What to <span className={ACCENT}>Expect</span></h2>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">Performance depends on the resin system, the substrate and how the floor is prepared — these are the practical points to weigh.</p>
             </div>
           </FadeInView>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -310,13 +333,13 @@ const ThreeDEpoxy: React.FC = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(20,184,166,0.1)_0%,transparent_70%)]" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Ready To Pour Your <span className="bg-gradient-to-r from-teal-300 to-violet-400 bg-clip-text text-transparent">Masterpiece?</span></h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4 font-syne tracking-tight">Send a Photo of <span className="bg-gradient-to-r from-teal-300 to-violet-400 bg-clip-text text-transparent">Your Space</span></h2>
             <p className="text-xs sm:text-sm text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Send us a photo of your space and we'll come back with a design concept and a free, no-obligation quote.
+              A photo, the room size and how the space is used are enough for a first conversation. We will say whether a resin finish suits the surface before quoting.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-teal-500 to-violet-600 shadow-lg shadow-teal-500/20"><Sparkles className="h-4 w-4" /> Get a Free Quote</Link>
-              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><MessageCircle className="h-4 w-4 text-teal-300" /> WhatsApp Us</a>
+              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-teal-500 to-violet-600 shadow-lg shadow-teal-500/20"><Sparkles className="h-4 w-4" /> Request a Quotation</Link>
+              <a href={getWhatsAppUrl('Hello Haritech, I would like to discuss an epoxy floor or interior décor project.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><MessageCircle className="h-4 w-4 text-teal-300" /> Send the Details</a>
             </div>
           </FadeInView>
         </div>

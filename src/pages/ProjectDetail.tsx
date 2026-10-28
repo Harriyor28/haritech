@@ -7,8 +7,8 @@ import { getStoredProjects } from '../utils/projects';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const allProjects = getStoredProjects();
-  const project = allProjects.find(p => p.id === parseInt(id || '0'));
+  const allProjects = Array.isArray(getStoredProjects()) ? getStoredProjects() : [];
+  const project: any = allProjects.find((p: any) => p?.id === parseInt(id || '0'));
 
   if (!project) {
     return (
@@ -24,7 +24,7 @@ const ProjectDetail: React.FC = () => {
     );
   }
 
-  const nextProject = allProjects.find(p => p.id === project.id + 1) || allProjects[0];
+  const nextProject: any = allProjects.find((p: any) => p?.id === (project as any)?.id + 1) || allProjects[0] || null;
 
   return (
     <div className="bg-[#070a13] min-h-screen text-white">
@@ -75,7 +75,7 @@ const ProjectDetail: React.FC = () => {
                 {project.title}
               </h1>
               <div className="flex flex-wrap gap-2 mb-8">
-                {project.tags.map((tag) => (
+                {(project.tags || []).map((tag: any) => (
                   <span key={tag} className="bg-slate-900/60 backdrop-blur-sm border border-white/5 text-slate-400 px-3 py-1 rounded-lg text-xs font-semibold">
                     {tag}
                   </span>
@@ -131,7 +131,7 @@ const ProjectDetail: React.FC = () => {
                     </p>
                     <h3 className="text-lg font-bold mb-4 mt-6 text-white">Key Features</h3>
                     <ul className="space-y-3">
-                      {project.features.map((feature, index) => (
+                      {(project.features || []).map((feature: any, index: any) => (
                         <li key={index} className="flex items-start">
                           <span className="w-5 h-5 rounded-md bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
                             <Check className="h-3 w-3 text-cyan-400" />
@@ -254,8 +254,7 @@ const ProjectDetail: React.FC = () => {
               Technology <span className="gradient-text-pink">Stack</span>
             </motion.h2>
             
-            <div className="flex flex-wrap justify-center gap-4">
-              {project.technology.map((tech, index) => (
+            <div className="flex flex-wrap justify-center gap-4">                {(project.technology || []).map((tech: any, index: any) => (
                 <motion.div
                   key={tech}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -314,6 +313,7 @@ const ProjectDetail: React.FC = () => {
         </section>
 
         {/* Next Project */}
+        {nextProject && (
         <section className="section-padding bg-slate-950/30">
           <div className="container mx-auto">
             <div className="text-center">
@@ -342,6 +342,7 @@ const ProjectDetail: React.FC = () => {
             </div>
           </div>
         </section>
+        )}
       </main>
     </div>
   );

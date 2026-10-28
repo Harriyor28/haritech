@@ -30,14 +30,14 @@ const HaritechPortfolio: React.FC = () => {
             <FadeInView>
               <div className="stone-frame-box inline-block px-5 py-2 rounded-sm mb-6">
                 <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase flex items-center justify-center gap-2">
-                  <Monitor className="h-4 w-4" /> HARITECH PRODUCTION DEPLOYMENT VAULT
+                  <Monitor className="h-4 w-4" /> PROJECTS &amp; EXAMPLES
                 </span>
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-syne tracking-tight">
-                Projects We've <span className="gradient-text">Engineered & Delivered</span>
+                Work We Can <span className="gradient-text">Show You</span>
               </h1>
               <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6">
-                Browse through our portfolio of completed projects across software architecture, corporate solutions, and digital transformation.
+                Completed work is published here only when the customer agrees and the details can be verified. Where nothing is shown yet, that is deliberate — we would rather show nothing than invent a portfolio.
               </p>
               <div className="flex justify-center">
                 <button
@@ -45,7 +45,7 @@ const HaritechPortfolio: React.FC = () => {
                   className="btn-primary text-xs py-2.5 px-6 rounded-xl font-bold flex items-center gap-2"
                 >
                   <Zap className="h-4 w-4" />
-                  <span>Get Estimate for Similar Project</span>
+                  <span>Estimate Your Own Project</span>
                 </button>
               </div>
             </FadeInView>
@@ -58,8 +58,8 @@ const HaritechPortfolio: React.FC = () => {
           {projects.length === 0 ? (
             <div className="text-center py-20">
               <Monitor className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-slate-400 mb-2">No Projects Yet</h3>
-              <p className="text-slate-500">Projects will appear here once they are added via the admin panel.</p>
+              <h3 className="text-xl font-bold text-slate-300 mb-2">No published projects yet</h3>
+              <p className="text-slate-500 max-w-xl mx-auto">Confirmed, permission-cleared work is added here from the admin dashboard. Until then, ask us directly for details of work relevant to your enquiry.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -100,10 +100,10 @@ const HaritechPortfolio: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/20 via-blue-600/10 to-purple-600/20" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <FadeInView>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Want a Project Like These?</h2>
-            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Let's create something amazing for your business. Get in touch today.</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Have a Similar Need?</h2>
+            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Describe the job and we will tell you what it involves, what it costs and whether it is something we can actually deliver.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Start Your Project</Link>
+              <Link to="/haritech/request-quote" className="btn-primary text-base px-10 py-4"><Zap className="h-5 w-5" /> Send an Enquiry</Link>
               <Link to="/haritech/contact" className="btn-secondary text-base px-10 py-4">Contact Us <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
             </div>
           </FadeInView>

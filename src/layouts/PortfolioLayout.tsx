@@ -35,7 +35,7 @@ const PortfolioLayout: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#070a13] text-slate-100 overflow-x-hidden grid-bg-overlay">
+    <div className="relative min-h-screen ht-screen-height bg-[#070a13] text-slate-100 overflow-x-hidden grid-bg-overlay">
       <ParticleBackground />
 
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-blue-500/10 blur-[120px] pointer-events-none z-0" />
@@ -177,9 +177,9 @@ const PortfolioLayout: React.FC = () => {
       </main>
 
       <CrossPromo
-        eyebrow="Haritech Exclusive Services"
+        eyebrow="Haritech Exclusive Business"
         title="Need more than a website for your business?"
-        text="You're browsing our portfolio — but Haritech also offers solar energy, CCTV, printing, CAC business registration and full digital solutions. Check out everything we do on the Haritech Services side."
+        text="You're browsing our portfolio — but Haritech Exclusive Business also offers laptops and tech accessories, computer services, printing and branding, importation consultation, business consultation, solar energy, project management and interior décor. See everything we do on the Haritech side."
         cta="Explore Haritech Services"
         to="/haritech"
       />

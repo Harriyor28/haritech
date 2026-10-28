@@ -1,8 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Mail, Phone, MessageCircle, Send, Sparkles } from 'lucide-react';
+import { MapPin, Mail, Phone, MessageCircle, Send, Sparkles, AlertCircle } from 'lucide-react';
 import { getStoredSettings } from '../utils/settings';
 import type { SiteSettings } from '../utils/settings';
+import { submitContactMessage, buildWhatsAppFallbackUrl, type ContactMessage } from '../utils/contactMessages';
+import { trackEvent } from '../utils/analytics';
 
 const ContactSection: React.FC = () => {
   const [settings, setSettings] = useState<SiteSettings>(() => getStoredSettings());
@@ -30,44 +32,61 @@ const ContactSection: React.FC = () => {
   
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [bankMessage, setBankMessage] = useState<ContactMessage | null>(null);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) newErrors.name = 'Name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    if (formData.phone.trim() && !/^[+0-9()\-\s]{6,20}$/.test(formData.phone.trim())) newErrors.phone = 'Invalid phone format';
+    if (!formData.message.trim() || formData.message.trim().length < 10) newErrors.message = 'Message is required (10+ chars)';
     if (!formData.projectType) newErrors.projectType = 'Please select a project type';
     if (!formData.budget) newErrors.budget = 'Please select a budget range';
     if (!formData.timeline) newErrors.timeline = 'Please select a timeline';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    
+    if (!validateForm()) {
+      trackEvent('enquiry_validation_failed', 'portfolio');
+      return;
+    }
     setFormStatus('submitting');
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setFormStatus('success');
-    setFormData({
-      name: '',
-      company: '',
-      phone: '',
-      email: '',
-      projectType: '',
-      budget: '',
-      timeline: '',
-      message: ''
-    });
-    
-    setTimeout(() => setFormStatus('idle'), 5000);
+    const msg: ContactMessage = {
+      form: 'contact',
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      category: formData.projectType,
+      subject: formData.projectType,
+      message: formData.message.trim(),
+      budget: formData.budget,
+      timeline: formData.timeline,
+      sourcePage: '/',
+    };
+    const result = await submitContactMessage(msg);
+    if (result.ok) {
+      setFormStatus('success');
+      setFormData({
+        name: '', company: '', phone: '', email: '',
+        projectType: '', budget: '', timeline: '', message: '',
+      });
+      setTimeout(() => setFormStatus('idle'), 6000);
+      return;
+    }
+    if (result.error === 'rate-limited') {
+      setFormStatus('error');
+      setErrors({ submit: 'You just sent an enquiry — wait about half a minute and try again.' });
+      return;
+    }
+    setFormStatus('error');
+    setBankMessage(msg);
+    setErrors({ submit: 'Could not reach our servers — your message is saved locally below. Retry or deliver via WhatsApp.' });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -211,13 +230,35 @@ const ContactSection: React.FC = () => {
                     <Send className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold">Transmission Successful!</h4>
-                    <p className="text-xs text-slate-300 mt-1">Thank you. Our lead architect will follow up within 12-24 hours.</p>
+                    <h4 className="font-bold">Enquiry Received!</h4>
+                    <p className="text-xs text-slate-300 mt-1">Thank you — your enquiry has been recorded and the owner has been notified. We will follow up by your preferred contact method.</p>
                   </div>
                 </motion.div>
               )}
               
               <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                {/* Honeypot — hidden from real visitors */}
+                <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <label htmlFor="cs-website">Website</label>
+                  <input type="text" id="cs-website" name="website" tabIndex={-1} autoComplete="off" onChange={handleChange} />
+                </div>
+                {errors.submit && (
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-start gap-3">
+                    <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-300 whitespace-pre-line">{errors.submit}</p>
+                  </div>
+                )}
+                {bankMessage && (
+                  <a
+                    href={buildWhatsAppFallbackUrl(bankMessage)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent('whatsapp_click', 'portfolio_fallback')}
+                    className="block text-xs font-bold text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+                  >
+                    Or deliver this message instantly via WhatsApp →
+                  </a>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">

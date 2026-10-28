@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Paintbrush, Zap } from 'lucide-react';
+import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Paintbrush, Zap, Ship, Calculator, Kanban, Lock } from 'lucide-react';
 import { getHaritechBrandLogo, subscribeToHaritechLogo } from '../utils/haritechBrand';
 import { getWhatsAppUrl, getHaritechContent } from '../utils/haritechContent';
 import Underground3DBackground from '../components/Underground3DBackground';
@@ -10,30 +10,87 @@ import { HaritechCostEstimator } from '../components/haritech/HaritechCostEstima
 import { CacVerificationModal } from '../components/haritech/CacVerificationModal';
 import { PremierFloatingDock } from '../components/haritech/PremierFloatingDock';
 
-const navItems = [
-  { label: 'Home', path: '/haritech', icon: Building2 },
-  { label: 'About', path: '/haritech/about', icon: FileText },
-  { label: 'What We Do', path: '/haritech/what-we-do', icon: Globe },
-  { label: 'Our Services', path: '/haritech/services', icon: Monitor },
-  { label: 'Industries', path: '/haritech/industries', icon: Layout },
-  { label: 'Portfolio', path: '/haritech/portfolio', icon: Briefcase },
-  { label: 'Solar Energy', path: '/haritech/solar-energy', icon: Sun },
-  { label: '3D Epoxy', path: '/haritech/3d-epoxy', icon: Paintbrush },
-  { label: 'CAC Registration', path: '/haritech/cac-registration', icon: FileText },
-  { label: 'Blog', path: '/haritech/blog', icon: MessageCircle },
-  { label: 'FAQ', path: '/haritech/faq', icon: HelpCircle },
-  { label: 'Contact', path: '/haritech/contact', icon: Mail },
+/* Two tight groups instead of one long list, so the header and the mobile
+   drawer stay readable on phones and tablets:
+     · Company    — Home → Industries (who we are, what we do)
+     · Portfolio  — Portfolio → Contact (the divisions, the work, the ways in)
+   ------------------------------------------------------------------------ */
+interface NavItem {
+  label: string;
+  path: string;
+  icon: typeof Building2;
+  hint?: string;
+}
+
+interface NavGroup {
+  id: string;
+  label: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
+  {
+    id: 'company',
+    label: 'Haritech',
+    items: [
+      { label: 'Home', path: '/haritech', icon: Building2 },
+      { label: 'About', path: '/haritech/about', icon: FileText },
+      { label: 'What We Do', path: '/haritech/what-we-do', icon: Globe },
+      { label: 'Our Services', path: '/haritech/services', icon: Monitor },
+      { label: 'Industries', path: '/haritech/industries', icon: Layout },
+    ],
+  },
+  {
+    id: 'portfolio',
+    label: 'Portfolio & Divisions',
+    items: [
+      { label: 'Portfolio', path: '/haritech/portfolio', icon: Briefcase, hint: 'Client work' },
+      { label: 'Solar Energy', path: '/haritech/solar-energy', icon: Sun, hint: 'Inverters & micro-grids' },
+      { label: 'Importation', path: '/haritech/importation', icon: Ship, hint: 'Freight & clearing' },
+      { label: 'Project & Property', path: '/haritech/project-management', icon: Kanban, hint: 'Management hub' },
+      { label: 'Client Portal', path: '/haritech/client-portal', icon: Lock, hint: 'Client sign-in' },
+      { label: 'Epoxy & Décor', path: '/haritech/3d-epoxy', icon: Paintbrush, hint: '3D floors' },
+      { label: 'CAC Registration', path: '/haritech/cac-registration', icon: FileText, hint: 'Company filings' },
+      { label: 'Blog', path: '/haritech/blog', icon: MessageCircle },
+      { label: 'FAQ', path: '/haritech/faq', icon: HelpCircle },
+      { label: 'Contact', path: '/haritech/contact', icon: Mail },
+    ],
+  },
 ];
+
+const [primaryGroup, secondaryGroup] = navGroups;
 
 const HaritechLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(primaryGroup.id);
+  const [divisionsOpen, setDivisionsOpen] = useState(false);
+  const divisionsRef = useRef<HTMLDivElement | null>(null);
   const [logoUrl, setLogoUrl] = useState(() => getHaritechBrandLogo());
   const [content, setContent] = useState(() => getHaritechContent());
   const [estimatorOpen, setEstimatorOpen] = useState(false);
   const [cacModalOpen, setCacModalOpen] = useState(false);
   const location = useLocation();
+  // Thin reading-progress rail under the header — works with the smooth-scroll
+  // engine because it reads the real document scroll position.
+  const { scrollYProgress } = useScroll();
+  const scrollProgress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, restDelta: 0.001 });
 
   useEffect(() => subscribeToHaritechLogo(setLogoUrl), []);
+
+  // Close the header’s division menu whenever the route changes
+  useEffect(() => { setDivisionsOpen(false); }, [location.pathname]);
+
+  // …and when the pointer lands anywhere outside it
+  useEffect(() => {
+    if (!divisionsOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (divisionsRef.current && !divisionsRef.current.contains(event.target as Node)) {
+        setDivisionsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, [divisionsOpen]);
 
   useEffect(() => {
     const handler = () => setContent(getHaritechContent());
@@ -57,49 +114,66 @@ const HaritechLayout: React.FC = () => {
     return location.pathname.startsWith(path);
   };
 
+  const activeGroupId =
+    navGroups.find(group => group.items.some(item => isActive(item.path)))?.id ?? primaryGroup.id;
+
+  const openDrawer = () => {
+    setOpenGroup(activeGroupId);
+    setSidebarOpen(true);
+  };
+
   return (
-    <div className="min-h-screen bg-[#04060a] text-slate-100 selection:bg-white selection:text-black">
+    <div className="min-h-screen ht-screen-height bg-[#04060a] text-slate-100 selection:bg-white selection:text-black">
       <Underground3DBackground />
       <Ambient3DLayer />
 
-      {/* Stone Architectural Top Ribbon / Status Ticker */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-8 bg-slate-950/90 border-b border-white/10 text-[11px] overflow-hidden flex items-center backdrop-blur-md">
+      {/* Keyboard users on any OS can jump the fixed header */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-xl focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-slate-950"
+      >
+        Skip to content
+      </a>
+
+      {/* Stone Architectural Top Ribbon / Status Ticker
+          Hidden on phones: 32px of a 667px screen belongs to the content. */}
+      <div className="hidden sm:flex fixed top-0 left-0 right-0 z-50 h-8 bg-slate-950/90 border-b border-white/10 text-[11px] overflow-hidden items-center backdrop-blur-md">
         <div className="animate-marquee whitespace-nowrap text-slate-400 font-mono flex items-center gap-8">
           <span className="flex items-center gap-1.5 text-white font-bold tracking-tight">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
-            OPERATIONS LIVE: ALL HARITECH ENTERPRISE DIVISIONS RUNNING AT 100% CAPACITY
+            HARITECH EXCLUSIVE BUSINESS — SMART TECH, SMART LIVING.
           </span>
           <span className="text-slate-600">|</span>
           <span className="text-slate-300 font-medium">
-            ⚡ SOLAR DIVISION: Tier-1 Hybrid Inverters & LiFePO4 Energy Micro-Grids
+            💻 Laptops, accessories and practical computer services
           </span>
           <span className="text-slate-600">|</span>
           <span className="text-slate-300 font-medium">
-            🏛️ STATUTORY COMPLIANCE: CAC Accredited Entity (BN 3829104) • Federal Republic of Nigeria
+            🖨️ Printing, branding and online registration assistance
           </span>
           <span className="text-slate-600">|</span>
           <span className="text-slate-300 font-medium">
-            💎 3D EPOXY SURFACES: High-Tensile 12,500 PSI Industrial Coatings & Residential Marble Gloss
+            🚢 Importation consultation with landed-cost planning
           </span>
           <span className="text-slate-600">|</span>
           <span className="text-slate-300 font-medium">
-            🚀 DIGITAL SYSTEMS: React 18, Custom APIs, Mobile & SaaS Development
+            🎨 3D epoxy and interior décor consultation
           </span>
           <span className="text-slate-600">|</span>
-          <span className="text-white font-bold">
-            📞 RAPID RESPONSE: +234 800 000 0000
+          <span className="text-slate-300 font-medium">
+            ☀️ Solar energy planning and project management support
           </span>
         </div>
       </div>
 
       {/* Top Navigation */}
-      <nav className="fixed top-8 w-full z-40 bg-slate-950/85 backdrop-blur-2xl border-b border-white/10 transition-all">
+      <nav className="ht-nav-font fixed top-0 sm:top-8 w-full z-40 bg-slate-950/85 backdrop-blur-2xl border-b border-white/10 transition-all">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <button 
-                onClick={() => setSidebarOpen(true)} 
-                className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-slate-400 transition-colors"
+                onClick={openDrawer} 
+                className="ht-tap lg:hidden p-2 -ml-1 rounded-xl hover:bg-white/5 text-slate-400 transition-colors flex items-center justify-center"
                 aria-label="Toggle navigation"
               >
                 <Menu className="h-5 w-5" />
@@ -117,7 +191,7 @@ const HaritechLayout: React.FC = () => {
                         HARITECH
                       </span>
                       <span className="text-[9px] block font-mono text-slate-400 tracking-[0.25em] uppercase -mt-0.5 font-bold">
-                        EXCLUSIVE SERVICES
+                        EXCLUSIVE BUSINESS
                       </span>
                     </div>
                   </>
@@ -125,8 +199,8 @@ const HaritechLayout: React.FC = () => {
               </Link>
             </div>
 
-            <div className="hidden lg:flex items-center gap-6">
-              {navItems.slice(0, 6).map((item) => (
+            <div className="hidden lg:flex items-center gap-5 xl:gap-6">
+              {primaryGroup.items.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -137,27 +211,37 @@ const HaritechLayout: React.FC = () => {
                 </Link>
               ))}
 
-              <div className="relative group">
-                <button className="text-sm font-semibold text-slate-300 hover:text-cyan-300 transition-colors flex items-center gap-1 py-1">
-                  Divisions & More <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180" />
+              <div className="relative group" ref={divisionsRef}>
+                <button
+                  onClick={() => setDivisionsOpen(open => !open)}
+                  aria-expanded={divisionsOpen}
+                  aria-haspopup="true"
+                  className={`text-sm font-semibold transition-colors flex items-center gap-1 py-1 ${secondaryGroup.items.some(i => isActive(i.path)) ? 'text-cyan-400' : 'text-slate-300 hover:text-cyan-300'}`}
+                >
+                  Portfolio <ChevronDown className={`h-3.5 w-3.5 transition-transform ${divisionsOpen ? 'rotate-180' : 'group-hover:rotate-180'}`} />
                 </button>
-                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2.5 z-50">
-                  {navItems.slice(6).map((item) => (
-                    <Link 
-                      key={item.path} 
-                      to={item.path} 
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition-colors"
-                    >
-                      <item.icon className="h-4 w-4 text-cyan-400" />
-                      {item.label}
-                    </Link>
-                  ))}
-                  <div className="border-t border-white/5 my-1.5 pt-1.5 px-3">
+                <div className={`absolute top-full right-0 mt-2 w-[24rem] bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl transition-all duration-200 p-2 z-50 ${divisionsOpen ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
+                  <div className="grid grid-cols-2 gap-0.5">
+                    {secondaryGroup.items.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className="flex items-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition-colors"
+                      >
+                        <item.icon className="h-4 w-4 text-cyan-400 shrink-0 mt-px" />
+                        <span className="min-w-0">
+                          <span className="block leading-tight">{item.label}</span>
+                          {item.hint && <span className="block text-[10px] text-slate-500 leading-tight mt-0.5">{item.hint}</span>}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="border-t border-white/5 mt-1.5 pt-1.5 px-1">
                     <button
-                      onClick={() => setCacModalOpen(true)}
+                      onClick={() => { setDivisionsOpen(false); setCacModalOpen(true); }}
                       className="w-full text-left flex items-center gap-2 px-2 py-1.5 text-xs text-purple-300 hover:text-purple-200 font-semibold"
                     >
-                      <Building2 className="h-3.5 w-3.5 text-purple-400" /> Verify CAC License
+                      <Building2 className="h-3.5 w-3.5 text-purple-400" /> Business details
                     </button>
                   </div>
                 </div>
@@ -178,17 +262,26 @@ const HaritechLayout: React.FC = () => {
               </Link>
 
               <a 
-                href={getWhatsAppUrl('Hello Haritech Exclusive Services, I would like to consult with your team.')} 
+                href={getWhatsAppUrl('Hello Haritech Exclusive Business, I would like to consult with your team.')} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="p-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors"
+                className="ht-tap p-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors flex items-center justify-center"
                 title="Direct WhatsApp"
+                aria-label="Chat on WhatsApp"
               >
                 <MessageCircle className="h-4 w-4" />
               </a>
             </div>
           </div>
         </div>
+        {/* Reading progress — accent-coloured, sits on the header's bottom edge */}
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleX: scrollProgress }}
+          className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+        >
+          <div className="h-full w-full" style={{ background: 'linear-gradient(90deg, var(--ht-accent), var(--ht-accent-bright))' }} />
+        </motion.div>
       </nav>
 
 
@@ -202,9 +295,9 @@ const HaritechLayout: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-72 bg-slate-950 border-r border-white/5 z-50 overflow-y-auto"
+              className="ht-nav-font fixed top-0 left-0 bottom-0 w-72 max-w-[86vw] bg-slate-950 border-r border-white/5 z-50 overflow-y-auto"
             >
-              <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <div className="ht-safe-top p-4 border-b border-white/5 flex items-center justify-between">
                 <Link to="/haritech" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
                   {logoUrl ? (
                     <img src={logoUrl} alt="Haritech" className="h-7 w-auto object-contain" />
@@ -217,28 +310,88 @@ const HaritechLayout: React.FC = () => {
                     </>
                   )}
                 </Link>
-                <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-slate-400">
+                <button onClick={() => setSidebarOpen(false)} className="ht-tap p-2 rounded-xl hover:bg-white/5 text-slate-400 flex items-center justify-center" aria-label="Close navigation">
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="p-4 space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive(item.path) ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+              <div className="p-3.5 space-y-3">
+                {/* Primary actions first — always one tap away on a phone */}
+                <div className="grid grid-cols-2 gap-2">
+                  <Link to="/haritech/request-quote" onClick={() => setSidebarOpen(false)} className="btn-primary text-xs py-2.5 px-2 rounded-xl justify-center">
+                    <FileText className="h-3.5 w-3.5" /> Get Quote
+                  </Link>
+                  <a href={getWhatsAppUrl('Hello Haritech Exclusive Business, I would like to consult with your team.')} target="_blank" rel="noopener noreferrer" onClick={() => setSidebarOpen(false)} className="btn-secondary text-xs py-2.5 px-2 rounded-xl justify-center">
+                    <MessageCircle className="h-3.5 w-3.5 text-green-400" /> WhatsApp
+                  </a>
+                </div>
+
+                {/* Grouped navigation — two collapsible sections, never a wall of links */}
+                {navGroups.map(group => {
+                  const expanded = openGroup === group.id;
+                  const groupActive = group.items.some(item => isActive(item.path));
+                  return (
+                    <div key={group.id} className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden">
+                      <button
+                        onClick={() => setOpenGroup(expanded ? null : group.id)}
+                        aria-expanded={expanded}
+                        className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left"
+                      >
+                        <span className="min-w-0">
+                          <span className="block text-[10px] font-mono uppercase tracking-[0.2em] font-bold text-slate-400">
+                            {group.label}
+                          </span>
+                          <span className="block text-[10px] text-slate-600 mt-0.5">
+                            {group.items.length} pages{groupActive ? ' · you are here' : ''}
+                          </span>
+                        </span>
+                        <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${expanded ? 'rotate-180 text-cyan-400' : 'text-slate-500'} ${groupActive && !expanded ? 'text-cyan-400' : ''}`} />
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {expanded && (
+                          <motion.div
+                            key="content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-2 pb-2 space-y-0.5">
+                              {group.items.map(item => (
+                                <Link
+                                  key={item.path}
+                                  to={item.path}
+                                  onClick={() => setSidebarOpen(false)}
+                                  className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive(item.path) ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}`}
+                                >
+                                  <item.icon className="h-4 w-4 shrink-0" />
+                                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                                  {isActive(item.path) && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+
+                <div className="pt-3 border-t border-white/5 space-y-1">
+                  <button
+                    onClick={() => { setSidebarOpen(false); setEstimatorOpen(true); }}
+                    className="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-cyan-300 hover:bg-white/5 transition-colors"
                   >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                ))}
-                <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
-                  <Link to="/haritech/request-quote" onClick={() => setSidebarOpen(false)} className="btn-primary text-sm py-2.5 px-3 rounded-xl w-full justify-center">
-                    Request a Quote
-                  </Link>
-                  <Link to="/" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors py-2">
-                    <ArrowLeft className="h-4 w-4" /> Back to Portfolio
+                    <Calculator className="h-4 w-4 shrink-0 text-cyan-400" /> Smart Cost Estimator
+                  </button>
+                  <button
+                    onClick={() => { setSidebarOpen(false); setCacModalOpen(true); }}
+                    className="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-purple-300 hover:bg-white/5 transition-colors"
+                  >
+                    <Building2 className="h-4 w-4 shrink-0 text-purple-400" /> Business details
+                  </button>
+                  <Link to="/" onClick={() => setSidebarOpen(false)} className="flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-cyan-400 hover:bg-white/5 transition-colors">
+                    <ArrowLeft className="h-4 w-4 shrink-0" /> Back to Portfolio Hub
                   </Link>
                 </div>
               </div>
@@ -247,8 +400,8 @@ const HaritechLayout: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Page Content */}
-      <main className="pt-24 pb-16">
+      {/* Page Content — smaller top offset on phones, where the ribbon is hidden */}
+      <main id="main-content" className="pt-20 sm:pt-28 pb-16">
         <Outlet />
       </main>
 
@@ -269,10 +422,11 @@ const HaritechLayout: React.FC = () => {
       />
 
       {/* Footer */}
-      <footer className="bg-[#050810] border-t border-white/5 relative overflow-hidden">
+      <footer className="ht-safe-bottom bg-[#050810] border-t border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 grid-bg-overlay pointer-events-none" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-500/5 blur-[120px] pointer-events-none" />
-        <div className="container mx-auto px-6 py-16 relative z-10">
+        {/* Bottom padding keeps the floating dock from covering the legal row */}
+        <div className="container mx-auto px-6 pt-16 pb-24 sm:pb-20 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
             <div className="lg:col-span-2">
               <Link to="/haritech" className="flex items-center gap-2 mb-4">
@@ -288,24 +442,26 @@ const HaritechLayout: React.FC = () => {
                 )}
               </Link>
               <p className="text-slate-400 text-sm max-w-md leading-relaxed mb-6">
-                Premier multi-disciplinary engineering and corporate services: bespoke digital software architectures, 24/7 solar inverter grids, luxury 3D epoxy surfaces, and federal CAC corporate registrations.
+                A Nigerian multi-service business: laptop and tech accessories, cyber café and online registration assistance, printing and branding, importation consultation, 3D epoxy and interior décor, solar energy guidance, project management and business consultation.
               </p>
               <div className="flex gap-3">
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors" title="WhatsApp"><MessageCircle className="h-4 w-4" /></a>
-                <a href={`mailto:${content.email}`} className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors" title="Email"><Mail className="h-4 w-4" /></a>
+                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="ht-tap w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors" title="WhatsApp" aria-label="Chat on WhatsApp"><MessageCircle className="h-4 w-4" /></a>
+                <a href={`mailto:${content.email}`} className="ht-tap w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors" title="Email" aria-label="Email Haritech"><Mail className="h-4 w-4" /></a>
                 <button onClick={() => setCacModalOpen(true)} className="px-3 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 flex items-center gap-1.5 text-xs font-semibold hover:bg-purple-500/20 transition-colors">
-                  <Building2 className="h-3.5 w-3.5" /> BN 3829104
+                  <Building2 className="h-3.5 w-3.5" /> Business details
                 </button>
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Enterprise Divisions</h4>
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-5">Service Divisions</h4>
               <ul className="space-y-2.5">
-                <li><Link to="/haritech/services" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Software & Digital Engineering</Link></li>
-                <li><Link to="/haritech/solar-energy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Solar Energy & Micro-Grids</Link></li>
-                <li><Link to="/haritech/3d-epoxy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">3D Epoxy & Architectural Coatings</Link></li>
-                <li><Link to="/haritech/cac-registration" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">CAC Corporate Registration</Link></li>
-                <li><Link to="/haritech/industries" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Industries Served</Link></li>
+                <li><Link to="/haritech/services" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Laptops & Tech Accessories</Link></li>
+                <li><Link to="/haritech/services" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Cyber Café & Online Registration</Link></li>
+                <li><Link to="/haritech/services" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Printing & Branding</Link></li>
+                <li><Link to="/haritech/importation" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Importation Consultation</Link></li>
+                <li><Link to="/haritech/3d-epoxy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">3D Epoxy & Interior Décor</Link></li>
+                <li><Link to="/haritech/solar-energy" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Solar Energy</Link></li>
+                <li><Link to="/haritech/project-management" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Project Management</Link></li>
               </ul>
             </div>
             <div>
@@ -318,17 +474,18 @@ const HaritechLayout: React.FC = () => {
                 </li>
                 <li>
                   <button onClick={() => setCacModalOpen(true)} className="text-sm text-slate-400 hover:text-purple-400 transition-colors text-left">
-                    Verify CAC Certificate
+                    Business details
                   </button>
                 </li>
                 <li><Link to="/haritech/portfolio" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Client Portfolio</Link></li>
                 <li><Link to="/haritech/request-quote" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Request Formal Proposal</Link></li>
-                <li><Link to="/haritech/faq" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">FAQs & SLA</Link></li>
+                <li><Link to="/haritech/faq" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">FAQs</Link></li>
+                <li><Link to="/haritech/client-portal" className="text-sm text-slate-400 hover:text-cyan-400 transition-colors">Client Portal Sign-In</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-slate-500 text-xs font-mono">&copy; {new Date().getFullYear()} HARITECH EXCLUSIVE SERVICES (BN 3829104). All statutory rights reserved.</p>
+            <p className="text-slate-500 text-xs font-mono">&copy; {new Date().getFullYear()} Haritech Exclusive Business. All rights reserved.</p>
             <div className="flex items-center gap-6">
               <button onClick={() => setCacModalOpen(true)} className="text-slate-500 hover:text-purple-400 text-xs transition-colors font-mono">
                 Federal Republic of Nigeria Certified

@@ -14,6 +14,8 @@
   /* Admin Design controls — defaults, overridden at runtime by utils/designTheme */
   --ht-font-display: 'Syne', sans-serif;
   --ht-font-body: 'Plus Jakarta Sans', sans-serif;
+  --ht-font-nav: 'Plus Jakarta Sans', sans-serif;
+  --ht-font-button: 'Plus Jakarta Sans', sans-serif;
   --ht-accent: #14b8a6;
   --ht-accent-bright: #5eead4;
   --ht-accent-deep: #0f766e;
@@ -25,8 +27,25 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* The header (and mobile ribbon) is fixed — every anchor jump has to clear it. */
+    scroll-padding-top: 7rem;
     font-family: var(--ht-font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-dark);
+    /* Native scrollbars, date pickers and form controls follow the dark theme
+       on Windows, macOS, iOS and Android instead of flashing white. */
+    color-scheme: dark;
+    /* iOS Safari and Android Chrome must never re-inflate or shrink our type. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Once the smooth-scroll engine runs it owns wheel easing; a CSS smooth
+     behaviour on top of it would double-animate every programmatic scroll. */
+  html.ht-smooth-scroll,
+  html.ht-smooth-scroll body {
+    scroll-behavior: auto;
   }
   
   body {
@@ -34,17 +53,44 @@
     color: var(--text-primary);
     @apply antialiased overflow-x-hidden;
     letter-spacing: -0.01em;
+    /* iOS Safari's 100vh sits behind the toolbars; dvh tracks the real viewport. */
+    min-height: 100vh;
+    min-height: 100dvh;
+    -moz-osx-font-smoothing: grayscale;
+    /* No sideways rubber-banding on trackpads and touch screens. */
+    overscroll-behavior-x: none;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--ht-font-display), 'Syne', sans-serif;
     letter-spacing: -0.035em;
+    /* Stops a single orphan word dropping onto its own headline line. */
+    text-wrap: balance;
     @apply font-bold leading-tight text-white;
   }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Uploaded media of any size or DPR can never overflow its column. */
+  img, video, canvas, svg {
+    max-width: 100%;
+  }
+  img {
+    height: auto;
+  }
+
+  /* Every tap target: no 300ms delay, no grey flash on iOS/Android. */
+  a, button, [role='button'], summary, select,
+  input[type='checkbox'], input[type='radio'] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
   
-  /* Focus styles for accessibility */
+  /* Focus styles — the admin accent, so the ring matches whatever theme is live */
   *:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline: 2px solid var(--ht-accent-bright, rgba(255, 255, 255, 0.55));
     outline-offset: 2px;
   }
 }
@@ -54,6 +100,7 @@
   .btn-primary {
     position: relative;
     overflow: hidden;
+    font-family: var(--ht-font-button), var(--ht-font-body);
     @apply font-bold py-3.5 px-7 rounded-xl transition-all duration-300 ease-in-out hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 tracking-tight text-slate-950;
     background: var(--ht-accent-bright);
     box-shadow: 0 0 25px color-mix(in srgb, var(--ht-accent) 35%, transparent);
@@ -80,6 +127,7 @@
   }
   
   .btn-secondary {
+    font-family: var(--ht-font-button), var(--ht-font-body);
     @apply bg-slate-900/90 hover:bg-slate-800 text-white font-semibold py-3.5 px-7 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 ease-in-out shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2;
   }
   
@@ -118,7 +166,10 @@
   }
   
   .section-padding {
-    @apply py-24 px-4 md:px-8 lg:px-16 relative z-10;
+    /* Fluid rhythm: no more cramped 320px phones or oversized desktop gaps. */
+    padding-block: clamp(4rem, 7vw, 6rem);
+    padding-inline: clamp(1rem, 4vw, 4rem);
+    @apply relative z-10;
   }
   
   .container {
@@ -300,6 +351,11 @@
   font-family: var(--ht-font-display), 'Syne', sans-serif;
 }
 
+/* Per-section font: site navigation (header links, dropdown, mobile drawer) */
+.ht-nav-font {
+  font-family: var(--ht-font-nav), var(--ht-font-body);
+}
+
 ::selection {
   background: var(--ht-accent);
   color: #04121a;
@@ -326,4 +382,141 @@
   mix-blend-mode: screen;
   animation: ht-sheen 6.5s ease-in-out infinite;
   animation-delay: 1.2s;
+}
+
+/* ============================================================
+   DEVICE & OS PARITY
+   One pass so the same markup behaves correctly on Windows,
+   macOS, iOS, iPadOS, Android and Linux — not just Chrome desktop.
+   ============================================================ */
+
+/* Full-height sections: 100svh tracks mobile browser toolbars. */
+.ht-screen-height {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* Notched / rounded-corner phones keep fixed UI inside the safe area. */
+.ht-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.ht-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.ht-dock-bottom {
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Firefox (all OS) and Windows 11 native scrollbars follow the page. */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #243047 var(--bg-dark);
+  }
+}
+
+/* Touch and hybrid devices (phones, tablets, touch laptops). */
+@media (hover: none), (pointer: coarse) {
+  /* No stuck hover states after a tap, and no lifted card you can't put down. */
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .stone-card:hover {
+    transform: none;
+  }
+  .btn-primary:hover::after {
+    left: -100%;
+  }
+
+  /* Finger-friendly minimum for icon-only controls. */
+  .ht-tap {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Wide chip/tab rows scroll sideways instead of crushing their labels. */
+  .ht-scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ht-scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* iOS Safari zooms the whole page into any field smaller than 16px. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']),
+  select,
+  textarea {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Native momentum already feels right — keep scrollbars out of the way. */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Small phones (iPhone SE, Galaxy A-series): a little more usable width. */
+@media (max-width: 380px) {
+  .section-padding {
+    padding-inline: 0.875rem;
+  }
+}
+
+/* Landscape phones: vertical rhythm would otherwise fill the whole screen. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .section-padding {
+    padding-block: 3rem;
+  }
+}
+
+/* Windows high-contrast mode: borders must stay visible. */
+@media (forced-colors: active) {
+  .card,
+  .glass-panel,
+  .stone-card {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* Disabled controls never look interactive. */
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   MOTION PREFERENCE
+   Visitors who ask their OS to reduce motion get a still page —
+   system-wide, on every OS that exposes the setting.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-marquee {
+    animation: none;
+    transform: none;
+  }
+
+  .ht-sheen {
+    display: none;
+  }
 }

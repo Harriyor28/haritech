@@ -173,6 +173,16 @@ const Diamond3D: React.FC<{ x: string; y: string; size: number; color: string; d
 const Ambient3DLayer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
+  // Large blur filters are the most expensive part of this layer on phone and
+  // tablet GPUs. The radial gradients already read as soft, so touch devices
+  // get the same shapes without the per-frame blur cost.
+  const lightweight = React.useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches,
+    []
+  );
 
   // Parallax spring for smooth movement
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 60, damping: 25 });
@@ -199,7 +209,7 @@ const Ambient3DLayer: React.FC = () => {
               top:    orb.top,
               left:   orb.left,
               background: `radial-gradient(circle at 30% 30%, ${orb.color}, transparent 70%)`,
-              filter: `blur(${orb.blur})`,
+              filter: lightweight ? 'none' : `blur(${orb.blur})`,
             }}
             animate={{
               scale:   [1, 1.12, 1],
@@ -226,8 +236,8 @@ const Ambient3DLayer: React.FC = () => {
               height: orb.size,
               top:    orb.top,
               left:   orb.left,
-              background: `radial-gradient(circle at 40% 40%, ${orb.color}, transparent 70%)`,
-              filter: `blur(${orb.blur})`,
+            background: `radial-gradient(circle at 40% 40%, ${orb.color}, transparent 70%)`,
+            filter: lightweight ? 'none' : `blur(${orb.blur})`,
             }}
             animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.85, 0.5] }}
             transition={{ duration: orb.duration, repeat: Infinity, ease: 'easeInOut', delay: orb.delay }}
@@ -299,7 +309,7 @@ const Ambient3DLayer: React.FC = () => {
               top:    orb.top,
               left:   orb.left,
               background: orb.color,
-              filter: `blur(${parseInt(orb.blur) * 0.4}px)`,
+              filter: lightweight ? 'none' : `blur(${parseInt(orb.blur) * 0.4}px)`,
             }}
             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: orb.duration * 0.7, repeat: Infinity, ease: 'easeInOut', delay: orb.delay }}
