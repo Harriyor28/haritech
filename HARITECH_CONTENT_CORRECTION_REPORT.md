@@ -167,3 +167,18 @@ The owner confirmed the saved registration record and chose to publish it with t
 Verified: `npx tsc --noEmit` clean, `npm run build` passes, and in the built bundle the registration page shows RC 9733717, January 2024, Active, the registered name and the address, while the business-details panel shows the same values with no "not displayed publicly" wording.
 
 Still open (not CAC): the exact registered address is quoted as supplied ("Around Port Harcourt"); if the certificate prints a fuller address, enter it in the admin CAC panel and the site will use it.
+
+## Publish and Supabase Replacement
+
+- Committed and pushed to GitHub `master` (commit `7d4f420`), 63 files: corrected source, the new admin/pages components, the report, and the Supabase schema/edge function. Excluded from the commit: `tsconfig.tsbuildinfo`, `ref_*` reference images, `public/_cand/` scratch assets and `.freebuff/`.
+- `site_data` writes are restricted to the signed-in admin email, so the public key cannot replace the legacy rows (a test upsert returns 401 / RLS violation). `republishCorrectedHaritechContent()` now runs after cloud sync and, when an admin session exists, upserts the corrected content, blog, empty projects and testimonials, and the confirmed CAC row, and deletes the four legacy CAC list rows. Contact fields already stored are carried into the new content row.
+- Fallback if the browser flow is unavailable: run this in the Supabase SQL editor.
+
+```sql
+-- content, blog, projects, testimonials and CAC are replaced with the corrected copy
+-- (adjust the jsonb values to the current defaults if they change)
+delete from public.site_data
+where key in ('haritech-cac-services','haritech-cac-why','haritech-cac-docs','haritech-cac-faq');
+```
+
+The application also remains correct without any writes, because unapproved content, projects, testimonials, blog posts and unconfirmed CAC rows are not displayed.
