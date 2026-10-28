@@ -25,3 +25,11 @@ Thumbs.db
 # Misc
 .cache/
 .tmp/
+tsconfig.tsbuildinfo
+
+# Local reference material and asset candidates (not part of the site)
+public/_cand/
+ref_bing.html
+ref_img1.webp
+ref_img2.jpg
+ref_youtube.jpg
