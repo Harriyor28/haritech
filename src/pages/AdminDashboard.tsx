@@ -21,6 +21,7 @@ import HaritechLogoManager from '../components/admin/HaritechLogoManager';
 import HaritechContactManager from '../components/admin/HaritechContactManager';
 import HaritechFAQManager from '../components/admin/HaritechFAQManager';
 import HaritechSolarManager from '../components/admin/HaritechSolarManager';
+import HaritechSolarAdvisorManager from '../components/admin/HaritechSolarAdvisorManager';
 import HaritechImportationManager from '../components/admin/HaritechImportationManager';
 import HaritechProjectManager from '../components/admin/HaritechProjectManager';
 import HaritechClientProjectsManager from '../components/admin/HaritechClientProjectsManager';
@@ -855,6 +856,7 @@ const handleLogout = async () => {
                   { id: 'team', label: 'Team' },
                   { id: 'whatwedo', label: 'What We Do' },
                   { id: 'solar', label: 'Solar Energy' },
+                  { id: 'solaradvisor', label: 'Solar Advisor' },
                   { id: 'import', label: 'Importation' },
                   { id: 'projects', label: 'Project Management' },
                   { id: 'epoxy', label: 'Epoxy & Décor' },
@@ -876,6 +878,7 @@ const handleLogout = async () => {
               {haritechSubTab === 'team' && <HaritechTeamManager />}
               {haritechSubTab === 'whatwedo' && <HaritechWhatWeDoManager />}
               {haritechSubTab === 'solar' && <HaritechSolarManager />}
+              {haritechSubTab === 'solaradvisor' && <HaritechSolarAdvisorManager />}
               {haritechSubTab === 'import' && <HaritechImportationManager />}
               {haritechSubTab === 'projects' && (
                 <div className="space-y-6">

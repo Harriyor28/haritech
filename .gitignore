@@ -25,6 +25,8 @@ Thumbs.db
 # Misc
 .cache/
 .tmp/
+.tmp-solar/
+supabase/.temp/
 tsconfig.tsbuildinfo
 
 # Local reference material and asset candidates (not part of the site)

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Sun, Zap, Battery, Cpu, Shield, Star, TrendingUp, Home, Building2, Factory, Warehouse, TreePine, Smartphone, Headphones, Award, Settings, Wrench, Gauge, Droplets, LucideIcon } from 'lucide-react';
+import { Sun, Zap, Battery, Cpu, Shield, Star, TrendingUp, Home, Building2, Factory, Warehouse, TreePine, Smartphone, Headphones, Award, Settings, Wrench, Gauge, Droplets, Calculator, LucideIcon } from 'lucide-react';
 import { getWhatsAppUrl, getSolarContent } from '../../utils/haritechContent';
 import SolarSavingsCalculator from '../../components/haritech/SolarSavingsCalculator';
+
 
 const iconMap: Record<string, LucideIcon> = {
   Sun, Zap, Battery, Cpu, Shield, Star, TrendingUp, Home, Building2, Factory, Warehouse,
@@ -188,6 +189,43 @@ const SolarEnergy: React.FC = () => {
         </div>
       </section>
 
+      {/* Smart Solar Advisor */}
+      <section className="section-padding">
+        <div className="container mx-auto">
+          <FadeInView>
+            <div className="card p-6 sm:p-8 bg-gradient-to-br from-[#12180a] via-[#0b101c] to-[#0b101c] border-amber-400/20 relative overflow-hidden">
+              <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-amber-500/10 blur-[80px] pointer-events-none" />
+              <div className="relative flex flex-col lg:flex-row lg:items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 p-3 shrink-0">
+                  <Calculator className="h-full w-full text-slate-950" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-amber-300 mb-1.5">
+                    Smart Solar Advisor · System Designer
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                    Size a system from your own appliance list
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
+                    Add the appliances you actually run, mark what must stay on during an outage, and see the energy,
+                    inverter, battery and panel estimates — with every assumption and warning shown. Save or print the
+                    assessment, then send it with a quotation request.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0">
+                  <Link to="/haritech/solar-advisor" className="btn-primary text-xs py-3 px-5">
+                    <Zap className="h-4 w-4" /> Open the Designer
+                  </Link>
+                  <Link to="/haritech/request-quote?service=Solar%20Energy%20Installation" className="btn-secondary text-xs py-3 px-5">
+                    <Sun className="h-4 w-4 text-amber-300" /> Request a Quote
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </FadeInView>
+        </div>
+      </section>
+
       {/* Solar Savings Calculator */}
       <SolarSavingsCalculator />
 
@@ -203,7 +241,7 @@ const SolarEnergy: React.FC = () => {
               Send the appliances you run and what must stay on during an outage. We will come back with a size range, equipment options and the assumptions behind the numbers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Send Your Load List</Link>
+              <Link to="/haritech/solar-advisor" className="btn-primary text-xs sm:text-sm px-7 py-3.5 bg-gradient-to-r from-yellow-500 to-orange-600 shadow-lg shadow-yellow-500/20"><Zap className="h-4 w-4" /> Send Your Load List</Link>
               <a href={getWhatsAppUrl('Hello Haritech, I would like to discuss a solar energy requirement.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-7 py-3.5"><Sun className="h-4 w-4 text-yellow-400" /> Ask a Question</a>
             </div>
           </FadeInView>

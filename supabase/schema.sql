@@ -396,3 +396,12 @@ create policy "admin delete client_messages"
 -- 7. Re-run this file any time before/after code changes — it is
 --    written to be idempotent.
 -- ============================================================
+
+-- ============================================================
+-- NOT INCLUDED HERE — solar customer history
+-- The Solar Advisor and Monitor keep assessments and readings in the
+-- customer's browser. An optional server copy lives in
+--   supabase/migrations/20261028_solar_customer_history.sql
+-- That file is a DRAFT and has not been applied. Apply it separately, only
+-- after the privacy and retention wording has been approved.
+-- ============================================================
