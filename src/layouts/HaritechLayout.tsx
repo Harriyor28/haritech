@@ -47,6 +47,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Portfolio', path: '/haritech/portfolio', icon: Briefcase, hint: 'Client work' },
       { label: 'Solar Energy', path: '/haritech/solar-energy', icon: Sun, hint: 'Inverters & micro-grids' },
+      { label: 'Solar Advisor', path: '/haritech/solar-advisor', icon: Calculator, hint: 'Design & monitor' },
       { label: 'Importation', path: '/haritech/importation', icon: Ship, hint: 'Freight & clearing' },
       { label: 'Project & Property', path: '/haritech/project-management', icon: Kanban, hint: 'Management hub' },
       { label: 'Client Portal', path: '/haritech/client-portal', icon: Lock, hint: 'Client sign-in' },

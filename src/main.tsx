@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import CloudSync from './components/CloudSync';
 import HaritechWelcomeChatWidget from './components/HaritechWelcomeChatWidget';
+import { HaritechHelper } from './components/haritech/HaritechHelper';
 import { initSmoothScroll, scrollToElement, scrollToTop } from './utils/smoothScroll';
 import { migrateLegacyHaritechContent } from './utils/haritechContent';
 import './index.css';
@@ -27,6 +28,8 @@ const FAQ = lazy(() => import('./pages/haritech/FAQ'));
 const Contact = lazy(() => import('./pages/haritech/Contact'));
 const RequestQuote = lazy(() => import('./pages/haritech/RequestQuote'));
 const SolarEnergy = lazy(() => import('./pages/haritech/SolarEnergy'));
+const SolarAdvisor = lazy(() => import('./pages/haritech/SolarAdvisor'));
+const SolarMonitor = lazy(() => import('./pages/haritech/SolarMonitor'));
 const Importation = lazy(() => import('./pages/haritech/Importation'));
 const ProjectManagement = lazy(() => import('./pages/haritech/ProjectManagement'));
 const ClientPortal = lazy(() => import('./pages/haritech/ClientPortal'));
@@ -36,6 +39,9 @@ const PriceGuide = lazy(() => import('./pages/haritech/PriceGuide'));
 const ChatGate: React.FC = () => {
   const { pathname } = useLocation();
   if (pathname.startsWith('/admin')) return null;
+  // The AI helper answers site-wide questions across the whole Haritech
+  // website; the rule-based welcome widget stays only on the portfolio hub.
+  if (pathname.startsWith('/haritech')) return <HaritechHelper />;
   return <HaritechWelcomeChatWidget />;
 };
 
@@ -98,6 +104,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="contact" element={<Contact />} />
               <Route path="request-quote" element={<RequestQuote />} />
               <Route path="solar-energy" element={<SolarEnergy />} />
+              <Route path="solar-advisor" element={<SolarAdvisor />} />
+              <Route path="solar-advisor/monitor" element={<SolarMonitor />} />
               <Route path="importation" element={<Importation />} />
               <Route path="project-management" element={<ProjectManagement />} />
               <Route path="client-portal" element={<ClientPortal />} />

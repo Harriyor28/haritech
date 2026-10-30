@@ -113,7 +113,7 @@ const PANELS: Record<WorkspaceTab, Panel> = {
       { label: 'Installation', value: 'Coordinated' },
     ],
     primary: { label: 'Open the Solar Page', to: '/haritech/solar-energy' },
-    secondary: { label: 'Send Your Load List', message: 'Hello Haritech, I would like to discuss a solar requirement.' },
+    secondary: { label: 'Ask a Solar Question', message: 'Hello Haritech, I would like to discuss a solar requirement.' },
     panelTitle: 'What we need to assess',
     checklist: [
       'Appliances and their wattage',
