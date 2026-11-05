@@ -17,7 +17,10 @@ export interface SolarRemoteAnswer {
   source: SolarAnswerSource;
 }
 
-const FUNCTION_TIMEOUT_MS = 12000;
+// NVIDIA NIM (and other free tiers) can take 15–20s on a cold model, so the
+// client waits longer than the function's per-candidate budget (18s) before
+// aborting to the built-in guide.
+const FUNCTION_TIMEOUT_MS = 25000;
 const COOLDOWN_KEY = 'solar-ai-remote-cooldown';
 
 /** Remember cooldowns for this tab session, so navigating between the solar

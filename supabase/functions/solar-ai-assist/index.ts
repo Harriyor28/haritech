@@ -13,9 +13,10 @@
 //
 // Secrets (OpenAI-compatible, set in the dashboard: Edge Functions > Secrets):
 //   SOLAR_AI_API_KEY     the provider key (kept server-side only)
-//   SOLAR_AI_MODEL       e.g. "recursive/flint-v1.0:free,poolside/laguna-xs-2.1:free,google/gemma-4-26b-a4b-it:free"
-//                        (comma list → OpenRouter fallback chain, max 3)
-//   SOLAR_AI_BASE_URL    e.g. https://openrouter.ai/api/v1
+//   SOLAR_AI_MODEL       comma list, tried in order, e.g.
+//                        "meta/llama-3.2-11b-vision-instruct,meta/llama-3.2-90b-vision-instruct"
+//   SOLAR_AI_BASE_URL    e.g. https://integrate.api.nvidia.com/v1  (NVIDIA NIM)
+//                        or https://openrouter.ai/api/v1
 //
 // Rules enforced in the system prompt (mirroring the site's standing rules):
 //   - kW is power, kWh is energy, kVA is apparent power; never "kV" for
@@ -64,10 +65,10 @@ Hard rules you must never break:
 10. Importation is consultation + coordination — Haritech does not sell goods and duty depends on the item, value and freight mode; the consultation produces a landed-cost estimate before commitment.
 11. Keep answers short: a few sentences, at most two short paragraphs, no markdown headings.
 
-If the question is entirely outside Haritech's services or the website, politely redirect to what Haritech can actually help with.`;
+If the question is entirely outside Haritech's services or the website (general trivia, other companies, unrelated topics), do not answer it — say briefly that it is outside Haritech's scope, then redirect to what Haritech can actually help with.`;
 
 interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
@@ -132,55 +133,86 @@ Deno.serve(async (req: Request) => {
         }
       : null;
 
-    // OpenAI-compatible providers: base URL is configurable so a Groq or
-    // OpenRouter key works by also setting SOLAR_AI_BASE_URL.
+    // OpenAI-compatible providers: base URL is configurable so an NVIDIA NIM,
+    // Groq or OpenRouter key works by also setting SOLAR_AI_BASE_URL.
     const baseUrl = (Deno.env.get('SOLAR_AI_BASE_URL') ?? 'https://api.openai.com/v1').replace(/\/$/, '');
-    // SOLAR_AI_MODEL may list up to three comma-separated candidates; on
-    // OpenRouter they act as automatic fallbacks (shared free-tier upstreams
-    // occasionally return 429, so a second choice keeps the chat alive).
+    // SOLAR_AI_MODEL may list up to three comma-separated candidates tried in
+    // order. NVIDIA NIM and other providers ignore OpenRouter's "models"
+    // routing array, so fallback works serially here for every provider; the
+    // array is still sent on OpenRouter so its router can hot-switch upstreams
+    // on shared free-tier 429s inside one request.
     const modelCandidates = model
       .split(',')
       .map((m) => m.trim())
       .filter(Boolean)
       .slice(0, 3);
-    const upstream = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: modelCandidates[0],
-        ...(modelCandidates.length > 1 ? { models: modelCandidates } : {}),
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...(contextMessage ? [contextMessage] : []),
-          ...history,
-          { role: 'user', content: question },
-        ],
-        temperature: 0.3,
-        // Generous budget: some free upstream models stream an internal
-        // reasoning trace first, so the visible answer needs headroom.
-        max_tokens: 1500,
-      }),
-    });
+    const messages: ChatMessage[] = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...(contextMessage ? [contextMessage] : []),
+      ...history,
+      { role: 'user', content: question },
+    ];
+    const payload = {
+      messages,
+      temperature: 0.3,
+      // Bounded budget: answers are kept to two short paragraphs, and a
+      // tighter cap keeps slow free-tier models from running long.
+      max_tokens: 900,
+    };
 
-    if (!upstream.ok) {
-      console.error('[solar-ai-assist] upstream error', upstream.status);
+    // Per-candidate timeout: a retired or overloaded model can hang, and
+    // without this the whole request would stall instead of falling through
+    // to the next candidate (or failing fast so the widget shows its guide).
+    // The overall deadline keeps the total under the widget's 25s budget.
+    const CANDIDATE_TIMEOUT_MS = 20_000;
+    const DEADLINE_MS = 22_000;
+    const startedAt = Date.now();
+
+    let response: { answer: string } | null = null;
+    let lastStatus = 0;
+    for (const candidate of modelCandidates) {
+      const remaining = DEADLINE_MS - (Date.now() - startedAt);
+      if (remaining < 3_000) break;
+      let upstream: Response;
+      try {
+        upstream = await fetch(`${baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...payload,
+            model: candidate,
+            ...(modelCandidates.length > 1 && baseUrl.includes('openrouter.ai')
+              ? { models: modelCandidates }
+              : {}),
+          }),
+          signal: AbortSignal.timeout(Math.min(CANDIDATE_TIMEOUT_MS, remaining)),
+        });
+      } catch (error) {
+        console.error('[solar-ai-assist] candidate failed', candidate, error);
+        continue;
+      }
+      lastStatus = upstream.status;
+      if (!upstream.ok) continue;
+      const data = await upstream.json();
+      let answer = data?.choices?.[0]?.message?.content;
+      if (typeof answer !== 'string' || !answer.trim()) continue;
+      // The widget renders plain text; normalise the light markdown emphasis
+      // some upstream models emit (e.g. **bold**) into plain prose.
+      answer = answer
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1');
+      response = { answer: answer.trim() };
+      break;
+    }
+
+    if (!response) {
+      console.error('[solar-ai-assist] upstream error', lastStatus);
       return json({ error: 'The assistant is unavailable right now. Please use WhatsApp for urgent questions.' }, 502);
     }
-
-    const data = await upstream.json();
-    let answer = data?.choices?.[0]?.message?.content;
-    if (typeof answer !== 'string' || !answer.trim()) {
-      return json({ error: 'The assistant is unavailable right now.' }, 502);
-    }
-    // The widget renders plain text; normalise the light markdown emphasis
-    // some upstream models emit (e.g. **bold**) into plain prose.
-    answer = answer
-      .replace(/\*\*([^*]+)\*\*/g, '$1')
-      .replace(/\*([^*]+)\*/g, '$1');
-    return json({ answer: answer.trim(), source: 'llm' });
+    return json({ answer: response.answer, source: 'llm' });
   } catch (error) {
     console.error('[solar-ai-assist]', error);
     return json({ error: 'Unexpected server error.' }, 500);
