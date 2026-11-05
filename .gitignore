@@ -26,6 +26,7 @@ Thumbs.db
 .cache/
 .tmp/
 .tmp-solar/
+.tmp-cac/
 supabase/.temp/
 tsconfig.tsbuildinfo
 

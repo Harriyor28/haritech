@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Landmark, Scale, BadgeCheck, FileCheck, ClipboardList, ShieldCheck, ChevronDown, ArrowRight, Check, Clock } from 'lucide-react';
 import { getCACInfo, CACInfo, getWhatsAppUrl } from '../../utils/haritechContent';
 import CACFeeEstimator from '../../components/haritech/CACFeeEstimator';
+import CacApplicationWizard from '../../components/haritech/CacApplicationWizard';
+import CacStatusTracker from '../../components/haritech/CacStatusTracker';
 
 /* ── CAC Registry identity ───────────────────────────────────────────────
    Deliberately distinct from the rest of the Haritech site:
@@ -89,6 +91,7 @@ const CACRegistration: React.FC = () => {
   const [whys, setWhys] = useState<any[]>(() => getArr(WHY_REGISTER_KEY, defaultWhys));
   const [documents, setDocuments] = useState<string[]>(() => getArr(DOCUMENTS_KEY, defaultDocuments));
   const [faqs, setFaqs] = useState<any[]>(() => getArr(CAC_FAQ_KEY, defaultFaqs));
+  const [deskTab, setDeskTab] = useState<'apply' | 'track'>('apply');
 
   /* Registration details are only public once the owner supplies them; until
      then the flag value is replaced with neutral wording instead of showing
@@ -148,8 +151,14 @@ const CACRegistration: React.FC = () => {
                 We prepare every document and follow the file through until the certificate is issued.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center gap-2 bg-[#0B6B3B] hover:bg-[#074D2A] text-[#F7F2E6] text-xs sm:text-sm font-semibold px-6 py-3 transition-colors">
-                  <FileCheck className="h-4 w-4" /> Begin Name Search
+                <motion.a
+                  href="#application-desk"
+                  onClick={() => setDeskTab('apply')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center justify-center gap-2 bg-[#0B6B3B] hover:bg-[#074D2A] text-[#F7F2E6] text-xs sm:text-sm font-semibold px-6 py-3 transition-colors"
+                >
+                  <FileCheck className="h-4 w-4" /> Start an Application
                 </motion.a>
                 <Link to="/haritech/request-quote" className="inline-flex items-center justify-center gap-2 border border-[#2A352C]/30 hover:border-[#2A352C] text-[#2A352C] text-xs sm:text-sm font-semibold px-6 py-3 transition-colors">
                   Request a Quote <ArrowRight className="h-4 w-4" />
@@ -326,10 +335,85 @@ const CACRegistration: React.FC = () => {
         </div>
       </section>
 
+      {/* Application Desk */}
+      <section id="application-desk" className="py-20 scroll-mt-24">
+        <div className="container mx-auto px-6">
+          <Rule label="Schedule V" />
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
+            <FadeInView>
+              <div>
+                <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-3`}>The Application Desk</h2>
+                <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
+                  Prepare a CAC application online, receive a reference number, and follow the file
+                  without opening an account. No sign-in, no password — just the reference and the
+                  phone number or email you applied with.
+                </p>
+                <ul className="border-t border-[#DED3AC]">
+                  {[
+                    'Six guided steps: type, names, applicant, people, documents, review.',
+                    'A reference number issued when you submit — keep it safe.',
+                    'Private status tracking with the reference plus your phone or email.',
+                    'Documents published by the desk, ready to download.',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3 border-b border-[#DED3AC] py-3">
+                      <span className="mt-0.5 w-4 h-4 shrink-0 bg-[#0B6B3B] flex items-center justify-center">
+                        <Check className="h-2.5 w-2.5 text-[#F7F2E6]" />
+                      </span>
+                      <span className="text-sm text-[#2A352C]">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 border-l-2 border-[#C6B98F] pl-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">Honest note</p>
+                  <p className="text-xs text-[#5F6B5C] leading-relaxed">
+                    The stages describe how Haritech is handling your file. They are not a live feed
+                    from the Corporate Affairs Commission’s internal system. The Commission decides
+                    the application and issues the certificate.
+                  </p>
+                </div>
+              </div>
+            </FadeInView>
+
+            <FadeInView delay={0.12}>
+              <div>
+                <div role="tablist" aria-label="CAC application desk" className="flex gap-2 border-b border-[#DED3AC] pb-3">
+                  {([
+                    { id: 'apply' as const, label: 'Start an application' },
+                    { id: 'track' as const, label: 'Track an application' },
+                  ]).map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={deskTab === tab.id}
+                      onClick={() => setDeskTab(tab.id)}
+                      className={`px-4 py-2 text-xs sm:text-sm font-semibold transition-colors ${
+                        deskTab === tab.id
+                          ? 'bg-[#0B6B3B] text-[#F7F2E6]'
+                          : 'border border-[#DED3AC] text-[#5F6B5C] hover:border-[#B08D2E] hover:text-[#1E2B20]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  {deskTab === 'apply' ? (
+                    <CacApplicationWizard onTrack={() => setDeskTab('track')} />
+                  ) : (
+                    <CacStatusTracker />
+                  )}
+                </div>
+              </div>
+            </FadeInView>
+          </div>
+        </div>
+      </section>
+
       {/* Enquiries */}
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <Rule label="Schedule V" />
+          <Rule label="Schedule VI" />
           <FadeInView>
             <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-12`}>Enquiries</h2>
           </FadeInView>

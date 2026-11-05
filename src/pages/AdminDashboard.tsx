@@ -16,6 +16,7 @@ import HaritechServicesManager from '../components/admin/HaritechServicesManager
 import HaritechTeamManager from '../components/admin/HaritechTeamManager';
 import HaritechBlogManager from '../components/admin/HaritechBlogManager';
 import HaritechCACManager from '../components/admin/HaritechCACManager';
+import HaritechCacApplicationsManager from '../components/admin/HaritechCacApplicationsManager';
 import HaritechIndustriesManager from '../components/admin/HaritechIndustriesManager';
 import HaritechLogoManager from '../components/admin/HaritechLogoManager';
 import HaritechContactManager from '../components/admin/HaritechContactManager';
@@ -864,6 +865,7 @@ const handleLogout = async () => {
                   { id: 'faq', label: 'FAQ' },
                   { id: 'blog', label: 'Blog' },
                   { id: 'cac', label: 'CAC Info' },
+                  { id: 'cacapplications', label: 'CAC Applications' },
                   { id: 'contact', label: 'Contact' },
                   { id: 'logo', label: 'Logo' },
                 ].map(sub => (
@@ -891,6 +893,7 @@ const handleLogout = async () => {
               {haritechSubTab === 'faq' && <HaritechFAQManager />}
               {haritechSubTab === 'blog' && <HaritechBlogManager />}
               {haritechSubTab === 'cac' && <HaritechCACManager />}
+              {haritechSubTab === 'cacapplications' && <HaritechCacApplicationsManager />}
               {haritechSubTab === 'contact' && <HaritechContactManager />}
               {haritechSubTab === 'logo' && <HaritechLogoManager />}
             </div>
