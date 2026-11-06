@@ -2,6 +2,7 @@
 
 export {
   IDENTITY_KINDS,
+  classifyUpstreamStatus,
   extractIdentityRecord,
   getIdentityKind,
   isIdentityKind,
@@ -9,6 +10,7 @@ export {
   isValidIdentityNumber,
   maskIdentityNumber,
   normaliseIdentityNumber,
+  providerMessage,
   redactIdentityNumber,
 } from './identityCore';
 

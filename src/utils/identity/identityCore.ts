@@ -169,3 +169,40 @@ export const isProviderSuccess = (payload: unknown): boolean => {
   }
   return true;
 };
+
+/** The human message a provider sends back, wherever it hides it. */
+export const providerMessage = (payload: unknown): string => {
+  const root = asRecord(payload);
+  if (!root) return '';
+  const direct = firstText(root, ['message', 'detail', 'error', 'errorMessage', 'error_message', 'description']);
+  if (direct) return direct;
+  const nested = ['error', 'detail', 'data'].map((key) => asRecord(root[key])).find(Boolean);
+  return nested ? firstText(nested, ['message', 'detail', 'description']) : '';
+};
+
+export type UpstreamOutcome = 'not_found' | 'not_configured' | 'rate_limited' | 'error';
+
+/**
+ * Turns a provider HTTP failure into an honest outcome.
+ *
+ * A 404 is deliberately NOT assumed to mean "no such record": it is just as
+ * often a wrong endpoint, and telling a customer their NIN does not exist when
+ * the path is misconfigured would be a false claim. Only a provider that says
+ * so in words produces `not_found`. A 401/403 is a credentials problem, so it
+ * reports `not_configured` instead of asking the customer to retry.
+ */
+export const classifyUpstreamStatus = (
+  status: number,
+  payload: unknown,
+): UpstreamOutcome | null => {
+  if (status >= 200 && status < 300) return null;
+  if (status === 429) return 'rate_limited';
+  if (status === 401 || status === 403) return 'not_configured';
+  if (status === 404) {
+    const message = providerMessage(payload).toLowerCase();
+    return /not\s*found|no\s+record|does\s+not\s+exist|invalid\s+(nin|bvn|number|identity)/.test(message)
+      ? 'not_found'
+      : 'error';
+  }
+  return 'error';
+};

@@ -29,6 +29,7 @@
 //   headers Authorization + AppId.
 
 import {
+  classifyUpstreamStatus,
   extractIdentityRecord,
   isIdentityKind,
   isProviderSuccess,
@@ -298,28 +299,47 @@ const handle = async (req: Request): Promise<Response> => {
     );
   }
 
-  if (upstream.status === 404) {
-    return json({
-      status: 'not_found',
-      kind,
-      masked,
-      message: 'No record matched that number. Check the digits and the name on the record.',
-    });
-  }
+  if (!upstream.ok) {
+    const failurePayload = await upstream.json().catch(() => null);
+    const outcome = classifyUpstreamStatus(upstream.status, failurePayload);
 
-  if (upstream.status === 429) {
-    return json(
-      {
-        status: 'rate_limited',
+    if (outcome === 'rate_limited') {
+      return json(
+        {
+          status: 'rate_limited',
+          kind,
+          masked,
+          message: 'The identity provider is busy. Please wait a moment and try again.',
+        },
+        429,
+      );
+    }
+
+    // 401/403 means the provider rejected Haritech's credentials — a setup
+    // problem, not something the customer can fix by retrying.
+    if (outcome === 'not_configured') {
+      console.error('[identity-verify] provider rejected credentials', request.provider, upstream.status);
+      return json(
+        {
+          status: 'not_configured',
+          kind,
+          masked,
+          message:
+            'Identity checks are being activated. The desk can still help — send a message on WhatsApp.',
+        },
+        503,
+      );
+    }
+
+    if (outcome === 'not_found') {
+      return json({
+        status: 'not_found',
         kind,
         masked,
-        message: 'The identity provider is busy. Please wait a moment and try again.',
-      },
-      429,
-    );
-  }
+        message: 'No record matched that number. Check the digits and the name on the record.',
+      });
+    }
 
-  if (!upstream.ok) {
     console.error('[identity-verify] upstream status', request.provider, upstream.status);
     return json(
       {

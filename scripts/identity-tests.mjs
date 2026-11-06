@@ -42,6 +42,7 @@ const fn = await import(`${pathToFileURL(functionFile).href}?t=${Date.now()}`);
 
 const {
   IDENTITY_KINDS,
+  classifyUpstreamStatus,
   extractIdentityRecord,
   getIdentityKind,
   isIdentityKind,
@@ -49,6 +50,7 @@ const {
   isValidIdentityNumber,
   maskIdentityNumber,
   normaliseIdentityNumber,
+  providerMessage,
   redactIdentityNumber,
 } = core;
 
@@ -301,6 +303,44 @@ test('generic provider refuses a missing path', () => {
     ),
     null,
   );
+});
+
+/* ── Provider failure classification ───────────────────────────────────── */
+
+test('success statuses need no failure mapping', () => {
+  assert.equal(classifyUpstreamStatus(200, {}), null);
+  assert.equal(classifyUpstreamStatus(201, {}), null);
+});
+
+test('a busy provider is rate limited', () => {
+  assert.equal(classifyUpstreamStatus(429, null), 'rate_limited');
+});
+
+test('rejected credentials mean the desk is not configured', () => {
+  assert.equal(classifyUpstreamStatus(401, { message: 'Invalid API key' }), 'not_configured');
+  assert.equal(classifyUpstreamStatus(403, null), 'not_configured');
+});
+
+test('a bare 404 is not reported as a missing record', () => {
+  assert.equal(classifyUpstreamStatus(404, null), 'error');
+  assert.equal(classifyUpstreamStatus(404, { message: 'Not Found' }), 'not_found');
+  assert.equal(
+    classifyUpstreamStatus(404, { detail: 'No record found for this NIN' }),
+    'not_found',
+  );
+  assert.equal(classifyUpstreamStatus(404, { message: 'Cannot GET /api/v1/kyc/nin' }), 'error');
+});
+
+test('other upstream failures are errors', () => {
+  assert.equal(classifyUpstreamStatus(500, null), 'error');
+  assert.equal(classifyUpstreamStatus(400, { message: 'Bad request' }), 'error');
+});
+
+test('provider message is found in flat and nested payloads', () => {
+  assert.equal(providerMessage({ message: 'Invalid NIN' }), 'Invalid NIN');
+  assert.equal(providerMessage({ detail: { message: 'No record found' } }), 'No record found');
+  assert.equal(providerMessage({ error: 'Unauthorized' }), 'Unauthorized');
+  assert.equal(providerMessage(null), '');
 });
 
 console.log(`\n${passed} passed, ${failures.length} failed\n`);
