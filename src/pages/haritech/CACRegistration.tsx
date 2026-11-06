@@ -6,6 +6,7 @@ import { getCACInfo, CACInfo, getWhatsAppUrl } from '../../utils/haritechContent
 import CACFeeEstimator from '../../components/haritech/CACFeeEstimator';
 import CacApplicationWizard from '../../components/haritech/CacApplicationWizard';
 import CacStatusTracker from '../../components/haritech/CacStatusTracker';
+import IdentityCheckPanel from '../../components/haritech/IdentityCheckPanel';
 
 /* ── CAC Registry identity ───────────────────────────────────────────────
    Deliberately distinct from the rest of the Haritech site:
@@ -410,10 +411,54 @@ const CACRegistration: React.FC = () => {
         </div>
       </section>
 
+      {/* Identity Checks */}
+      <section id="identity-checks" className="py-20 bg-[#F1E9D6] border-y border-[#DED3AC] scroll-mt-24">
+        <div className="container mx-auto px-6">
+          <Rule label="Schedule VI" />
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
+            <FadeInView>
+              <div>
+                <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-3`}>Identity Checks</h2>
+                <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
+                  CAC filings need the NIN and BVN of the people listed. Check either number here
+                  against Haritech’s licensed identity-verification provider before you submit a file.
+                </p>
+                <ul className="border-t border-[#DED3AC]">
+                  {[
+                    'NIN and BVN checks — both are 11 digits.',
+                    'Results come from a licensed provider, not from this website.',
+                    'The number is sent securely and is not stored here.',
+                    'Enrolment, retrieval and correction help if a check fails.',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3 border-b border-[#DED3AC] py-3">
+                      <span className="mt-0.5 w-4 h-4 shrink-0 bg-[#0B6B3B] flex items-center justify-center">
+                        <Check className="h-2.5 w-2.5 text-[#F7F2E6]" />
+                      </span>
+                      <span className="text-sm text-[#2A352C]">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 border-l-2 border-[#C6B98F] pl-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">What this is not</p>
+                  <p className="text-xs text-[#5F6B5C] leading-relaxed">
+                    Haritech does not issue NIN or BVN. NIN is issued by NIMC and BVN by your bank
+                    through NIBSS. This desk checks a number and helps you correct what is wrong.
+                  </p>
+                </div>
+              </div>
+            </FadeInView>
+
+            <FadeInView delay={0.12}>
+              <IdentityCheckPanel />
+            </FadeInView>
+          </div>
+        </div>
+      </section>
+
       {/* Enquiries */}
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <Rule label="Schedule VI" />
+          <Rule label="Schedule VII" />
           <FadeInView>
             <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-12`}>Enquiries</h2>
           </FadeInView>

@@ -25,6 +25,10 @@ export const getSupabase = (): SupabaseClient | null => {
 
 export const isCloudConfigured = (): boolean => isConfigured;
 
+/** URL + anon key for direct Edge Function calls that need a Response object. */
+export const getSupabaseConfig = (): { url: string; anonKey: string } | null =>
+  isConfigured ? { url: url as string, anonKey: anonKey as string } : null;
+
 export const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined) || 'admin@haritech.com';
 
 export const CLOUD_TABLE = 'site_data';
