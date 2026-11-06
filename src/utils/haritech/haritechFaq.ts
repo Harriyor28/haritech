@@ -48,6 +48,7 @@ export const HARI_FAQ_ENTRY_IDS = [
   'cac-application-desk',
   'nin-verification',
   'bvn-verification',
+  'identity-applications',
   'importation-overview',
   'importation-duty',
   'project-management',
@@ -258,9 +259,9 @@ export const HARI_FAQ: FaqEntry[] = [
     ],
     keywords: ['nin', 'national identification', 'nimc', 'identity check', 'identity verification'],
     answer:
-      'NIN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit NIN; the name and date of birth on the record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nHaritech does not issue NIN — NIMC does. If you have not enrolled, or the record needs a correction, the desk can explain the steps and help you prepare.',
+      'NIN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit NIN; the name and date of birth on the record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nHaritech does not issue NIN — NIMC does. If you have not enrolled, or the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk): the desk prepares the paperwork, books the NIMC appointment and follows the file.',
     link: { to: '/haritech/cac-registration#identity-checks', label: 'Identity checks' },
-    related: ['cac-registration', 'bvn-verification', 'contact-human'],
+    related: ['cac-registration', 'bvn-verification', 'identity-applications', 'contact-human'],
   },
   {
     id: 'bvn-verification',
@@ -275,9 +276,31 @@ export const HARI_FAQ: FaqEntry[] = [
     ],
     keywords: ['bvn', 'bank verification', 'nibss', 'identity check', 'identity verification'],
     answer:
-      'BVN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit BVN; the name and date of birth on the bank record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nDial *565*0# from the phone number registered with your bank to retrieve a BVN. Haritech does not issue BVN — your bank and NIBSS do. If the record needs a correction, the desk can explain the steps.',
+      'BVN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit BVN; the name and date of birth on the bank record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nDial *565*0# from the phone number registered with your bank to retrieve a BVN. Haritech does not issue BVN — your bank and NIBSS do. If the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk): the desk prepares the correction request for your bank.',
     link: { to: '/haritech/cac-registration#identity-checks', label: 'Identity checks' },
-    related: ['cac-registration', 'nin-verification', 'contact-human'],
+    related: ['cac-registration', 'nin-verification', 'identity-applications', 'contact-human'],
+  },
+  {
+    id: 'identity-applications',
+    questions: [
+      'how can i apply for nin',
+      'register for nin online',
+      'nin modification',
+      'change name on nin',
+      'correct my bvn details',
+      'lost my nin slip',
+      'replace nin slip',
+      'retrieve my bvn',
+      'i forgot my bvn',
+      'nin registration appointment',
+      'bvn correction',
+      'identity services',
+    ],
+    keywords: ['apply nin', 'nin registration', 'nin modification', 'nin retrieval', 'nin slip', 'bvn correction', 'bvn retrieval', 'modify nin', 'replace nin', 'get nin', 'enrollment'],
+    answer:
+      'You can apply for identity services right on the CAC page: /haritech/cac-registration#identity-desk, just below the Identity Checks panel.\n\nThe desk covers five services: first-time NIN registration, NIN record modification, NIN slip retrieval or reprint, BVN record correction and BVN retrieval. It is a five-step form — service, applicant details, your number today, the details of the change, documents — and everything the service needs to know is listed for you as you go. A NID-XXXXXXXX reference is issued when you submit; track the file the same way, with the reference plus the phone number or email used on it.\n\nTwo honest rules: the form never asks for your NIN or BVN — the desk confirms it with you directly — and the fee is confirmed with you before any booking rather than quoted on the website. Haritech prepares, books and follows the file; NIMC issues the NIN, and your bank with NIBSS decides BVN corrections.',
+    link: { to: '/haritech/cac-registration#identity-desk', label: 'Identity application desk' },
+    related: ['nin-verification', 'bvn-verification', 'cac-application-desk', 'contact-human'],
   },
   {
     id: 'importation-overview',

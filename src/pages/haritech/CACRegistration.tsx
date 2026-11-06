@@ -6,6 +6,8 @@ import { getCACInfo, CACInfo, getWhatsAppUrl } from '../../utils/haritechContent
 import CACFeeEstimator from '../../components/haritech/CACFeeEstimator';
 import CacApplicationWizard from '../../components/haritech/CacApplicationWizard';
 import CacStatusTracker from '../../components/haritech/CacStatusTracker';
+import IdentityApplicationWizard from '../../components/haritech/IdentityApplicationWizard';
+import IdentityStatusTracker from '../../components/haritech/IdentityStatusTracker';
 import IdentityCheckPanel from '../../components/haritech/IdentityCheckPanel';
 
 /* ── CAC Registry identity ───────────────────────────────────────────────
@@ -93,6 +95,7 @@ const CACRegistration: React.FC = () => {
   const [documents, setDocuments] = useState<string[]>(() => getArr(DOCUMENTS_KEY, defaultDocuments));
   const [faqs, setFaqs] = useState<any[]>(() => getArr(CAC_FAQ_KEY, defaultFaqs));
   const [deskTab, setDeskTab] = useState<'apply' | 'track'>('apply');
+  const [identityDeskTab, setIdentityDeskTab] = useState<'apply' | 'track'>('apply');
 
   /* Registration details are only public once the owner supplies them; until
      then the flag value is replaced with neutral wording instead of showing
@@ -451,6 +454,83 @@ const CACRegistration: React.FC = () => {
             <FadeInView delay={0.12}>
               <IdentityCheckPanel />
             </FadeInView>
+          </div>
+
+          {/* Identity Application Desk — below the checks grid */}
+          <div id="identity-desk" className="mt-14 pt-12 border-t border-[#DED3AC] scroll-mt-24">
+            <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
+              <FadeInView>
+                <div>
+                  <h3 className={`${SERIF} text-2xl md:text-3xl text-[#1E2B20] mb-3`}>Apply for Identity Services</h3>
+                  <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
+                    Every detail needed for a first-time NIN registration, a record modification or a
+                    retrieval is collected right here — in five guided steps, with all requirements
+                    listed before you submit.
+                  </p>
+                  <ul className="border-t border-[#DED3AC]">
+                    {[
+                      'Registration, modification, retrieval — all prepared by the desk.',
+                      'Requirements checklist shown for the exact service you choose.',
+                      'Reference number issued on submission; no sign-in, no password.',
+                      'The form never asks for your NIN or BVN.',
+                      'The fee is confirmed with you by the desk before any booking.',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-3 border-b border-[#DED3AC] py-3">
+                        <span className="mt-0.5 w-4 h-4 shrink-0 bg-[#0B6B3B] flex items-center justify-center">
+                          <Check className="h-2.5 w-2.5 text-[#F7F2E6]" />
+                        </span>
+                        <span className="text-sm text-[#2A352C]">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 border-l-2 border-[#C6B98F] pl-4">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">Honest note</p>
+                    <p className="text-xs text-[#5F6B5C] leading-relaxed">
+                      Haritech prepares, books and follows the file. NIN is issued by NIMC and BVN by
+                      your bank through NIBSS — those authorities decide the final outcome. The
+                      stages the tracker shows are Haritech’s handling, not a live feed.
+                    </p>
+                  </div>
+                </div>
+              </FadeInView>
+
+              <FadeInView delay={0.12}>
+                <div>
+                  <div
+                    role="tablist"
+                    aria-label="Identity application desk"
+                    className="flex gap-2 border-b border-[#DED3AC] pb-3"
+                  >
+                    {([
+                      { id: 'apply' as const, label: 'Start a request' },
+                      { id: 'track' as const, label: 'Track a request' },
+                    ]).map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={identityDeskTab === tab.id}
+                        onClick={() => setIdentityDeskTab(tab.id)}
+                        className={`px-4 py-2 text-xs sm:text-sm font-semibold transition-colors ${
+                          identityDeskTab === tab.id
+                            ? 'bg-[#0B6B3B] text-[#F7F2E6]'
+                            : 'border border-[#DED3AC] text-[#5F6B5C] hover:border-[#B08D2E] hover:text-[#1E2B20]'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-4">
+                    {identityDeskTab === 'apply' ? (
+                      <IdentityApplicationWizard onTrack={() => setIdentityDeskTab('track')} />
+                    ) : (
+                      <IdentityStatusTracker />
+                    )}
+                  </div>
+                </div>
+              </FadeInView>
+            </div>
           </div>
         </div>
       </section>
