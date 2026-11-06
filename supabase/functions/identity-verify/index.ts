@@ -17,7 +17,8 @@
 //   IDENTITY_API_BASE_URL      override base URL (required for generic)
 //   IDENTITY_NIN_PATH          override NIN path
 //   IDENTITY_BVN_PATH          override BVN path
-//   IDENTITY_NUMBER_FIELD      body/query field name (default: number)
+//   IDENTITY_NUMBER_FIELD      body/query field name (default: number, or
+//                              nin/bvn for the dojah preset)
 //   IDENTITY_HTTP_METHOD       GET | POST (generic only; default POST)
 //   IDENTITY_API_AUTH_HEADER   header name (generic only; default Authorization)
 //   IDENTITY_API_AUTH_SCHEME   prefix, e.g. Bearer (generic only)
@@ -25,8 +26,10 @@
 //
 // Prembly defaults: POST /verification/vnin and /verification/bvn,
 //   headers x-api-key + app-id.
-// Dojah defaults: GET /api/v1/kyc/nin?nin= and /api/v1/kyc/bvn/basic?bvn=,
-//   headers Authorization + AppId.
+// Dojah defaults: GET /api/v1/kyc/nin?nin= and /api/v1/kyc/bvn/full?bvn=,
+//   headers Authorization (the secret key as-is, no "Bearer") + AppId.
+//   Sandbox: set IDENTITY_API_BASE_URL=https://sandbox.dojah.io and use the
+//   documented test values (nin 70123456789, bvn 22222222222).
 
 import {
   classifyUpstreamStatus,
@@ -99,12 +102,17 @@ export const resolveProviderRequest = (
       : provider === 'prembly'
         ? '/verification/bvn'
         : provider === 'dojah'
-          ? '/api/v1/kyc/bvn/basic'
+          ? // Dojah no longer sells BVN Basic to new direct-API customers;
+            // /full is the current endpoint.
+            '/api/v1/kyc/bvn/full'
           : '';
   const path = env(kind === 'nin' ? 'IDENTITY_NIN_PATH' : 'IDENTITY_BVN_PATH') ?? defaultPath;
   if (!path) return null;
 
-  const numberField = env('IDENTITY_NUMBER_FIELD') ?? 'number';
+  // Dojah names the query parameter after the document (nin=, bvn=); every
+  // other preset defaults to a neutral `number` field.
+  const defaultField = provider === 'dojah' ? kind : 'number';
+  const numberField = env('IDENTITY_NUMBER_FIELD') ?? defaultField;
 
   if (provider === 'dojah') {
     const url = `${base}${path}${path.includes('?') ? '&' : '?'}${encodeURIComponent(numberField)}=${encodeURIComponent(number)}`;
@@ -301,7 +309,9 @@ const handle = async (req: Request): Promise<Response> => {
 
   if (!upstream.ok) {
     const failurePayload = await upstream.json().catch(() => null);
-    const outcome = classifyUpstreamStatus(upstream.status, failurePayload);
+    const outcome = classifyUpstreamStatus(upstream.status, failurePayload, {
+      notFoundOn404: request.provider === 'dojah',
+    });
 
     if (outcome === 'rate_limited') {
       return json(
@@ -315,10 +325,11 @@ const handle = async (req: Request): Promise<Response> => {
       );
     }
 
-    // 401/403 means the provider rejected Haritech's credentials — a setup
-    // problem, not something the customer can fix by retrying.
+    // 401/403 means the provider rejected Haritech's credentials, and 402 means
+    // the provider account is out of credit — setup problems, not something the
+    // customer can fix by retrying.
     if (outcome === 'not_configured') {
-      console.error('[identity-verify] provider rejected credentials', request.provider, upstream.status);
+      console.error('[identity-verify] provider unavailable', request.provider, upstream.status);
       return json(
         {
           status: 'not_configured',

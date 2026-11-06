@@ -182,23 +182,37 @@ export const providerMessage = (payload: unknown): string => {
 
 export type UpstreamOutcome = 'not_found' | 'not_configured' | 'rate_limited' | 'error';
 
+export interface FailureRules {
+  /**
+   * Some providers document 404 as "no record for this identifier" (Dojah
+   * does). Others use 404 for an unknown route, so the default is to demand
+   * the provider say so in words before claiming a record is missing.
+   */
+  notFoundOn404?: boolean;
+}
+
 /**
  * Turns a provider HTTP failure into an honest outcome.
  *
- * A 404 is deliberately NOT assumed to mean "no such record": it is just as
- * often a wrong endpoint, and telling a customer their NIN does not exist when
- * the path is misconfigured would be a false claim. Only a provider that says
- * so in words produces `not_found`. A 401/403 is a credentials problem, so it
- * reports `not_configured` instead of asking the customer to retry.
+ * A 404 is deliberately NOT assumed to mean "no such record" unless the
+ * provider documents it that way: it is just as often a wrong endpoint, and
+ * telling a customer their NIN does not exist when the path is misconfigured
+ * would be a false claim. A 401/403 is a credentials problem, and a 402 is an
+ * empty provider wallet — both report `not_configured` rather than asking the
+ * customer to retry something only Haritech can fix.
  */
 export const classifyUpstreamStatus = (
   status: number,
   payload: unknown,
+  rules: FailureRules = {},
 ): UpstreamOutcome | null => {
   if (status >= 200 && status < 300) return null;
   if (status === 429) return 'rate_limited';
   if (status === 401 || status === 403) return 'not_configured';
+  // 402 Payment Required: the provider account is out of credit.
+  if (status === 402) return 'not_configured';
   if (status === 404) {
+    if (rules.notFoundOn404) return 'not_found';
     const message = providerMessage(payload).toLowerCase();
     return /not\s*found|no\s+record|does\s+not\s+exist|invalid\s+(nin|bvn|number|identity)/.test(message)
       ? 'not_found'

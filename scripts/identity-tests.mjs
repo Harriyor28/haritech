@@ -274,10 +274,34 @@ test('dojah preset uses GET query parameters', () => {
     '12345678901',
     envFrom({ IDENTITY_PROVIDER: 'dojah', IDENTITY_API_KEY: 'dk', IDENTITY_API_APP_ID: 'app' }),
   );
-  assert.equal(request.url, 'https://api.dojah.io/api/v1/kyc/nin?number=12345678901');
+  assert.equal(request.url, 'https://api.dojah.io/api/v1/kyc/nin?nin=12345678901');
   assert.equal(request.init.method, 'GET');
   assert.equal(request.init.headers.Authorization, 'dk');
   assert.equal(request.init.headers.AppId, 'app');
+});
+
+test('dojah BVN uses the /full endpoint and bvn parameter', () => {
+  const request = resolveProviderRequest(
+    'bvn',
+    '12345678901',
+    envFrom({ IDENTITY_PROVIDER: 'dojah', IDENTITY_API_KEY: 'dk', IDENTITY_API_APP_ID: 'app' }),
+  );
+  assert.equal(request.url, 'https://api.dojah.io/api/v1/kyc/bvn/full?bvn=12345678901');
+  assert.equal(request.init.method, 'GET');
+});
+
+test('dojah sandbox base URL is honoured', () => {
+  const request = resolveProviderRequest(
+    'nin',
+    '70123456789',
+    envFrom({
+      IDENTITY_PROVIDER: 'dojah',
+      IDENTITY_API_KEY: 'dk',
+      IDENTITY_API_APP_ID: 'app',
+      IDENTITY_API_BASE_URL: 'https://sandbox.dojah.io',
+    }),
+  );
+  assert.equal(request.url, 'https://sandbox.dojah.io/api/v1/kyc/nin?nin=70123456789');
 });
 
 test('explicit base URL and path override a preset', () => {
@@ -319,6 +343,18 @@ test('a busy provider is rate limited', () => {
 test('rejected credentials mean the desk is not configured', () => {
   assert.equal(classifyUpstreamStatus(401, { message: 'Invalid API key' }), 'not_configured');
   assert.equal(classifyUpstreamStatus(403, null), 'not_configured');
+});
+
+test('an empty provider wallet is a setup problem, not a customer error', () => {
+  assert.equal(classifyUpstreamStatus(402, { message: 'Insufficient balance' }), 'not_configured');
+});
+
+test('a provider that documents 404 as missing can say so', () => {
+  assert.equal(classifyUpstreamStatus(404, null, { notFoundOn404: true }), 'not_found');
+  assert.equal(
+    classifyUpstreamStatus(404, { message: 'Cannot GET /api/v1/kyc/nin' }, { notFoundOn404: true }),
+    'not_found',
+  );
 });
 
 test('a bare 404 is not reported as a missing record', () => {
