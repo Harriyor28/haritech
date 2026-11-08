@@ -241,10 +241,20 @@ const handleLogout = async () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  /** A write that only reached this browser is a real failure: the next visit
+      or another device would not show it, so say so instead of claiming success. */
+  const reportCloudSave = (saved: boolean, what: string) => {
+    if (saved) return;
+    showNotification(
+      'error',
+      `${what} saved on this device only — sign in as the site owner so it reaches the live site.`
+    );
+  };
+
   const handleDeleteTestimonial = (id: number) => {
     const updated = testimonials.filter(t => t.id !== id);
     setTestimonials(updated);
-    setStoredTestimonials(updated);
+    void setStoredTestimonials(updated).then(saved => reportCloudSave(saved, 'Testimonial change'));
     showNotification('success', 'Testimonial deleted successfully');
   };
 
@@ -258,14 +268,14 @@ const handleLogout = async () => {
       showNotification('success', 'Testimonial added successfully');
     }
     setTestimonials(updated);
-    setStoredTestimonials(updated);
+    void setStoredTestimonials(updated).then(saved => reportCloudSave(saved, 'Testimonial change'));
     setEditingTestimonial(null);
     setIsAddingTestimonial(false);
   };
 
   const persistProjects = (updated: ProjectData[]) => {
     setProjects(updated);
-    setStoredProjects(updated);
+    void setStoredProjects(updated).then(saved => reportCloudSave(saved, 'Project change'));
   };
 
   const handleDeleteProject = (id: number) => {

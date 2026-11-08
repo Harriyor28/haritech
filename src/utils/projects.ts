@@ -34,17 +34,25 @@ export const getStoredProjects = (): ProjectData[] => {
     if (!stored) return seededProjects;
     const parsed = JSON.parse(stored);
     if (!Array.isArray(parsed)) return seededProjects;
-    const approved = (parsed as ProjectData[]).filter(project => project && project.approved === true);
-    return approved.length ? approved : seededProjects;
+    // Only an explicit rejection hides a saved project. Entries written before
+    // the flag existed, or restored from the cloud without it, still belong to
+    // the owner and must stay visible instead of silently disappearing.
+    const published = (parsed as ProjectData[]).filter(
+      project => project && project.approved !== false
+    );
+    return published.length ? published : seededProjects;
   } catch {
     return seededProjects;
   }
 };
 
-export const setStoredProjects = (data: ProjectData[]): void => {
-  if (typeof window === 'undefined') return;
+/** Resolves true when the copy reached Supabase, false when it only lives in
+    this browser (for example, an expired admin session). */
+export const setStoredProjects = async (data: ProjectData[]): Promise<boolean> => {
+  if (typeof window === 'undefined') return false;
   const approved = data.map(project => ({ ...project, approved: true }));
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(approved));
-  void pushToCloud(STORAGE_KEY, approved);
+  const pushed = await pushToCloud(STORAGE_KEY, approved);
   window.dispatchEvent(new Event('haritech-projects-updated'));
+  return pushed;
 };

@@ -26,16 +26,19 @@ export const getStoredTestimonials = (): Testimonial[] => {
     if (!stored) return defaultTestimonials;
     const parsed = JSON.parse(stored);
     if (!Array.isArray(parsed)) return defaultTestimonials;
-    return (parsed as Testimonial[]).filter(item => item && item.approved === true);
+    return (parsed as Testimonial[]).filter(item => item && item.approved !== false);
   } catch {
     return defaultTestimonials;
   }
 };
 
-export const setStoredTestimonials = (data: Testimonial[]): void => {
-  if (typeof window === 'undefined') return;
+/** Resolves true when the copy reached Supabase, false when it only lives in
+    this browser (for example, an expired admin session). */
+export const setStoredTestimonials = async (data: Testimonial[]): Promise<boolean> => {
+  if (typeof window === 'undefined') return false;
   const approved = data.map(item => ({ ...item, approved: true }));
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(approved));
-  void pushToCloud(STORAGE_KEY, approved);
+  const pushed = await pushToCloud(STORAGE_KEY, approved);
   window.dispatchEvent(new Event('haritech-testimonials-updated'));
+  return pushed;
 };

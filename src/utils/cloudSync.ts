@@ -8,6 +8,7 @@ export interface CloudRow {
 
 const KEY_EVENTS: Record<string, string> = {
   'haritech-content': 'haritech-content-updated',
+  'haritech-portfolio-services': 'haritech-portfolio-services-updated',
   'haritech-team': 'haritech-team-updated',
   'haritech-industries': 'haritech-industries-updated',
   'haritech-blog': 'haritech-blog-updated',
@@ -38,11 +39,51 @@ export const isCloudKey = (key: string): boolean => key in KEY_EVENTS;
 
 export const cloudKeys = (): string[] => [...CLOUD_KEYS];
 
+/** When this device last wrote a key. Cloud rows older than this must not
+    overwrite what the owner has on screen — an expired admin session cannot
+    silently roll their work back. */
+const LOCAL_WRITE_PREFIX = 'haritech-local-write:';
+
+const markLocalWrite = (key: string, at: number = Date.now()): void => {
+  try {
+    window.localStorage.setItem(LOCAL_WRITE_PREFIX + key, String(at));
+  } catch {
+    /* storage full or blocked — sync still works, just without the guard */
+  }
+};
+
+const localWriteAt = (key: string): number => {
+  try {
+    return Number(window.localStorage.getItem(LOCAL_WRITE_PREFIX + key) || 0) || 0;
+  } catch {
+    return 0;
+  }
+};
+
+const readLocal = (key: string): unknown => {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (raw === null) return undefined;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw;
+    }
+  } catch {
+    return undefined;
+  }
+};
+
+const isEmptyList = (value: unknown): boolean => Array.isArray(value) && value.length === 0;
+
 export const pushToCloud = async (key: string, value: unknown): Promise<boolean> => {
   if (!isCloudConfigured()) return false;
   if (!isCloudKey(key)) return false;
   const sb = getSupabase();
   if (!sb) return false;
+  // Recorded before the attempt: if the write is rejected the local copy is
+  // still the newest, and the next sync pushes it up instead of discarding it.
+  markLocalWrite(key);
   try {
     const { error } = await sb
       .from(CLOUD_TABLE)
@@ -87,8 +128,28 @@ export const syncFromCloud = async (): Promise<void> => {
       return;
     }
     if (!data || data.length === 0) return;
-    data.forEach((row) => applyRow(row as CloudRow));
-    console.log(`[cloud] synced ${data.length} keys from Supabase`);
+    let restored = 0;
+    data.forEach((raw) => {
+      const row = raw as CloudRow;
+      const local = readLocal(row.key);
+      const cloudAt = Date.parse(row.updated_at);
+      const newerLocally = localWriteAt(row.key) > (Number.isNaN(cloudAt) ? 0 : cloudAt);
+      const wouldEraseLocalList = isEmptyList(row.value) && Array.isArray(local) && local.length > 0;
+
+      if (newerLocally || wouldEraseLocalList) {
+        // The device holds the owner's newer work; send it up rather than
+        // replacing it with the older cloud copy.
+        if (local !== undefined) {
+          void pushToCloud(row.key, local);
+          restored += 1;
+        }
+        return;
+      }
+      applyRow(row);
+    });
+    console.log(
+      `[cloud] synced ${data.length} keys from Supabase${restored ? ` — kept ${restored} newer local key(s)` : ''}`
+    );
   } catch (e) {
     console.warn('[cloud] sync error:', e);
   }

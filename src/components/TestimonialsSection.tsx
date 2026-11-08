@@ -68,10 +68,15 @@ const TestimonialsSection: React.FC = () => {
   };
   
   React.useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || testimonials.length < 2) return;
     const interval = setInterval(nextTestimonial, 5000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonials.length]);
+
+  // Keep the carousel pointed at a card that exists after edits or deletes.
+  React.useEffect(() => {
+    if (currentIndex > testimonials.length - 1) setCurrentIndex(0);
+  }, [testimonials.length, currentIndex]);
   
   return (
     <section id="testimonials" className="section-padding bg-[#070a13] relative overflow-hidden">
@@ -94,6 +99,15 @@ const TestimonialsSection: React.FC = () => {
           </p>
         </motion.div>
         
+        {testimonials.length === 0 ? (
+          <div className="card max-w-xl mx-auto mb-12 px-8 py-12 text-center">
+            <p className="text-slate-300 text-sm mb-2">No feedback published yet</p>
+            <p className="text-slate-500 text-xs leading-relaxed">
+              Client comments appear here once they are supplied with permission — we do not publish invented reviews.
+            </p>
+          </div>
+        ) : (
+          <>
         {/* Desktop View - Grid Layout */}
         <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {testimonials.slice(0, 3).map((testimonial, index) => (
@@ -151,6 +165,8 @@ const TestimonialsSection: React.FC = () => {
             ))}
           </div>
         </div>
+          </>
+        )}
         
         <div className="text-center mt-16">
           <p className="text-slate-400 mb-6 text-sm">Ready to build your company's web experience?</p>

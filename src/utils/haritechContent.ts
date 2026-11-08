@@ -39,8 +39,9 @@ const LEGACY_SEEDED_KEYS = [
   'haritech-epoxy',
   'haritech-whatwedo',
   'haritech-pm',
-  'haritech-projects',
-  'haritech-testimonials',
+  // 'haritech-projects' and 'haritech-testimonials' are deliberately absent:
+  // the owner's own portfolio entries live under those keys, so the migration
+  // must never clear them.
   'haritech-cac-services',
   'haritech-cac-why',
   'haritech-cac-docs',
@@ -87,9 +88,9 @@ export async function republishCorrectedHaritechContent(): Promise<void> {
           address: previousAddress,
         },
       },
-      { key: HARITECH_BLOG_KEY, value: defaultBlog.map(post => ({ ...post, approved: true })) },
-      { key: 'haritech-projects', value: [] },
-      { key: 'haritech-testimonials', value: [] },
+      // Blog posts, projects and testimonials are the owner's own work once
+      // published; re-running this must not overwrite them. Only the corrected
+      // narrative and certificate details are restored.
       { key: HARITECH_CAC_KEY, value: { ...defaultCAC, confirmed: true } },
     ];
 
