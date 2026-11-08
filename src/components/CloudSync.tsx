@@ -8,11 +8,12 @@ const CloudSync: React.FC = () => {
     void syncFromCloud().then(() => republishCorrectedHaritechContent());
     const unsubscribe = subscribeToCloud();
 
-    // The corrected rows can only be written once an admin is signed in, so
-    // run the replacement again as soon as a session appears.
+    // Writes need an admin session, so as soon as one appears: retry the push
+    // of any work that was kept locally, then run the corrected-row restore.
+    // This is what turns "saved on this device" into content visitors can see.
     const sb = getSupabase();
     const authSubscription = sb?.auth.onAuthStateChange(() => {
-      void republishCorrectedHaritechContent();
+      void syncFromCloud().then(() => republishCorrectedHaritechContent());
     });
 
     return () => {
