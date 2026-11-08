@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARITECH — Admin Control Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0d14;--surface:#111520;--surface2:#161b2e;--border:#1e2540;
+  --accent:#4f8ef7;--accent2:#00e5b0;--accent3:#f7c948;--danger:#f74f6b;
+  --text:#e8eaf2;--text2:#8890a8;--text3:#545d7a;--radius:12px;--sidebar:260px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sb-brand{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sb-logo-img{width:44px;height:44px;border-radius:10px;object-fit:cover;display:none}
+.sb-logo-ph{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1.1rem;flex-shrink:0}
+.sb-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--text)}
+.sb-tag{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+.nav-section{padding:14px 14px 6px;font-size:.67rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin:1px 8px;cursor:pointer;color:var(--text2);font-size:.87rem;font-weight:500;transition:all .2s;border:1px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(79,142,247,.12),rgba(0,229,176,.08));border-color:rgba(79,142,247,.25);color:var(--accent)}
+.nav-item i{width:17px;font-size:.85rem}
+.nb{margin-left:auto;background:var(--accent);color:#fff;font-size:.62rem;padding:1px 6px;border-radius:20px;font-weight:700;min-width:18px;text-align:center}
+.nb.red{background:var(--danger)}
+.sb-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border)}
+.logout-btn{width:100%;padding:9px;background:rgba(247,79,107,.08);border:1px solid rgba(247,79,107,.25);color:var(--danger);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.logout-btn:hover{background:var(--danger);color:#fff}
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem}
+.tb-sub{font-size:.76rem;color:var(--text3);margin-top:2px}
+.tb-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;transition:all .2s;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#3a78e8;transform:translateY(-1px)}
+.btn-success{background:var(--accent2);color:#0a0d14}.btn-success:hover{background:#00c99a;transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{opacity:.85}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn-sm{padding:5px 11px;font-size:.78rem}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center}
+/* PAGE */
+.page{display:none;padding:22px 24px;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.card+.card{margin-top:14px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem}
+.card-sub{font-size:.76rem;color:var(--text3);margin-top:2px}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+.stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;margin-bottom:10px}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem}
+.stat-lbl{font-size:.76rem;color:var(--text3);margin-top:3px}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--surface2)}
+th{padding:10px 14px;text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-weight:600;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid var(--border);font-size:.85rem;color:var(--text2)}
+tr:hover td{background:rgba(255,255,255,.015);color:var(--text)}
+.td-thumb{width:40px;height:40px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden}
+.td-thumb img{width:100%;height:100%;object-fit:cover}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
+.bg{background:rgba(0,229,176,.12);color:var(--accent2);border:1px solid rgba(0,229,176,.2)}
+.br{background:rgba(247,79,107,.12);color:var(--danger);border:1px solid rgba(247,79,107,.2)}
+.by{background:rgba(247,201,72,.12);color:var(--accent3);border:1px solid rgba(247,201,72,.2)}
+.bb{background:rgba(79,142,247,.12);color:var(--accent);border:1px solid rgba(79,142,247,.2)}
+/* FORM */
+.fg{margin-bottom:14px}
+.fg.full{grid-column:1/-1}
+label{display:block;font-size:.79rem;font-weight:600;color:var(--text2);margin-bottom:5px}
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],input[type=date],input[type=password],textarea,select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;transition:border .2s;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,142,247,.1)}
+textarea{resize:vertical;min-height:80px}
+select option{background:var(--surface2)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.input-help{font-size:.72rem;color:var(--text3);margin-top:3px}
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.upload-zone:hover{border-color:var(--accent);background:rgba(79,142,247,.04)}
+.upload-zone.has-img{border-style:solid;border-color:var(--accent2)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-prev{width:100%;max-height:160px;object-fit:contain;border-radius:7px;display:none}
+.up-prev.show{display:block}
+.up-ph{display:block}.up-ph.hidden{display:none}
+.up-icon{font-size:1.8rem;color:var(--text3);margin-bottom:6px}
+.up-text{font-size:.82rem;color:var(--text3)}.up-text strong{color:var(--accent)}
+.up-hint{font-size:.72rem;color:var(--text3);margin-top:3px}
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-ov.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-hdr{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-ttl{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem}
+.modal-close{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.modal-close:hover{color:var(--danger);border-color:var(--danger)}
+.modal-body{padding:20px}
+.modal-ftr{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+/* TOAST */
+#toasts{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-size:.83rem;min-width:240px;animation:tIn .25s ease;box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.toast.s{border-left:3px solid var(--accent2)}.toast.e{border-left:3px solid var(--danger)}.toast.i{border-left:3px solid var(--accent)}
+@keyframes tIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.toast.s i{color:var(--accent2)}.toast.e i{color:var(--danger)}.toast.i i{color:var(--accent)}
+/* COLOR SWATCHES */
+.swatches{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
+.swatch{width:26px;height:26px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.swatch.active,.swatch:hover{border-color:var(--text);transform:scale(1.1)}
+/* EMPTY */
+.empty-state{text-align:center;padding:40px 16px;color:var(--text3)}
+.empty-state i{font-size:2.5rem;opacity:.25;display:block;margin-bottom:10px}
+.empty-state p{font-size:.85rem}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)}.fgrid{grid-template-columns:1fr}}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+/* Progress indication on save */
+.saving{position:relative;overflow:hidden}
+.saving::after{content:'';position:absolute;bottom:0;left:0;height:2px;background:var(--accent2);animation:savingBar .6s ease-in-out}
+@keyframes savingBar{from{width:0}to{width:100%}}
+
+/* TOGGLE SWITCH */
+.toggle-sw{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:24px;transition:.3s}
+.toggle-track:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle-sw input:checked+.toggle-track{background:var(--accent2)}
+.toggle-sw input:checked+.toggle-track:before{transform:translateX(20px)}
+/* PAYMENT METHOD CARD active state */
+.pm-method-active{border-color:rgba(0,229,176,.35)!important;background:linear-gradient(180deg,rgba(0,229,176,.04),transparent)!important}
+/* ORDER ITEM */
+.order-item{padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;transition:border .2s}
+.order-item:hover{border-color:var(--accent)}
+.order-status{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.os-pending{background:rgba(247,201,72,.12);color:var(--accent3);border:1px solid rgba(247,201,72,.25)}
+.os-confirmed{background:rgba(79,142,247,.12);color:var(--accent);border:1px solid rgba(79,142,247,.25)}
+.os-completed{background:rgba(0,229,176,.12);color:var(--accent2);border:1px solid rgba(0,229,176,.25)}
+.os-cancelled{background:rgba(247,79,107,.12);color:var(--danger);border:1px solid rgba(247,79,107,.25)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <img id="sb-logo-img" class="sb-logo-img" src="" alt="Logo">
+    <div class="sb-logo-ph" id="sb-logo-ph">H</div>
+    <div>
+      <div class="sb-name" id="sb-brand-name">HARITECH</div>
+      <div class="sb-tag">Admin Panel</div>
+    </div>
+  </div>
+  <div class="nav-section">Content</div>
+  <div class="nav-item active" data-page="dashboard"><i class="fas fa-chart-bar"></i><span>Dashboard</span></div>
+  <div class="nav-item" data-page="services"><i class="fas fa-tools"></i><span>Services</span><span class="nb" id="nb-sv">0</span></div>
+  <div class="nav-item" data-page="products"><i class="fas fa-box"></i><span>Products</span><span class="nb" id="nb-pr">0</span></div>
+  <div class="nav-item" data-page="blog"><i class="fas fa-newspaper"></i><span>Blog Posts</span><span class="nb" id="nb-bl">0</span></div>
+  <div class="nav-item" data-page="testimonials"><i class="fas fa-star"></i><span>Testimonials</span><span class="nb" id="nb-tm">0</span></div>
+  <div class="nav-section">Site Config</div>
+  <div class="nav-item" data-page="promo"><i class="fas fa-bullhorn"></i><span>Promo Banner</span></div>
+  <div class="nav-item" data-page="faq"><i class="fas fa-question-circle"></i><span>FAQ Manager</span></div>
+  <div class="nav-item" data-page="hero"><i class="fas fa-home"></i><span>Hero Section</span></div>
+  <div class="nav-item" data-page="contact"><i class="fas fa-address-card"></i><span>Contact Info</span></div>
+  <div class="nav-item" data-page="social"><i class="fas fa-share-alt"></i><span>Social Media</span></div>
+  <div class="nav-item" data-page="appearance"><i class="fas fa-palette"></i><span>Appearance</span></div>
+  <div class="nav-item" data-page="bookings"><i class="fas fa-calendar-check"></i><span>Bookings</span><span class="nb" id="nb-bk">0</span></div>
+  <div class="nav-section">Commerce</div>
+  <div class="nav-item" data-page="payment"><i class="fas fa-credit-card"></i><span>Payment Methods</span></div>
+  <div class="nav-item" data-page="orders"><i class="fas fa-shopping-cart"></i><span>Orders</span><span class="nb" id="nb-orders">0</span></div>
+  <div class="nav-item" data-page="subscribers"><i class="fas fa-mail-bulk"></i><span>Subscribers</span><span class="nb" id="nb-sub">0</span></div>
+  <div class="nav-section">System</div>
+  <div class="nav-item" data-page="messages"><i class="fas fa-envelope"></i><span>Messages</span><span class="nb red" id="nb-msg">0</span></div>
+  <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></div>
+  <div class="sb-footer">
+    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="pg-heading">Dashboard</div>
+      <div class="tb-sub" id="pg-sub">Website overview</div>
+    </div>
+    <div class="tb-actions">
+      <button class="btn btn-ghost btn-sm" onclick="exportData()"><i class="fas fa-download"></i>Export</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.open('index.html','_blank')"><i class="fas fa-external-link-alt"></i>View Site</button>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(0,229,176,.08);border:1px solid rgba(0,229,176,.2);border-radius:8px;font-size:.75rem;color:var(--accent2);font-weight:600">
+        <span style="width:7px;height:7px;background:var(--accent2);border-radius:50%;display:inline-block;animation:livePulse 2s ease-in-out infinite"></span>
+        Live Sync On
+      </div>
+    </div>
+  </div>
+  <div id="toasts"></div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(79,142,247,.12);color:var(--accent)"><i class="fas fa-box"></i></div>
+        <div class="stat-num" id="ds-prod">0</div><div class="stat-lbl">Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,229,176,.12);color:var(--accent2)"><i class="fas fa-tools"></i></div>
+        <div class="stat-num" id="ds-serv">0</div><div class="stat-lbl">Services</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(247,201,72,.12);color:var(--accent3)"><i class="fas fa-newspaper"></i></div>
+        <div class="stat-num" id="ds-blog">0</div><div class="stat-lbl">Blog Posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(247,79,107,.12);color:var(--danger)"><i class="fas fa-envelope"></i></div>
+        <div class="stat-num" id="ds-msg">0</div><div class="stat-lbl">Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(247,201,72,.12);color:var(--accent3)"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-num" id="ds-bk">0</div><div class="stat-lbl">Bookings</div>
+      </div>
+      <div class="stat-card" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(79,142,247,.06),rgba(0,229,176,.04));border-color:rgba(79,142,247,.15);display:flex;align-items:center;gap:16px;padding:16px;flex-wrap:wrap">
+        <div class="stat-icon" style="background:linear-gradient(135deg,rgba(0,229,176,.15),rgba(79,142,247,.1));color:var(--accent2);width:46px;height:46px;flex-shrink:0"><i class="fas fa-shopping-cart"></i></div>
+        <div style="flex:1;min-width:100px"><div class="stat-lbl" style="margin-bottom:3px">Total Orders</div><div class="stat-num" style="font-size:1.6rem" id="ds-orders">0</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="goPage('orders')"><i class="fas fa-list"></i>View Orders</button>
+          <button class="btn btn-primary btn-sm" onclick="goPage('payment')"><i class="fas fa-credit-card"></i>Payment Settings</button>
+        </div>
+      </div>
+    </div>
+    <!-- Analytics Charts -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title"><i class="fas fa-chart-line" style="color:var(--accent);margin-right:6px"></i>Activity Overview</div><div class="card-sub">Orders, messages & bookings over last 7 days</div></div></div>
+        <canvas id="chart-activity" height="90"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title"><i class="fas fa-chart-pie" style="color:var(--accent2);margin-right:6px"></i>Content Mix</div></div></div>
+        <canvas id="chart-mix" height="160"></canvas>
+      </div>
+    </div>
+    <!-- Pending alerts -->
+    <div id="ds-alerts" style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Quick Actions</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn btn-primary" onclick="goPage('products');openProdModal()"><i class="fas fa-plus"></i>Add Product</button>
+          <button class="btn btn-ghost" onclick="goPage('services');openSvcModal()"><i class="fas fa-plus"></i>Add Service</button>
+          <button class="btn btn-ghost" onclick="goPage('blog');openBlogModal()"><i class="fas fa-plus"></i>Add Blog Post</button>
+          <button class="btn btn-ghost" onclick="goPage('testimonials');openTmModal()"><i class="fas fa-star"></i>Add Review</button>
+          <button class="btn btn-ghost" onclick="goPage('bookings')"><i class="fas fa-calendar"></i>View Bookings</button>
+          <button class="btn btn-ghost" onclick="goPage('promo')"><i class="fas fa-bullhorn"></i>Promo Banner</button>
+          <button class="btn btn-ghost" onclick="goPage('faq')"><i class="fas fa-question-circle"></i>Manage FAQ</button>
+          <button class="btn btn-ghost" onclick="goPage('payment')"><i class="fas fa-credit-card"></i>Payments</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Recent Messages</div></div></div>
+        <div id="ds-recent"><div class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="page" id="page-services">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Services</div><div class="card-sub">Services displayed on website</div></div>
+        <button class="btn btn-primary" onclick="openSvcModal()"><i class="fas fa-plus"></i>Add Service</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Visual</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead>
+        <tbody id="svc-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="page" id="page-products">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Products</div><div class="card-sub">Your product catalog</div></div>
+        <button class="btn btn-primary" onclick="openProdModal()"><i class="fas fa-plus"></i>Add Product</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="prod-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="page" id="page-blog">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Blog Posts</div><div class="card-sub">Articles and news</div></div>
+        <button class="btn btn-primary" onclick="openBlogModal()"><i class="fas fa-plus"></i>Add Post</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="blog-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="page" id="page-hero">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Hero Section</div></div>
+      <form onsubmit="saveHero(event)">
+        <div class="fgrid">
+          <div class="fg"><label>Badge Text</label><input type="text" id="hero-badge" placeholder="Your Premium Tech Partner"></div>
+          <div class="fg"><label>Main Title</label><input type="text" id="hero-title" placeholder="EXCLUSIVE TECH SOLUTIONS"></div>
+          <div class="fg"><label>Subtitle</label><input type="text" id="hero-subtitle" placeholder="Premium Technology Services"></div>
+          <div class="fg"><label>Btn 1 Text</label><input type="text" id="hero-btn1" placeholder="Explore Products"></div>
+          <div class="fg full"><label>Description</label><textarea id="hero-desc" rows="3"></textarea></div>
+          <div class="fg"><label>Btn 2 Text</label><input type="text" id="hero-btn2" placeholder="Our Services"></div>
+        </div>
+        <div class="fg"><label>Hero Background Image (optional)</label>
+          <div class="upload-zone" id="hz-zone">
+            <input type="file" accept="image/*" onchange="handleUpload(this,'hz-prev','hz-data','hz-zone')">
+            <span class="up-ph" id="hz-ph"><div class="up-icon"><i class="fas fa-image"></i></div><div class="up-text"><strong>Click to upload</strong> or drag & drop</div><div class="up-hint">PNG, JPG up to 5MB</div></span>
+            <img class="up-prev" id="hz-prev" src=""><input type="hidden" id="hz-data">
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="clearUpload('hz-prev','hz-data','hz-zone','hz-ph')"><i class="fas fa-times"></i>Remove Image</button>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>Save Hero Section</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="page-contact">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Contact Information</div></div>
+      <form onsubmit="saveContact(event)">
+        <div class="fgrid">
+          <div class="fg"><label>Phone Number</label><input type="tel" id="c-phone" placeholder="+234 XXX XXX XXXX"></div>
+          <div class="fg"><label>Email Address</label><input type="email" id="c-email" placeholder="info@haritechexclusive.com"></div>
+          <div class="fg"><label>WhatsApp Number</label><input type="tel" id="c-whatsapp" placeholder="234XXXXXXXXXX"><span class="input-help">Format: 234XXXXXXXXXX (no + or spaces)</span></div>
+          <div class="fg"><label>Location</label><input type="text" id="c-location" placeholder="Lagos, Nigeria"></div>
+          <div class="fg full"><label>Business Hours</label><input type="text" id="c-hours" placeholder="Mon-Fri: 9am-6pm, Sat: 10am-4pm"></div>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>Save Contact Info</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SOCIAL -->
+  <div class="page" id="page-social">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Social Media Links</div></div>
+      <form onsubmit="saveSocial(event)">
+        <div class="fgrid">
+          <div class="fg"><label><i class="fab fa-facebook" style="color:#1877f2;margin-right:5px"></i>Facebook</label><input type="url" id="s-facebook" placeholder="https://facebook.com/..."></div>
+          <div class="fg"><label><i class="fab fa-twitter" style="color:#1da1f2;margin-right:5px"></i>Twitter / X</label><input type="url" id="s-twitter" placeholder="https://twitter.com/..."></div>
+          <div class="fg"><label><i class="fab fa-instagram" style="color:#e1306c;margin-right:5px"></i>Instagram</label><input type="url" id="s-instagram" placeholder="https://instagram.com/..."></div>
+          <div class="fg"><label><i class="fab fa-linkedin" style="color:#0a66c2;margin-right:5px"></i>LinkedIn</label><input type="url" id="s-linkedin" placeholder="https://linkedin.com/..."></div>
+          <div class="fg"><label><i class="fab fa-youtube" style="color:#ff0000;margin-right:5px"></i>YouTube</label><input type="url" id="s-youtube" placeholder="https://youtube.com/..."></div>
+          <div class="fg"><label><i class="fab fa-tiktok" style="margin-right:5px"></i>TikTok</label><input type="url" id="s-tiktok" placeholder="https://tiktok.com/..."></div>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>Save Social Links</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPEARANCE -->
+  <div class="page" id="page-appearance">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Logo & Branding</div></div>
+        <div class="fg"><label>Site Logo</label>
+          <div class="upload-zone" id="logo-zone">
+            <input type="file" accept="image/*" onchange="handleLogoUpload(this)">
+            <span class="up-ph" id="logo-ph"><div class="up-icon"><i class="fas fa-image"></i></div><div class="up-text"><strong>Upload Logo</strong></div><div class="up-hint">PNG transparent background recommended</div></span>
+            <img class="up-prev" id="logo-prev" src="">
+          </div>
+          <button class="btn btn-danger btn-sm" style="margin-top:7px" onclick="removeLogo()"><i class="fas fa-trash"></i>Remove Logo</button>
+        </div>
+        <div class="fg"><label>Site Name</label><input type="text" id="ap-name" placeholder="HARITECH EXCLUSIVE SERVICES"></div>
+        <div class="fg"><label>Tagline</label><input type="text" id="ap-tag" placeholder="Premium Tech Solutions"></div>
+        <div class="fg"><label>Footer Description</label><textarea id="ap-fdesc" rows="3"></textarea></div>
+        <button class="btn btn-success" onclick="saveBranding()"><i class="fas fa-save"></i>Save Branding</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Theme Colors</div></div>
+        <div class="fg">
+          <label>Primary Color</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" id="th-primary" value="#1e3a5f" style="width:50px;height:34px;padding:2px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer">
+            <span style="font-size:.8rem;color:var(--text3)">Main brand color</span>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Accent Color</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" id="th-accent" value="#00d4aa" style="width:50px;height:34px;padding:2px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer">
+            <span style="font-size:.8rem;color:var(--text3)">Highlight & CTA color</span>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Preset Themes</label>
+          <div class="swatches">
+            <div class="swatch active" style="background:linear-gradient(135deg,#1e3a5f,#00d4aa)" onclick="setTheme('#1e3a5f','#00d4aa',this)"></div>
+            <div class="swatch" style="background:linear-gradient(135deg,#7c3aed,#06b6d4)" onclick="setTheme('#7c3aed','#06b6d4',this)"></div>
+            <div class="swatch" style="background:linear-gradient(135deg,#dc2626,#f97316)" onclick="setTheme('#dc2626','#f97316',this)"></div>
+            <div class="swatch" style="background:linear-gradient(135deg,#065f46,#10b981)" onclick="setTheme('#065f46','#10b981',this)"></div>
+            <div class="swatch" style="background:linear-gradient(135deg,#0f3460,#e94560)" onclick="setTheme('#0f3460','#e94560',this)"></div>
+            <div class="swatch" style="background:linear-gradient(135deg,#1c0b19,#c77dff)" onclick="setTheme('#1c0b19','#c77dff',this)"></div>
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="saveTheme()"><i class="fas fa-save"></i>Apply Theme</button>
+
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+          <div class="card-title" style="font-size:.85rem;margin-bottom:10px">Favicon</div>
+          <div class="upload-zone" id="fav-zone">
+            <input type="file" accept="image/*" onchange="handleUpload(this,'fav-prev','fav-data','fav-zone')">
+            <span class="up-ph" id="fav-ph"><div class="up-icon" style="font-size:1.3rem"><i class="fas fa-star"></i></div><div class="up-text"><strong>Upload Favicon</strong></div><div class="up-hint">32x32 or 64x64px</div></span>
+            <img class="up-prev" id="fav-prev" src="" style="max-height:70px"><input type="hidden" id="fav-data">
+          </div>
+          <button class="btn btn-success btn-sm" style="margin-top:7px" onclick="saveFavicon()"><i class="fas fa-save"></i>Save Favicon</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-hdr"><div class="card-title">Homepage Stats</div></div>
+      <div class="fgrid">
+        <div class="fg"><label>Happy Clients</label><input type="text" id="st-clients" placeholder="500+"></div>
+        <div class="fg"><label>Projects Done</label><input type="text" id="st-projects" placeholder="50+"></div>
+        <div class="fg"><label>Years Experience</label><input type="text" id="st-years" placeholder="5+"></div>
+        <div class="fg"><label>Support</label><input type="text" id="st-support" placeholder="24/7"></div>
+      </div>
+      <button class="btn btn-success" onclick="saveStats()"><i class="fas fa-save"></i>Save Stats</button>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="page" id="page-messages">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Messages</div><div class="card-sub">Contact form submissions</div></div>
+        <button class="btn btn-danger btn-sm" onclick="clearMsgs()"><i class="fas fa-trash"></i>Clear All</button>
+      </div>
+      <div id="msgs-list"><div class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Admin Password</div></div>
+        <form onsubmit="changePw(event)">
+          <div class="fg"><label>Admin Username</label><input type="text" id="pw-user" placeholder="admin"><span class="input-help">Username for the login page</span></div>
+          <div class="fg"><label>Current Password</label><input type="password" id="pw-cur" required></div>
+          <div class="fg"><label>New Password</label><input type="password" id="pw-new" required></div>
+          <div class="fg"><label>Confirm Password</label><input type="password" id="pw-con" required></div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-lock"></i>Save Credentials</button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Data Management</div></div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <button class="btn btn-ghost" onclick="exportData()"><i class="fas fa-download"></i>Export All Data (JSON)</button>
+          <label class="btn btn-ghost" style="cursor:pointer"><i class="fas fa-upload"></i>Import Data (JSON)<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+          <button class="btn btn-danger" onclick="resetAll()"><i class="fas fa-exclamation-triangle"></i>Reset All Data</button>
+        </div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="font-size:.78rem;color:var(--text3)" id="storage-info">Calculating...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHODS -->
+  <div class="page" id="page-payment">
+    <!-- Status Bar -->
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card" style="flex:1;min-width:140px;padding:14px">
+        <div class="stat-icon" style="background:rgba(0,229,176,.12);color:var(--accent2);width:30px;height:30px;font-size:.75rem;margin-bottom:7px"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-num" style="font-size:1.3rem" id="pm-active-count">0</div><div class="stat-lbl">Active Methods</div>
+      </div>
+      <div class="stat-card" style="flex:1;min-width:140px;padding:14px">
+        <div class="stat-icon" style="background:rgba(79,142,247,.12);color:var(--accent);width:30px;height:30px;font-size:.75rem;margin-bottom:7px"><i class="fas fa-shopping-cart"></i></div>
+        <div class="stat-num" style="font-size:1.3rem" id="pm-orders-count">0</div><div class="stat-lbl">Total Orders</div>
+      </div>
+      <div class="stat-card" style="flex:1;min-width:140px;padding:14px">
+        <div class="stat-icon" style="background:rgba(247,201,72,.12);color:var(--accent3);width:30px;height:30px;font-size:.75rem;margin-bottom:7px"><i class="fas fa-naira-sign"></i></div>
+        <div class="stat-num" style="font-size:1.3rem" id="pm-revenue">₦0</div><div class="stat-lbl">Total Revenue</div>
+      </div>
+      <div class="stat-card" style="flex:1;min-width:200px;padding:14px">
+        <div class="stat-lbl" style="margin-bottom:6px">Default Currency</div>
+        <select id="pm-currency" style="width:100%;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:DM Sans,sans-serif;font-size:.83rem">
+          <option value="NGN">₦ Nigerian Naira (NGN)</option>
+          <option value="USD">$ US Dollar (USD)</option>
+          <option value="GBP">£ British Pound (GBP)</option>
+          <option value="EUR">€ Euro (EUR)</option>
+          <option value="GHS">GH₵ Ghanaian Cedi (GHS)</option>
+          <option value="KES">KSh Kenyan Shilling (KES)</option>
+        </select>
+        <button class="btn btn-success btn-sm" style="margin-top:8px;width:100%" onclick="saveCurrency()"><i class="fas fa-save"></i>Save Currency</button>
+      </div>
+    </div>
+
+    <!-- General Payment Settings -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-hdr"><div><div class="card-title"><i class="fas fa-sliders-h" style="color:var(--accent);margin-right:7px"></i>General Payment Settings</div></div></div>
+      <div class="fgrid">
+        <div class="fg"><label>Payment Page Title</label><input type="text" id="pm-page-title" placeholder="Complete Your Order"></div>
+        <div class="fg"><label>Order Confirmation Email (optional)</label><input type="email" id="pm-confirm-email" placeholder="orders@haritechexclusive.com"></div>
+        <div class="fg"><label>Min Order Amount (₦)</label><input type="number" id="pm-min-order" placeholder="500" min="0"></div>
+        <div class="fg"><label>Checkout Button Text</label><input type="text" id="pm-btn-text" placeholder="Pay Now"></div>
+        <div class="fg full"><label>Payment Success Message</label><input type="text" id="pm-success-msg" placeholder="Thank you! Your order has been received."></div>
+        <div class="fg full"><label>Payment Instructions / Notes (shown at checkout)</label><textarea id="pm-instructions" rows="2" placeholder="We'll contact you within 24hrs to confirm your order."></textarea></div>
+      </div>
+      <button class="btn btn-success" onclick="savePaymentGeneral()"><i class="fas fa-save"></i>Save General Settings</button>
+    </div>
+
+    <!-- Payment Methods Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+
+      <!-- Paystack -->
+      <div class="card" id="pm-card-paystack">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#00c3f7,#011b33);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.75rem;font-family:Syne,sans-serif">PS</div>
+            <div><div class="card-title">Paystack</div><div class="card-sub">Card, Bank, USSD, Mobile Money</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-paystack-on" onchange="pmToggle('paystack')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-paystack-body" style="display:none">
+          <div class="fg"><label>Public Key <span style="color:var(--danger)">*</span></label><input type="text" id="pm-paystack-pubkey" placeholder="pk_live_xxxxxxxxxxxxxx"><span class="input-help">Get from your Paystack Dashboard → Settings → API Keys</span></div>
+          <div class="fg"><label>Secret Key <span style="color:var(--danger)">*</span></label><input type="password" id="pm-paystack-seckey" placeholder="sk_live_xxxxxxxxxxxxxx"><span class="input-help">Keep secret — used only for server-side verification</span></div>
+          <div class="fg"><label>Display Label</label><input type="text" id="pm-paystack-label" placeholder="Pay with Card / Bank Transfer" value="Pay with Paystack"></div>
+          <div class="fg">
+            <label>Accepted Channels</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:5px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text2);font-weight:400"><input type="checkbox" id="pm-ps-card" checked> Card</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text2);font-weight:400"><input type="checkbox" id="pm-ps-bank" checked> Bank Transfer</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text2);font-weight:400"><input type="checkbox" id="pm-ps-ussd" checked> USSD</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text2);font-weight:400"><input type="checkbox" id="pm-ps-momo"> Mobile Money</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text2);font-weight:400"><input type="checkbox" id="pm-ps-qr"> QR Code</label>
+            </div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('paystack')"><i class="fas fa-save"></i>Save Paystack Config</button>
+        </div>
+      </div>
+
+      <!-- Flutterwave -->
+      <div class="card" id="pm-card-flutterwave">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#f5a623,#e8330d);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.75rem;font-family:Syne,sans-serif">FW</div>
+            <div><div class="card-title">Flutterwave</div><div class="card-sub">Card, Bank, Mobile Money, USSD</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-flutterwave-on" onchange="pmToggle('flutterwave')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-flutterwave-body" style="display:none">
+          <div class="fg"><label>Public Key <span style="color:var(--danger)">*</span></label><input type="text" id="pm-flutterwave-pubkey" placeholder="FLWPUBK_TEST-xxxxxxxxxxxxx-X"><span class="input-help">Get from Flutterwave Dashboard → Settings → API Keys</span></div>
+          <div class="fg"><label>Secret Key <span style="color:var(--danger)">*</span></label><input type="password" id="pm-flutterwave-seckey" placeholder="FLWSECK_TEST-xxxxxxxxxxxxx-X"></div>
+          <div class="fg"><label>Display Label</label><input type="text" id="pm-flutterwave-label" placeholder="Pay with Flutterwave" value="Pay with Flutterwave"></div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('flutterwave')"><i class="fas fa-save"></i>Save Flutterwave Config</button>
+        </div>
+      </div>
+
+      <!-- Bank Transfer -->
+      <div class="card" id="pm-card-bank">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#2c5f2e,#97bc62);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff"><i class="fas fa-university"></i></div>
+            <div><div class="card-title">Bank Transfer</div><div class="card-sub">Manual bank / wire transfer</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-bank-on" onchange="pmToggle('bank')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-bank-body" style="display:none">
+          <div class="fg"><label>Bank Name <span style="color:var(--danger)">*</span></label><input type="text" id="pm-bank-name" placeholder="First Bank of Nigeria"></div>
+          <div class="fg"><label>Account Name <span style="color:var(--danger)">*</span></label><input type="text" id="pm-bank-acctname" placeholder="HARITECH EXCLUSIVE SERVICES LTD"></div>
+          <div class="fg"><label>Account Number <span style="color:var(--danger)">*</span></label><input type="text" id="pm-bank-acctno" placeholder="0123456789" maxlength="10"></div>
+          <div class="fg"><label>Sort Code / Branch</label><input type="text" id="pm-bank-sort" placeholder="011152011"></div>
+          <div class="fg"><label>Display Label</label><input type="text" id="pm-bank-label" value="Direct Bank Transfer"></div>
+          <div class="fg"><label>Transfer Instructions</label><textarea id="pm-bank-instructions" rows="2" placeholder="Transfer to the account above and send proof to our WhatsApp..."></textarea></div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('bank')"><i class="fas fa-save"></i>Save Bank Details</button>
+        </div>
+      </div>
+
+      <!-- WhatsApp Order -->
+      <div class="card" id="pm-card-whatsapp">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff"><i class="fab fa-whatsapp"></i></div>
+            <div><div class="card-title">WhatsApp Order</div><div class="card-sub">Order via WhatsApp chat</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-whatsapp-on" onchange="pmToggle('whatsapp')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-whatsapp-body" style="display:none">
+          <div class="fg"><label>WhatsApp Number <span style="color:var(--danger)">*</span></label><input type="text" id="pm-whatsapp-number" placeholder="234XXXXXXXXXX"><span class="input-help">Format: 234XXXXXXXXXX (no + or spaces)</span></div>
+          <div class="fg"><label>Auto-Message Template</label><textarea id="pm-whatsapp-msg" rows="3" placeholder="Hello HARITECH! I'd like to order: {product} at {price}. My name is {name}."></textarea><span class="input-help">Use {product}, {price}, {name} as placeholders</span></div>
+          <div class="fg"><label>Display Label</label><input type="text" id="pm-whatsapp-label" value="Order via WhatsApp"></div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('whatsapp')"><i class="fas fa-save"></i>Save WhatsApp Config</button>
+        </div>
+      </div>
+
+      <!-- Cash on Delivery -->
+      <div class="card" id="pm-card-cod">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#f7c948,#e6890a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff"><i class="fas fa-hand-holding-usd"></i></div>
+            <div><div class="card-title">Cash on Delivery</div><div class="card-sub">Pay on physical receipt</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-cod-on" onchange="pmToggle('cod')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-cod-body" style="display:none">
+          <div class="fg"><label>Delivery Areas</label><input type="text" id="pm-cod-areas" placeholder="Lagos Island, Lekki, Victoria Island..."><span class="input-help">Comma-separated delivery zones</span></div>
+          <div class="fg"><label>Delivery Fee (₦)</label><input type="number" id="pm-cod-fee" placeholder="0" min="0"></div>
+          <div class="fg"><label>Display Label</label><input type="text" id="pm-cod-label" value="Cash on Delivery"></div>
+          <div class="fg"><label>Delivery Timeframe</label><input type="text" id="pm-cod-time" placeholder="24-48 hours within Lagos"></div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('cod')"><i class="fas fa-save"></i>Save COD Settings</button>
+        </div>
+      </div>
+
+      <!-- Custom / USSD -->
+      <div class="card" id="pm-card-ussd">
+        <div class="card-hdr">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#4f8ef7,#a855f7);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff"><i class="fas fa-mobile-alt"></i></div>
+            <div><div class="card-title">USSD / Mobile Banking</div><div class="card-sub">GTBank, Zenith, Access etc.</div></div>
+          </div>
+          <label class="toggle-sw"><input type="checkbox" id="pm-ussd-on" onchange="pmToggle('ussd')"><span class="toggle-track"></span></label>
+        </div>
+        <div id="pm-ussd-body" style="display:none">
+          <div id="ussd-banks-list" style="margin-bottom:10px"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addUssdBank()"><i class="fas fa-plus"></i>Add Bank USSD Code</button>
+          <div class="fg" style="margin-top:10px"><label>Display Label</label><input type="text" id="pm-ussd-label" value="Pay via USSD"></div>
+          <button class="btn btn-success btn-sm" onclick="savePaymentMethod('ussd')"><i class="fas fa-save"></i>Save USSD Config</button>
+        </div>
+      </div>
+
+    </div><!-- end grid -->
+  </div>
+
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-hdr">
+        <div><div class="card-title">Orders & Transactions</div><div class="card-sub">All orders placed via the website</div></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <select id="order-filter" onchange="renderOrders()" style="padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:DM Sans,sans-serif;font-size:.8rem">
+            <option value="all">All Orders</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportOrders()"><i class="fas fa-download"></i>Export</button>
+          <button class="btn btn-danger btn-sm" onclick="clearOrders()"><i class="fas fa-trash"></i>Clear All</button>
+        </div>
+      </div>
+      <div id="orders-list"><div class="empty-state"><i class="fas fa-shopping-cart"></i><p>No orders yet</p></div></div>
+    </div>
+  </div>
+</main>
+
+
+  <!-- TESTIMONIALS -->
+  <div class="page" id="page-testimonials">
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">Testimonials</div>
+          <div class="card-sub">Customer reviews shown on your website</div>
+        </div>
+        <button class="btn btn-primary" onclick="openTmModal()"><i class="fas fa-plus"></i>Add Testimonial</button>
+      </div>
+
+      <!-- Section Settings -->
+      <div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end">
+        <div class="fg" style="flex:1;min-width:200px;margin:0">
+          <label>Section Title</label>
+          <input type="text" id="tm-sec-title" placeholder="What Our Clients Say" style="margin-top:5px">
+        </div>
+        <div class="fg" style="flex:1;min-width:200px;margin:0">
+          <label>Section Subtitle</label>
+          <input type="text" id="tm-sec-sub" placeholder="Real feedback from real customers">
+        </div>
+        <div class="fg" style="flex:0;margin:0">
+          <label>Layout</label>
+          <select id="tm-layout" style="min-width:130px">
+            <option value="grid">Grid</option>
+            <option value="slider">Slider</option>
+            <option value="masonry">Masonry</option>
+          </select>
+        </div>
+        <button class="btn btn-success btn-sm" onclick="saveTmSettings()"><i class="fas fa-save"></i>Save Settings</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Photo</th><th>Name</th><th>Role / Company</th><th>Rating</th><th>Review</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="tm-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+<!-- TESTIMONIAL MODAL -->
+<div class="modal-ov" id="tm-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-ttl" id="tm-mtitle">Add Testimonial</span>
+      <button class="modal-close" onclick="closeM('tm-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tm-id">
+      <div class="fgrid">
+        <div class="fg">
+          <label>Customer Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="tm-name" placeholder="Emeka Okafor">
+        </div>
+        <div class="fg">
+          <label>Role / Company</label>
+          <input type="text" id="tm-role" placeholder="CEO, TechCorp Lagos">
+        </div>
+        <div class="fg">
+          <label>Star Rating</label>
+          <select id="tm-rating">
+            <option value="5">★★★★★ — 5 Stars</option>
+            <option value="4">★★★★☆ — 4 Stars</option>
+            <option value="3">★★★☆☆ — 3 Stars</option>
+            <option value="2">★★☆☆☆ — 2 Stars</option>
+            <option value="1">★☆☆☆☆ — 1 Star</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Status</label>
+          <select id="tm-status">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Service Used</label>
+          <input type="text" id="tm-service" placeholder="Tech Accessories, 3D Epoxy...">
+        </div>
+        <div class="fg">
+          <label>Date</label>
+          <input type="date" id="tm-date">
+        </div>
+        <div class="fg full">
+          <label>Review Text <span style="color:var(--danger)">*</span></label>
+          <textarea id="tm-review" rows="4" placeholder="Write the customer's testimonial here..."></textarea>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Customer Photo (optional)</label>
+        <div class="upload-zone" id="tm-iz">
+          <input type="file" accept="image/*" onchange="handleUpload(this,'tm-ip','tm-idata','tm-iz')">
+          <span class="up-ph" id="tm-iph">
+            <div class="up-icon"><i class="fas fa-user-circle"></i></div>
+            <div class="up-text"><strong>Upload Photo</strong></div>
+            <div class="up-hint">Square image recommended — 200×200px</div>
+          </span>
+          <img class="up-prev" id="tm-ip" src=""><input type="hidden" id="tm-idata">
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="clearUpload('tm-ip','tm-idata','tm-iz','tm-iph')"><i class="fas fa-times"></i>Remove Photo</button>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeM('tm-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="saveTm()"><i class="fas fa-save"></i>Save Testimonial</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- BOOKINGS -->
+  <div class="page" id="page-bookings">
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">Bookings</div>
+          <div class="card-sub">Appointment requests from the website</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <select id="bk-filter" onchange="renderBookings()" style="padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:DM Sans,sans-serif;font-size:.8rem">
+            <option value="all">All Bookings</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn-danger btn-sm" onclick="clearBookings()"><i class="fas fa-trash"></i>Clear All</button>
+        </div>
+      </div>
+      <div id="bookings-list"><div class="empty-state"><i class="fas fa-calendar"></i><p>No bookings yet</p></div></div>
+    </div>
+  </div>
+
+
+  <!-- PROMO BANNER -->
+  <div class="page" id="page-promo">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Promo / Announcement Banner</div></div>
+      <div class="fg" style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <label class="toggle-sw"><input type="checkbox" id="promo-enabled" onchange="savePromo()"><span class="toggle-track"></span></label>
+        <span style="font-size:.88rem;color:var(--text2)">Show banner on website</span>
+      </div>
+      <div class="fg"><label>Banner Text (HTML supported)</label>
+        <input type="text" id="promo-text" placeholder="🎉 Free delivery on orders over ₦10,000 this week only! <strong>Shop now →</strong>">
+        <span class="input-help">You can use &lt;strong&gt;, &lt;a&gt;, and emoji in the text</span>
+      </div>
+      <div class="fgrid">
+        <div class="fg">
+          <label>Background Color</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" id="promo-bg" value="#0d2240" style="width:50px;height:34px;padding:2px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer">
+            <span style="font-size:.8rem;color:var(--text3)">Banner background</span>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Text Color</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" id="promo-color" value="#ffffff" style="width:50px;height:34px;padding:2px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer">
+            <span style="font-size:.8rem;color:var(--text3)">Banner text color</span>
+          </div>
+        </div>
+      </div>
+      <!-- Preview -->
+      <div style="margin-bottom:18px">
+        <label style="font-size:.79rem;font-weight:600;color:var(--text2);display:block;margin-bottom:8px">Preview</label>
+        <div id="promo-preview" style="padding:.6rem 1.5rem;border-radius:8px;font-size:.84rem;text-align:center;background:#0d2240;color:white">
+          Banner preview will appear here
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-success" onclick="savePromo()"><i class="fas fa-save"></i>Save Banner</button>
+        <button class="btn btn-ghost" onclick="previewPromo()"><i class="fas fa-eye"></i>Update Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ MANAGER -->
+  <div class="page" id="page-faq">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">FAQ Manager</div><div class="card-sub">Questions displayed on the website FAQ section</div></div>
+        <button class="btn btn-primary" onclick="openFaqModal()"><i class="fas fa-plus"></i>Add Question</button>
+      </div>
+      <div id="faq-admin-list"></div>
+    </div>
+  </div>
+
+
+<!-- FAQ MODAL -->
+<div class="modal-ov" id="faq-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-ttl" id="faq-mtitle">Add FAQ</span>
+      <button class="modal-close" onclick="closeM('faq-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="faq-id">
+      <div class="fg"><label>Question <span style="color:var(--danger)">*</span></label><input type="text" id="faq-q" placeholder="How do I place an order?"></div>
+      <div class="fg"><label>Answer <span style="color:var(--danger)">*</span></label><textarea id="faq-a" rows="5" placeholder="Write the answer here..."></textarea></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeM('faq-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="saveFaq()"><i class="fas fa-save"></i>Save</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- SUBSCRIBERS -->
+  <div class="page" id="page-subscribers">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Newsletter Subscribers</div><div class="card-sub">Emails collected from the website footer</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="exportSubscribers()"><i class="fas fa-download"></i>Export CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="clearSubscribers()"><i class="fas fa-trash"></i>Clear All</button>
+        </div>
+      </div>
+      <div id="subscribers-list"><div class="empty-state"><i class="fas fa-mail-bulk"></i><p>No subscribers yet</p></div></div>
+    </div>
+  </div>
+
+<!-- SERVICE MODAL -->
+<div class="modal-ov" id="svc-modal">
+  <div class="modal">
+    <div class="modal-hdr"><span class="modal-ttl" id="svc-mtitle">Add Service</span><button class="modal-close" onclick="closeM('svc-modal')">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="svc-id">
+      <div class="fg">
+        <label>Service Icon (Font Awesome class)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="svc-icon" placeholder="fas fa-tools" style="flex:1" oninput="updateIconPrev()">
+          <div id="svc-icon-prev" style="width:40px;height:40px;background:var(--surface2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--text);flex-shrink:0"><i class="fas fa-tools"></i></div>
+        </div>
+        <span class="input-help">Examples: fas fa-laptop, fas fa-print, fas fa-cube</span>
+      </div>
+      <div class="fg"><label>Service Image (replaces icon if uploaded)</label>
+        <div class="upload-zone" id="svc-iz">
+          <input type="file" accept="image/*" onchange="handleUpload(this,'svc-ip','svc-idata','svc-iz')">
+          <span class="up-ph" id="svc-iph"><div class="up-icon"><i class="fas fa-image"></i></div><div class="up-text"><strong>Click to upload image</strong></div></span>
+          <img class="up-prev" id="svc-ip" src=""><input type="hidden" id="svc-idata">
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="clearUpload('svc-ip','svc-idata','svc-iz','svc-iph')"><i class="fas fa-times"></i>Remove</button>
+      </div>
+      <div class="fg"><label>Title *</label><input type="text" id="svc-title" required></div>
+      <div class="fg"><label>Description *</label><textarea id="svc-desc" required></textarea></div>
+      <div class="fg"><label>Link (optional)</label><input type="text" id="svc-link" placeholder="#contact or https://..."></div>
+    </div>
+    <div class="modal-ftr"><button class="btn btn-ghost" onclick="closeM('svc-modal')">Cancel</button><button class="btn btn-success" onclick="saveSvc()"><i class="fas fa-save"></i>Save</button></div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-ov" id="prod-modal">
+  <div class="modal">
+    <div class="modal-hdr"><span class="modal-ttl" id="prod-mtitle">Add Product</span><button class="modal-close" onclick="closeM('prod-modal')">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="prod-id">
+      <div class="fgrid">
+        <div class="fg"><label>Product Name *</label><input type="text" id="prod-name" required></div>
+        <div class="fg"><label>Price (₦) *</label><input type="number" id="prod-price" required min="0"></div>
+        <div class="fg"><label>Category *</label>
+          <select id="prod-cat" required>
+            <option value="">Select category</option>
+            <option>Laptops</option><option>Accessories</option><option>Peripherals</option><option>Components</option><option>Software</option><option>Networking</option>
+          </select>
+        </div>
+        <div class="fg"><label>Status</label>
+          <select id="prod-status"><option value="In Stock">In Stock</option><option value="Out of Stock">Out of Stock</option><option value="Coming Soon">Coming Soon</option></select>
+        </div>
+        <div class="fg"><label>Icon (fallback)</label><input type="text" id="prod-icon" placeholder="fas fa-laptop"></div>
+        <div class="fg"><label>Featured?</label>
+          <select id="prod-feat"><option value="no">No</option><option value="yes">Yes — Show on Homepage</option></select>
+        </div>
+        <div class="fg full"><label>Description *</label><textarea id="prod-desc" required></textarea></div>
+      </div>
+      <div class="fg"><label>Product Image</label>
+        <div class="upload-zone" id="prod-iz">
+          <input type="file" accept="image/*" onchange="handleUpload(this,'prod-ip','prod-idata','prod-iz')">
+          <span class="up-ph" id="prod-iph"><div class="up-icon"><i class="fas fa-camera"></i></div><div class="up-text"><strong>Upload Product Image</strong></div><div class="up-hint">Recommended: 600x400px</div></span>
+          <img class="up-prev" id="prod-ip" src=""><input type="hidden" id="prod-idata">
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="clearUpload('prod-ip','prod-idata','prod-iz','prod-iph')"><i class="fas fa-times"></i>Remove Image</button>
+      </div>
+    </div>
+    <div class="modal-ftr"><button class="btn btn-ghost" onclick="closeM('prod-modal')">Cancel</button><button class="btn btn-success" onclick="saveProd()"><i class="fas fa-save"></i>Save Product</button></div>
+  </div>
+</div>
+
+<!-- BLOG MODAL -->
+<div class="modal-ov" id="blog-modal">
+  <div class="modal">
+    <div class="modal-hdr"><span class="modal-ttl" id="blog-mtitle">Add Blog Post</span><button class="modal-close" onclick="closeM('blog-modal')">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="blog-id">
+      <div class="fgrid">
+        <div class="fg full"><label>Title *</label><input type="text" id="blog-title" required></div>
+        <div class="fg"><label>Author</label><input type="text" id="blog-author" value="Admin"></div>
+        <div class="fg"><label>Date</label><input type="date" id="blog-date"></div>
+        <div class="fg"><label>Status</label>
+          <select id="blog-status"><option value="Published">Published</option><option value="Draft">Draft</option></select>
+        </div>
+        <div class="fg"><label>Icon (fallback)</label><input type="text" id="blog-icon" placeholder="fas fa-blog"></div>
+        <div class="fg full"><label>Excerpt / Summary *</label><textarea id="blog-excerpt" required rows="3"></textarea></div>
+        <div class="fg full"><label>Full Content (optional)</label><textarea id="blog-content" rows="5" placeholder="Full article body..."></textarea></div>
+      </div>
+      <div class="fg"><label>Cover Image</label>
+        <div class="upload-zone" id="blog-iz">
+          <input type="file" accept="image/*" onchange="handleUpload(this,'blog-ip','blog-idata','blog-iz')">
+          <span class="up-ph" id="blog-iph"><div class="up-icon"><i class="fas fa-image"></i></div><div class="up-text"><strong>Upload Cover Image</strong></div><div class="up-hint">Recommended: 800x500px</div></span>
+          <img class="up-prev" id="blog-ip" src=""><input type="hidden" id="blog-idata">
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="clearUpload('blog-ip','blog-idata','blog-iz','blog-iph')"><i class="fas fa-times"></i>Remove Image</button>
+      </div>
+    </div>
+    <div class="modal-ftr"><button class="btn btn-ghost" onclick="closeM('blog-modal')">Cancel</button><button class="btn btn-success" onclick="saveBlog()"><i class="fas fa-save"></i>Save Post</button></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// HARITECH ADMIN DASHBOARD — Clean JS v5
+// No nested template literals, no broken string escaping
+// All tested with node --check before shipping
+// ============================================================
+
+// AUTH
+if(!localStorage.getItem('haritechAdminLoggedIn')) window.location.href='admin-login.html';
+
+// ── Helpers ─────────────────────────────────────────────────
+function gs(k){ try{ return JSON.parse(localStorage.getItem(k))||null; }catch(e){ return null; } }
+function ss(k,v){
+  try{ localStorage.setItem(k,JSON.stringify(v)); broadcastUpdate(); }
+  catch(err){
+    if(err.name==='QuotaExceededError'||err.name==='NS_ERROR_DOM_QUOTA_REACHED'){
+      toast('Storage full! Image may be too large. Try a smaller image.','e');
+    } else { toast('Save failed: '+err.message,'e'); }
+  }
+}
+function broadcastUpdate(){ localStorage.setItem('haritechUpdated', Date.now()+''); }
+function toast(msg,type){
+  type = type||'s';
+  var icons={s:'fa-check-circle',e:'fa-times-circle',i:'fa-info-circle'};
+  var t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML='<i class="fas '+icons[type]+'"></i><span>'+msg+'</span>';
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(function(){
+    t.style.opacity='0'; t.style.transform='translateX(16px)'; t.style.transition='all .3s';
+    setTimeout(function(){ t.remove(); },300);
+  },3200);
+}
+function openM(id){ var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function closeM(id){ var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+function el(id){ return document.getElementById(id); }
+
+// ── Navigation ───────────────────────────────────────────────
+var pageNames={
+  dashboard:'Dashboard',services:'Services',products:'Products',
+  blog:'Blog Posts',testimonials:'Testimonials',bookings:'Bookings',
+  promo:'Promo Banner',faq:'FAQ Manager',subscribers:'Newsletter Subscribers',
+  hero:'Hero Section',contact:'Contact Info',social:'Social Media',
+  appearance:'Appearance',messages:'Messages',settings:'Settings',
+  payment:'Payment Methods',orders:'Orders & Transactions'
+};
+
+function goPage(id){
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.toggle('active',n.dataset.page===id); });
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var pg=el('page-'+id); if(pg) pg.classList.add('active');
+  var h=el('pg-heading'); if(h) h.textContent=pageNames[id]||id;
+  if(id==='orders')      renderOrders();
+  if(id==='payment')     loadPaymentMethods();
+  if(id==='settings')    loadSettingsPage();
+  if(id==='testimonials')renderTestimonials();
+  if(id==='bookings')    renderBookings();
+  if(id==='faq')         renderFaqs();
+  if(id==='promo')       loadPromoPage();
+  if(id==='subscribers') renderSubscribers();
+  if(id==='dashboard'){ initCharts(); renderDashboardAlerts(); }
+}
+document.querySelectorAll('.nav-item[data-page]').forEach(function(n){
+  n.addEventListener('click',function(){ goPage(n.dataset.page); });
+});
+
+// ── Image compression ────────────────────────────────────────
+function compressImage(file,maxDim,quality,callback){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width, h=img.height;
+      if(w>maxDim||h>maxDim){
+        if(w>h){ h=Math.round(h*maxDim/w); w=maxDim; }
+        else{ w=Math.round(w*maxDim/h); h=maxDim; }
+      }
+      var canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      var fmt=file.type==='image/png'?'image/png':'image/jpeg';
+      callback(canvas.toDataURL(fmt, fmt==='image/png'?1:quality));
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleUpload(input,prevId,dataId,zoneId){
+  var file=input.files[0];
+  if(!file) return;
+  if(file.size>10*1024*1024){ toast('File must be under 10MB','e'); return; }
+  compressImage(file,900,0.82,function(compressed){
+    el(dataId).value=compressed;
+    var prev=el(prevId); prev.src=compressed; prev.classList.add('show');
+    el(zoneId).classList.add('has-img');
+    var ph=el(zoneId).querySelector('.up-ph'); if(ph) ph.classList.add('hidden');
+    toast('Image ready ('+(Math.round(compressed.length*0.75/1024))+'KB)');
+  });
+}
+
+function handleLogoUpload(input){
+  var file=input.files[0]; if(!file) return;
+  compressImage(file,400,0.9,function(d){
+    try{ localStorage.setItem('haritechLogo',d); broadcastUpdate(); }
+    catch(err){ toast('Logo too large. Use a smaller image.','e'); return; }
+    el('logo-prev').src=d; el('logo-prev').classList.add('show');
+    el('logo-zone').classList.add('has-img');
+    el('logo-ph').classList.add('hidden');
+    updateSbLogo(d);
+    toast('Logo saved ('+(Math.round(d.length*0.75/1024))+'KB)!');
+  });
+}
+
+function clearUpload(prevId,dataId,zoneId,phId){
+  var p=el(prevId); if(p){ p.src=''; p.classList.remove('show'); }
+  var d=el(dataId); if(d) d.value='';
+  var z=el(zoneId); if(z) z.classList.remove('has-img');
+  var ph=el(phId); if(ph) ph.classList.remove('hidden');
+}
+
+function removeLogo(){
+  localStorage.removeItem('haritechLogo'); broadcastUpdate();
+  clearUpload('logo-prev','','logo-zone','logo-ph');
+  el('logo-prev').src=''; el('logo-prev').classList.remove('show');
+  updateSbLogo(null);
+  toast('Logo removed','i');
+}
+
+function updateSbLogo(d){
+  var img=el('sb-logo-img'), ph=el('sb-logo-ph');
+  if(d && d.startsWith && d.startsWith('data:image')){
+    img.src=d; img.style.display='block'; ph.style.display='none';
+  } else { img.style.display='none'; ph.style.display='flex'; }
+}
+
+function setUploadPreview(prevId,dataId,zoneId,phId,src){
+  var prev=el(prevId); if(!prev) return;
+  prev.src=src; prev.classList.add('show');
+  el(zoneId).classList.add('has-img');
+  el(phId).classList.add('hidden');
+  if(dataId && el(dataId)) el(dataId).value=src;
+}
+
+// ── SERVICES ────────────────────────────────────────────────
+function renderSvc(){
+  var sv=gs('haritechServices')||[];
+  el('nb-sv').textContent=sv.length;
+  el('ds-serv').textContent=sv.length;
+  var tb=el('svc-tbody');
+  if(!sv.length){ tb.innerHTML='<tr><td colspan="4"><div class="empty-state"><i class="fas fa-tools"></i><p>No services yet</p></div></td></tr>'; return; }
+  tb.innerHTML=sv.map(function(s,i){
+    var thumb=s.image&&s.image.startsWith('data:image')
+      ? '<img src="'+s.image+'" alt="">'
+      : '<i class="'+(s.icon||'fas fa-tools')+'"></i>';
+    return '<tr>'
+      +'<td><div class="td-thumb">'+thumb+'</div></td>'
+      +'<td style="color:var(--text);font-weight:600">'+s.title+'</td>'
+      +'<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(s.description||'').substring(0,60)+'...</td>'
+      +'<td><div style="display:flex;gap:5px">'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="edit-svc"><i class="fas fa-edit"></i></button>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="del-svc"><i class="fas fa-trash"></i></button>'
+      +'</div></td></tr>';
+  }).join('');
+  tb.querySelectorAll('[data-action="edit-svc"]').forEach(function(b){ b.addEventListener('click',function(){ openSvcModal(parseInt(this.dataset.idx)); }); });
+  tb.querySelectorAll('[data-action="del-svc"]').forEach(function(b){ b.addEventListener('click',function(){ delSvc(parseInt(this.dataset.idx)); }); });
+}
+function openSvcModal(idx){
+  var isEdit = idx!==undefined && idx!==null;
+  el('svc-mtitle').textContent = isEdit ? 'Edit Service' : 'Add Service';
+  el('svc-id').value = isEdit ? idx : '';
+  if(isEdit){
+    var s=(gs('haritechServices')||[])[idx];
+    el('svc-icon').value=s.icon||''; el('svc-title').value=s.title||'';
+    el('svc-desc').value=s.description||''; el('svc-link').value=s.link||'';
+    if(s.image&&s.image.startsWith('data:image')) setUploadPreview('svc-ip','svc-idata','svc-iz','svc-iph',s.image);
+    else clearUpload('svc-ip','svc-idata','svc-iz','svc-iph');
+  } else {
+    ['svc-icon','svc-title','svc-desc','svc-link'].forEach(function(id){ el(id).value=''; });
+    clearUpload('svc-ip','svc-idata','svc-iz','svc-iph');
+  }
+  updateIconPrev(); openM('svc-modal');
+}
+function saveSvc(){
+  var id=el('svc-id').value;
+  var sv=gs('haritechServices')||[];
+  var imgVal=el('svc-idata').value||'';
+  var s={icon:el('svc-icon').value||'fas fa-tools',title:el('svc-title').value,description:el('svc-desc').value,link:el('svc-link').value||'#contact',image:imgVal};
+  if(!s.title||!s.description){ toast('Title and description required','e'); return; }
+  if(id!=='') sv[parseInt(id)]=s; else sv.push(s);
+  ss('haritechServices',sv); closeM('svc-modal'); renderSvc(); toast('Service saved!');
+}
+function delSvc(i){ if(!confirm('Delete service?')) return; var sv=gs('haritechServices')||[]; sv.splice(i,1); ss('haritechServices',sv); renderSvc(); toast('Deleted','i'); }
+function updateIconPrev(){ var v=el('svc-icon').value||'fas fa-tools'; el('svc-icon-prev').innerHTML='<i class="'+v+'"></i>'; }
+
+// ── PRODUCTS ────────────────────────────────────────────────
+function renderProd(){
+  var pr=gs('haritechProducts')||[];
+  el('nb-pr').textContent=pr.length; el('ds-prod').textContent=pr.length;
+  var tb=el('prod-tbody');
+  if(!pr.length){ tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><i class="fas fa-box"></i><p>No products yet</p></div></td></tr>'; return; }
+  tb.innerHTML=pr.map(function(p,i){
+    var thumb=p.image&&p.image.startsWith('data:image')
+      ? '<img src="'+p.image+'" alt="">'
+      : '<i class="'+(p.icon||'fas fa-box')+'"></i>';
+    var sc=p.status==='In Stock'?'bg':p.status==='Coming Soon'?'by':'br';
+    return '<tr>'
+      +'<td><div class="td-thumb">'+thumb+'</div></td>'
+      +'<td style="color:var(--text);font-weight:600">'+p.name+'</td>'
+      +'<td>&#8358;'+parseInt(p.price).toLocaleString()+'</td>'
+      +'<td><span class="badge bb">'+p.category+'</span></td>'
+      +'<td><span class="badge '+sc+'">'+p.status+'</span></td>'
+      +'<td><div style="display:flex;gap:5px">'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="edit-prod"><i class="fas fa-edit"></i></button>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="del-prod"><i class="fas fa-trash"></i></button>'
+      +'</div></td></tr>';
+  }).join('');
+  tb.querySelectorAll('[data-action="edit-prod"]').forEach(function(b){ b.addEventListener('click',function(){ openProdModal(parseInt(this.dataset.idx)); }); });
+  tb.querySelectorAll('[data-action="del-prod"]').forEach(function(b){ b.addEventListener('click',function(){ delProd(parseInt(this.dataset.idx)); }); });
+}
+function openProdModal(idx){
+  var isEdit=idx!==undefined&&idx!==null;
+  el('prod-mtitle').textContent=isEdit?'Edit Product':'Add Product';
+  el('prod-id').value=isEdit?idx:'';
+  if(isEdit){
+    var p=(gs('haritechProducts')||[])[idx];
+    el('prod-name').value=p.name||''; el('prod-price').value=p.price||'';
+    el('prod-cat').value=p.category||''; el('prod-status').value=p.status||'In Stock';
+    el('prod-icon').value=p.icon||''; el('prod-feat').value=p.featured||'no';
+    el('prod-desc').value=p.description||'';
+    if(p.image&&p.image.startsWith('data:image')) setUploadPreview('prod-ip','prod-idata','prod-iz','prod-iph',p.image);
+    else clearUpload('prod-ip','prod-idata','prod-iz','prod-iph');
+  } else {
+    ['prod-name','prod-price','prod-icon','prod-desc'].forEach(function(id){ el(id).value=''; });
+    el('prod-cat').value=''; el('prod-status').value='In Stock'; el('prod-feat').value='no';
+    clearUpload('prod-ip','prod-idata','prod-iz','prod-iph');
+  }
+  openM('prod-modal');
+}
+function saveProd(){
+  var id=el('prod-id').value;
+  var pr=gs('haritechProducts')||[];
+  var imgVal=el('prod-idata').value||'';
+  var p={name:el('prod-name').value,price:el('prod-price').value,category:el('prod-cat').value,status:el('prod-status').value,icon:el('prod-icon').value||'fas fa-box',featured:el('prod-feat').value,description:el('prod-desc').value,image:imgVal};
+  if(!p.name||!p.price||!p.category){ toast('Name, price and category required','e'); return; }
+  if(id!=='') pr[parseInt(id)]=p; else pr.push(p);
+  ss('haritechProducts',pr); closeM('prod-modal'); renderProd(); toast('Product saved!');
+}
+function delProd(i){ if(!confirm('Delete product?')) return; var pr=gs('haritechProducts')||[]; pr.splice(i,1); ss('haritechProducts',pr); renderProd(); toast('Deleted','i'); }
+
+// ── BLOG ────────────────────────────────────────────────────
+function renderBlog(){
+  var bl=gs('haritechBlogs')||[];
+  el('nb-bl').textContent=bl.length;
+  el('ds-blog').textContent=bl.filter(function(b){ return b.status==='Published'; }).length;
+  var tb=el('blog-tbody');
+  if(!bl.length){ tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><i class="fas fa-newspaper"></i><p>No posts yet</p></div></td></tr>'; return; }
+  tb.innerHTML=bl.map(function(b,i){
+    var thumb=b.image&&b.image.startsWith('data:image')
+      ? '<img src="'+b.image+'" alt="">'
+      : '<i class="'+(b.icon||'fas fa-blog')+'"></i>';
+    return '<tr>'
+      +'<td><div class="td-thumb">'+thumb+'</div></td>'
+      +'<td style="color:var(--text);font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+b.title+'</td>'
+      +'<td>'+b.author+'</td><td>'+b.date+'</td>'
+      +'<td><span class="badge '+(b.status==='Published'?'bg':'by')+'">'+b.status+'</span></td>'
+      +'<td><div style="display:flex;gap:5px">'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="edit-blog"><i class="fas fa-edit"></i></button>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="del-blog"><i class="fas fa-trash"></i></button>'
+      +'</div></td></tr>';
+  }).join('');
+  tb.querySelectorAll('[data-action="edit-blog"]').forEach(function(b){ b.addEventListener('click',function(){ openBlogModal(parseInt(this.dataset.idx)); }); });
+  tb.querySelectorAll('[data-action="del-blog"]').forEach(function(b){ b.addEventListener('click',function(){ delBlog(parseInt(this.dataset.idx)); }); });
+}
+function openBlogModal(idx){
+  var isEdit=idx!==undefined&&idx!==null;
+  el('blog-mtitle').textContent=isEdit?'Edit Post':'Add Blog Post';
+  el('blog-id').value=isEdit?idx:'';
+  if(isEdit){
+    var b=(gs('haritechBlogs')||[])[idx];
+    el('blog-title').value=b.title||''; el('blog-author').value=b.author||'Admin';
+    el('blog-date').value=b.date||''; el('blog-status').value=b.status||'Published';
+    el('blog-icon').value=b.icon||''; el('blog-excerpt').value=b.excerpt||'';
+    el('blog-content').value=b.content||'';
+    if(b.image&&b.image.startsWith('data:image')) setUploadPreview('blog-ip','blog-idata','blog-iz','blog-iph',b.image);
+    else clearUpload('blog-ip','blog-idata','blog-iz','blog-iph');
+  } else {
+    ['blog-title','blog-excerpt','blog-content','blog-icon'].forEach(function(id){ el(id).value=''; });
+    el('blog-author').value='Admin';
+    el('blog-date').value=new Date().toISOString().split('T')[0];
+    el('blog-status').value='Published';
+    clearUpload('blog-ip','blog-idata','blog-iz','blog-iph');
+  }
+  openM('blog-modal');
+}
+function saveBlog(){
+  var id=el('blog-id').value;
+  var bl=gs('haritechBlogs')||[];
+  var b={title:el('blog-title').value,author:el('blog-author').value,date:el('blog-date').value,status:el('blog-status').value,icon:el('blog-icon').value||'fas fa-blog',excerpt:el('blog-excerpt').value,content:el('blog-content').value,image:el('blog-idata').value||''};
+  if(!b.title||!b.excerpt){ toast('Title and excerpt required','e'); return; }
+  if(id!=='') bl[parseInt(id)]=b; else bl.push(b);
+  ss('haritechBlogs',bl); closeM('blog-modal'); renderBlog(); toast('Post saved!');
+}
+function delBlog(i){ if(!confirm('Delete post?')) return; var bl=gs('haritechBlogs')||[]; bl.splice(i,1); ss('haritechBlogs',bl); renderBlog(); toast('Deleted','i'); }
+
+// ── TESTIMONIALS ────────────────────────────────────────────
+function renderTestimonials(){
+  var tm=gs('haritechTestimonials')||[];
+  el('nb-tm').textContent=tm.length;
+  var cfg=gs('haritechTmConfig')||{};
+  if(cfg.title&&el('tm-sec-title')) el('tm-sec-title').value=cfg.title;
+  if(cfg.sub&&el('tm-sec-sub')) el('tm-sec-sub').value=cfg.sub;
+  if(cfg.layout&&el('tm-layout')) el('tm-layout').value=cfg.layout;
+  var tb=el('tm-tbody');
+  if(!tb) return;
+  if(!tm.length){ tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><i class="fas fa-star"></i><p>No testimonials yet</p></div></td></tr>'; return; }
+  tb.innerHTML=tm.map(function(t,i){
+    var stars='★'.repeat(parseInt(t.rating||5))+'☆'.repeat(5-parseInt(t.rating||5));
+    var photo=t.image&&t.image.startsWith('data:image')
+      ? '<img src="'+t.image+'" alt="'+t.name+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+      : '<span style="font-family:Syne,sans-serif;font-weight:800;font-size:1rem;color:white">'+(t.name||'?')[0].toUpperCase()+'</span>';
+    return '<tr>'
+      +'<td><div class="td-thumb" style="border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))">'+photo+'</div></td>'
+      +'<td style="color:var(--text);font-weight:600">'+t.name+'</td>'
+      +'<td style="font-size:.8rem;color:var(--text3)">'+(t.role||'—')+'</td>'
+      +'<td style="color:#f5c518;letter-spacing:1px;font-size:.85rem">'+stars+'</td>'
+      +'<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem">'+(t.review||'').substring(0,70)+'</td>'
+      +'<td><span class="badge '+(t.status==='published'?'bg':'by')+'">'+(t.status||'published')+'</span></td>'
+      +'<td><div style="display:flex;gap:5px">'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="edit-tm"><i class="fas fa-edit"></i></button>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="del-tm"><i class="fas fa-trash"></i></button>'
+      +'</div></td></tr>';
+  }).join('');
+  tb.querySelectorAll('[data-action="edit-tm"]').forEach(function(b){ b.addEventListener('click',function(){ openTmModal(parseInt(this.dataset.idx)); }); });
+  tb.querySelectorAll('[data-action="del-tm"]').forEach(function(b){ b.addEventListener('click',function(){ delTm(parseInt(this.dataset.idx)); }); });
+}
+function openTmModal(idx){
+  var isEdit=idx!==undefined&&idx!==null;
+  el('tm-mtitle').textContent=isEdit?'Edit Testimonial':'Add Testimonial';
+  el('tm-id').value=isEdit?idx:'';
+  if(isEdit){
+    var t=(gs('haritechTestimonials')||[])[idx];
+    el('tm-name').value=t.name||''; el('tm-role').value=t.role||'';
+    el('tm-rating').value=t.rating||'5'; el('tm-status').value=t.status||'published';
+    el('tm-service').value=t.service||''; el('tm-date').value=t.date||'';
+    el('tm-review').value=t.review||'';
+    if(t.image&&t.image.startsWith('data:image')) setUploadPreview('tm-ip','tm-idata','tm-iz','tm-iph',t.image);
+    else clearUpload('tm-ip','tm-idata','tm-iz','tm-iph');
+  } else {
+    ['tm-name','tm-role','tm-service','tm-review'].forEach(function(id){ el(id).value=''; });
+    el('tm-rating').value='5'; el('tm-status').value='published';
+    el('tm-date').value=new Date().toISOString().split('T')[0];
+    clearUpload('tm-ip','tm-idata','tm-iz','tm-iph');
+  }
+  openM('tm-modal');
+}
+function saveTm(){
+  var id=el('tm-id').value;
+  var tm=gs('haritechTestimonials')||[];
+  var t={name:el('tm-name').value.trim(),role:el('tm-role').value.trim(),rating:el('tm-rating').value,status:el('tm-status').value,service:el('tm-service').value.trim(),date:el('tm-date').value,review:el('tm-review').value.trim(),image:el('tm-idata').value||''};
+  if(!t.name){ toast('Customer name is required','e'); return; }
+  if(!t.review){ toast('Review text is required','e'); return; }
+  if(id!=='') tm[parseInt(id)]=t; else tm.push(t);
+  ss('haritechTestimonials',tm); closeM('tm-modal'); renderTestimonials(); toast('Testimonial saved!');
+}
+function delTm(i){ if(!confirm('Delete this testimonial?')) return; var tm=gs('haritechTestimonials')||[]; tm.splice(i,1); ss('haritechTestimonials',tm); renderTestimonials(); toast('Deleted','i'); }
+function saveTmSettings(){ ss('haritechTmConfig',{title:el('tm-sec-title').value,sub:el('tm-sec-sub').value,layout:el('tm-layout').value}); toast('Settings saved!'); }
+
+// ── HERO ────────────────────────────────────────────────────
+function loadHero(){
+  var h=gs('haritechHero')||{};
+  el('hero-badge').value=h.badge||'Your Premium Tech Partner';
+  el('hero-title').value=h.title||'EXCLUSIVE TECH SOLUTIONS';
+  el('hero-subtitle').value=h.subtitle||'Premium Technology Services & Products';
+  el('hero-desc').value=h.description||'';
+  el('hero-btn1').value=h.btn1||'Explore Products';
+  el('hero-btn2').value=h.btn2||'Our Services';
+  if(h.bgImage&&h.bgImage.startsWith('data:')) setUploadPreview('hz-prev','hz-data','hz-zone','hz-ph',h.bgImage);
+}
+function saveHero(e){
+  e.preventDefault();
+  ss('haritechHero',{badge:el('hero-badge').value,title:el('hero-title').value,subtitle:el('hero-subtitle').value,description:el('hero-desc').value,btn1:el('hero-btn1').value,btn2:el('hero-btn2').value,bgImage:el('hz-data').value||''});
+  toast('Hero section saved!');
+}
+
+// ── CONTACT ─────────────────────────────────────────────────
+function loadContact(){
+  var c=gs('haritechContact')||{};
+  el('c-phone').value=c.phone||''; el('c-email').value=c.email||'';
+  el('c-whatsapp').value=c.whatsapp||''; el('c-location').value=c.location||'';
+  el('c-hours').value=c.hours||'';
+}
+function saveContact(e){
+  e.preventDefault();
+  ss('haritechContact',{phone:el('c-phone').value,email:el('c-email').value,whatsapp:el('c-whatsapp').value,location:el('c-location').value,hours:el('c-hours').value});
+  toast('Contact info saved!');
+}
+
+// ── SOCIAL ──────────────────────────────────────────────────
+function loadSocial(){
+  var s=gs('haritechSocial')||{};
+  ['facebook','twitter','instagram','linkedin','youtube','tiktok'].forEach(function(k){
+    var e=el('s-'+k); if(e) e.value=s[k]||'';
+  });
+}
+function saveSocial(e){
+  e.preventDefault();
+  var o={};
+  ['facebook','twitter','instagram','linkedin','youtube','tiktok'].forEach(function(k){ o[k]=el('s-'+k).value; });
+  ss('haritechSocial',o); toast('Social links saved!');
+}
+
+// ── APPEARANCE ──────────────────────────────────────────────
+function loadAppearance(){
+  var st=gs('haritechSettings')||{};
+  el('ap-name').value=st.siteName||'HARITECH EXCLUSIVE SERVICES';
+  el('ap-tag').value=st.tagline||'';
+  el('ap-fdesc').value=st.footerDesc||'';
+  var logo=localStorage.getItem('haritechLogo');
+  if(logo&&logo.startsWith('data:image')) setUploadPreview('logo-prev','','logo-zone','logo-ph',logo);
+  var th=gs('haritechTheme')||{};
+  el('th-primary').value=th.primary||'#1e3a5f';
+  el('th-accent').value=th.accent||'#00d4aa';
+  var stats=gs('haritechStats')||{};
+  el('st-clients').value=stats.clients||'500+';
+  el('st-projects').value=stats.projects||'50+';
+  el('st-years').value=stats.years||'5+';
+  el('st-support').value=stats.support||'24/7';
+  var fav=gs('haritechFavicon');
+  if(fav&&fav.startsWith('data:')) setUploadPreview('fav-prev','fav-data','fav-zone','fav-ph',fav);
+}
+function saveBranding(){
+  var st=gs('haritechSettings')||{};
+  st.siteName=el('ap-name').value; st.tagline=el('ap-tag').value; st.footerDesc=el('ap-fdesc').value;
+  ss('haritechSettings',st);
+  el('sb-brand-name').textContent=(st.siteName||'HARITECH').split(' ')[0];
+  el('sb-logo-ph').textContent=(st.siteName||'H')[0];
+  toast('Branding saved!');
+}
+function setTheme(p,a,el2){
+  el('th-primary').value=p; el('th-accent').value=a;
+  document.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('active'); });
+  el2.classList.add('active');
+}
+function saveTheme(){ ss('haritechTheme',{primary:el('th-primary').value,accent:el('th-accent').value}); toast('Theme saved!'); }
+function saveStats(){ ss('haritechStats',{clients:el('st-clients').value,projects:el('st-projects').value,years:el('st-years').value,support:el('st-support').value}); toast('Stats saved!'); }
+function saveFavicon(){ var d=el('fav-data').value; if(!d){ toast('Upload a favicon first','e'); return; } ss('haritechFavicon',d); toast('Favicon saved!'); }
+
+// ── MESSAGES ────────────────────────────────────────────────
+function renderMessages(){
+  var msgs=gs('haritechMessages')||[];
+  el('nb-msg').textContent=msgs.length; el('ds-msg').textContent=msgs.length;
+  var ds=el('ds-recent');
+  if(!msgs.length){ if(ds) ds.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></div>'; }
+  else if(ds) ds.innerHTML=msgs.slice(-3).reverse().map(function(m){
+    return '<div style="padding:9px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">'
+      +'<div style="font-weight:600;font-size:.83rem;color:var(--text)">'+m.name+'</div>'
+      +'<div style="font-size:.75rem;color:var(--text3)">'+m.email+' · '+m.date+'</div>'
+      +'<div style="font-size:.8rem;color:var(--text2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+m.message+'</div></div>';
+  }).join('');
+  var ml=el('msgs-list');
+  if(!ml) return;
+  if(!msgs.length){ ml.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></div>'; return; }
+  ml.innerHTML=[...msgs].reverse().map(function(m,ri){
+    var realIdx=msgs.length-1-ri;
+    return '<div style="padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+      +'<div><div style="font-weight:600;color:var(--text)">'+m.name+'</div>'
+      +'<div style="font-size:.77rem;color:var(--text3)">'+m.email+(m.phone?' · '+m.phone:'')+'</div></div>'
+      +'<div style="display:flex;gap:7px;align-items:center"><span class="badge bb">'+(m.service||'General')+'</span>'
+      +'<span style="font-size:.75rem;color:var(--text3)">'+m.date+'</span>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+realIdx+'" data-action="del-msg"><i class="fas fa-trash"></i></button></div></div>'
+      +'<div style="font-size:.85rem;color:var(--text2);line-height:1.6;background:var(--surface2);padding:10px;border-radius:7px">'+m.message+'</div></div>';
+  }).join('');
+  ml.querySelectorAll('[data-action="del-msg"]').forEach(function(b){ b.addEventListener('click',function(){ delMsg(parseInt(this.dataset.idx)); }); });
+}
+function delMsg(i){ var msgs=gs('haritechMessages')||[]; msgs.splice(i,1); ss('haritechMessages',msgs); renderMessages(); toast('Deleted','i'); }
+function clearMsgs(){ if(!confirm('Clear all messages?')) return; ss('haritechMessages',[]); renderMessages(); toast('All messages cleared','i'); }
+
+// ── SETTINGS ────────────────────────────────────────────────
+function loadSettingsPage(){
+  var savedUser=localStorage.getItem('haritechAdminUsername')||'admin';
+  var uf=el('pw-user'); if(uf) uf.value=savedUser;
+  var used=0;
+  for(var k in localStorage){ if(localStorage.hasOwnProperty(k)) used+=((localStorage.getItem(k)||'').length*2/1024); }
+  var pct=Math.min(Math.round(used/5120*100),100);
+  var color=pct>80?'var(--danger)':pct>60?'var(--accent3)':'var(--accent2)';
+  var si=el('storage-info');
+  if(si) si.innerHTML='<strong>Storage:</strong> ~'+used.toFixed(0)+'KB / 5,120KB'
+    +'<div style="margin-top:6px;height:6px;background:var(--border);border-radius:3px;overflow:hidden">'
+    +'<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:3px;transition:width .5s"></div></div>'
+    +'<div style="font-size:.7rem;color:var(--text3);margin-top:3px">'+pct+'% used'+(pct>80?' — <span style=color:var(--danger)>Consider removing large images</span>':'')+'</div>';
+}
+function changePw(e){
+  e.preventDefault();
+  var cur=el('pw-cur').value, nw=el('pw-new').value, con=el('pw-con').value;
+  var user=el('pw-user')?el('pw-user').value.trim():'';
+  var stored=localStorage.getItem('haritechAdminPassword')||'admin123';
+  if(cur!==stored){ toast('Incorrect current password','e'); return; }
+  if(nw!==con){ toast('Passwords do not match','e'); return; }
+  if(nw.length<6){ toast('Password must be at least 6 characters','e'); return; }
+  localStorage.setItem('haritechAdminPassword',nw);
+  if(user) localStorage.setItem('haritechAdminUsername',user);
+  e.target.reset(); toast('Credentials updated!');
+}
+
+// ── DATA MANAGEMENT ─────────────────────────────────────────
+function exportData(){
+  var data={
+    services:gs('haritechServices')||[],products:gs('haritechProducts')||[],
+    blogs:gs('haritechBlogs')||[],testimonials:gs('haritechTestimonials')||[],
+    subscribers:gs('haritechSubscribers')||[],faqs:gs('haritechFaqs')||[],
+    promo:gs('haritechPromo')||{},contact:gs('haritechContact')||{},
+    social:gs('haritechSocial')||{},settings:gs('haritechSettings')||{},
+    hero:gs('haritechHero')||{},theme:gs('haritechTheme')||{},
+    stats:gs('haritechStats')||{},logo:localStorage.getItem('haritechLogo')||'',
+    exported:new Date().toISOString()
+  };
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download='haritech-backup-'+Date.now()+'.json';
+  a.click(); toast('Exported!');
+}
+function importData(e){
+  var file=e.target.files[0]; if(!file) return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{
+      var d=JSON.parse(ev.target.result);
+      var map={services:'haritechServices',products:'haritechProducts',blogs:'haritechBlogs',
+        testimonials:'haritechTestimonials',subscribers:'haritechSubscribers',faqs:'haritechFaqs',
+        promo:'haritechPromo',contact:'haritechContact',social:'haritechSocial',
+        settings:'haritechSettings',hero:'haritechHero',theme:'haritechTheme',stats:'haritechStats'};
+      Object.keys(map).forEach(function(k){ if(d[k]) ss(map[k],d[k]); });
+      if(d.logo) localStorage.setItem('haritechLogo',d.logo);
+      loadAll(); toast('Data imported!');
+    }catch(err){ toast('Invalid JSON file','e'); }
+  };
+  r.readAsText(file);
+}
+function resetAll(){
+  if(!confirm('Delete ALL data? This cannot be undone!')) return;
+  if(!confirm('FINAL CONFIRMATION: Are you absolutely sure?')) return;
+  ['haritechServices','haritechProducts','haritechBlogs','haritechContact','haritechSocial',
+   'haritechSettings','haritechHero','haritechTheme','haritechStats','haritechMessages',
+   'haritechLogo','haritechFavicon','haritechOrders','haritechPayment','haritechTestimonials',
+   'haritechBookings','haritechFaqs','haritechPromo','haritechSubscribers','haritechWishlist'
+  ].forEach(function(k){ localStorage.removeItem(k); });
+  broadcastUpdate(); loadAll(); toast('All data reset','i');
+}
+function logout(){
+  if(!confirm('Logout?')) return;
+  localStorage.removeItem('haritechAdminLoggedIn');
+  window.location.href='admin-login.html';
+}
+
+// ── ORDERS ──────────────────────────────────────────────────
+function updateOrderStats(){
+  var orders=gs('haritechOrders')||[];
+  el('nb-orders').textContent=orders.length;
+  var revenue=orders.filter(function(o){ return o.status==='completed'; }).reduce(function(s,o){ return s+(parseFloat(o.total)||0); },0);
+  var pmOC=el('pm-orders-count'); if(pmOC) pmOC.textContent=orders.length;
+  var pmR=el('pm-revenue'); if(pmR) pmR.textContent='&#8358;'+revenue.toLocaleString();
+  var dsO=el('ds-orders'); if(dsO) dsO.textContent=orders.length;
+}
+function renderOrders(){
+  var filterEl=el('order-filter');
+  var filter=filterEl?filterEl.value:'all';
+  var orders=gs('haritechOrders')||[];
+  updateOrderStats();
+  if(filter!=='all') orders=orders.filter(function(o){ return o.status===filter; });
+  var list=el('orders-list'); if(!list) return;
+  if(!orders.length){ list.innerHTML='<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>No orders found</p></div>'; return; }
+  list.innerHTML=[...orders].reverse().map(function(o){
+    var sc={pending:'os-pending',confirmed:'os-confirmed',completed:'os-completed',cancelled:'os-cancelled'}[o.status]||'os-pending';
+    var items=o.items&&o.items.length?o.items.map(function(i){ return i.name+'x'+i.qty; }).join(', '):'—';
+    return '<div class="order-item">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px">'
+      +'<div><div style="font-weight:700;color:var(--text);font-size:.9rem">#'+o.id+' — '+o.customerName+'</div>'
+      +'<div style="font-size:.76rem;color:var(--text3)">'+(o.customerEmail||'')+' '+(o.customerPhone?'· '+o.customerPhone:'')+'</div>'
+      +'<div style="font-size:.76rem;color:var(--text3)">'+o.date+' · via <strong>'+(o.paymentMethod||'—')+'</strong></div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      +'<span class="order-status '+sc+'">'+o.status+'</span>'
+      +'<span style="font-family:Syne,sans-serif;font-weight:800;color:var(--accent2);font-size:.95rem">&#8358;'+(parseFloat(o.total)||0).toLocaleString()+'</span>'
+      +'</div></div>'
+      +'<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:space-between;align-items:center;flex-wrap:wrap">'
+      +'<div style="font-size:.78rem;color:var(--text3)">'+items+'</div>'
+      +'<div style="display:flex;gap:5px">'
+      +'<button class="btn btn-ghost btn-sm view-order-btn" data-oid="'+o.id+'"><i class="fas fa-eye"></i>View</button>'
+      +'<select class="order-status-sel" data-oid="'+o.id+'" style="padding:5px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:.77rem;font-family:DM Sans,sans-serif">'
+      +'<option value="pending" '+(o.status==='pending'?'selected':'')+'>Pending</option>'
+      +'<option value="confirmed" '+(o.status==='confirmed'?'selected':'')+'>Confirmed</option>'
+      +'<option value="completed" '+(o.status==='completed'?'selected':'')+'>Completed</option>'
+      +'<option value="cancelled" '+(o.status==='cancelled'?'selected':'')+'>Cancelled</option>'
+      +'</select>'
+      +'<button class="btn btn-danger btn-sm btn-icon del-order-btn" data-oid="'+o.id+'"><i class="fas fa-trash"></i></button>'
+      +'</div></div></div>';
+  }).join('');
+  list.querySelectorAll('.view-order-btn').forEach(function(b){ b.addEventListener('click',function(){ viewOrder(this.dataset.oid); }); });
+  list.querySelectorAll('.order-status-sel').forEach(function(s){ s.addEventListener('change',function(){ updateOrderStatus(this.dataset.oid,this.value); }); });
+  list.querySelectorAll('.del-order-btn').forEach(function(b){ b.addEventListener('click',function(){ delOrder(this.dataset.oid); }); });
+}
+function viewOrder(id){
+  var orders=gs('haritechOrders')||[];
+  var o=orders.find(function(x){ return x.id===id; }); if(!o) return;
+  var sc={pending:'os-pending',confirmed:'os-confirmed',completed:'os-completed',cancelled:'os-cancelled'}[o.status]||'os-pending';
+  var addrHtml=o.address?'<div style="font-size:.82rem;color:var(--text2);margin-top:4px">'+o.address+'</div>':'';
+  var refHtml=o.paymentRef?'<div style="font-size:.83rem;color:var(--text2)">Ref: <strong style="color:var(--text)">'+o.paymentRef+'</strong></div>':'';
+  var notesHtml=o.notes?'<div style="font-size:.82rem;color:var(--text2);margin-top:6px">Notes: '+o.notes+'</div>':'';
+  var itemsHtml=(o.items||[]).map(function(i){
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.84rem">'
+      +'<span style="color:var(--text)">'+i.name+' <span style="color:var(--text3)">x'+i.qty+'</span></span>'
+      +'<span style="color:var(--accent2);font-weight:700">&#8358;'+(parseFloat(i.price)*i.qty).toLocaleString()+'</span></div>';
+  }).join('');
+  el('order-modal-body').innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'
+    +'<div><div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;color:var(--text)">Order #'+o.id+'</div>'
+    +'<div style="font-size:.77rem;color:var(--text3)">'+o.date+'</div></div>'
+    +'<span class="order-status '+sc+'">'+o.status+'</span></div>'
+    +'<div style="background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Customer</div>'
+    +'<div style="font-weight:600;color:var(--text)">'+o.customerName+'</div>'
+    +'<div style="font-size:.82rem;color:var(--text2)">'+(o.customerEmail||'—')+'</div>'
+    +'<div style="font-size:.82rem;color:var(--text2)">'+(o.customerPhone||'—')+'</div>'
+    +addrHtml+'</div>'
+    +'<div style="background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Items</div>'
+    +itemsHtml
+    +'<div style="display:flex;justify-content:space-between;padding-top:8px;margin-top:4px">'
+    +'<span style="font-weight:700;color:var(--text)">Total</span>'
+    +'<span style="font-family:Syne,sans-serif;font-weight:800;font-size:1.05rem;color:var(--accent2)">&#8358;'+(parseFloat(o.total)||0).toLocaleString()+'</span></div></div>'
+    +'<div style="background:var(--surface2);border-radius:10px;padding:14px">'
+    +'<div style="font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Payment</div>'
+    +'<div style="font-size:.83rem;color:var(--text2)">Method: <strong style="color:var(--text)">'+(o.paymentMethod||'—')+'</strong></div>'
+    +refHtml+notesHtml+'</div>';
+  var ftr=el('order-modal-ftr');
+  ftr.innerHTML='<select id="order-status-sel" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:DM Sans,sans-serif;font-size:.83rem">'
+    +'<option value="pending" '+(o.status==='pending'?'selected':'')+'>Pending</option>'
+    +'<option value="confirmed" '+(o.status==='confirmed'?'selected':'')+'>Confirmed</option>'
+    +'<option value="completed" '+(o.status==='completed'?'selected':'')+'>Completed</option>'
+    +'<option value="cancelled" '+(o.status==='cancelled'?'selected':'')+'>Cancelled</option>'
+    +'</select>'
+    +'<button class="btn btn-success" id="modal-upd-btn"><i class="fas fa-save"></i>Update Status</button>'
+    +'<button class="btn btn-ghost" id="modal-cls-btn">Close</button>';
+  el('modal-upd-btn').addEventListener('click',function(){ updateOrderStatus(o.id,el('order-status-sel').value); closeM('order-modal'); });
+  el('modal-cls-btn').addEventListener('click',function(){ closeM('order-modal'); });
+  openM('order-modal');
+}
+function updateOrderStatus(id,status){
+  var orders=gs('haritechOrders')||[];
+  var idx=orders.findIndex(function(x){ return x.id===id; }); if(idx<0) return;
+  orders[idx].status=status; ss('haritechOrders',orders); renderOrders(); toast('Order status updated!');
+}
+function delOrder(id){ if(!confirm('Delete this order?')) return; var o=gs('haritechOrders')||[]; ss('haritechOrders',o.filter(function(x){ return x.id!==id; })); renderOrders(); toast('Deleted','i'); }
+function clearOrders(){ if(!confirm('Delete ALL orders?')) return; ss('haritechOrders',[]); renderOrders(); toast('All orders cleared','i'); }
+function exportOrders(){
+  var orders=gs('haritechOrders')||[];
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(orders,null,2));
+  a.download='haritech-orders-'+Date.now()+'.json';
+  a.click(); toast('Orders exported!');
+}
+
+// ── BOOKINGS ────────────────────────────────────────────────
+function renderBookings(){
+  var filterEl=el('bk-filter'), filter=filterEl?filterEl.value:'all';
+  var bk=gs('haritechBookings')||[];
+  var allLen=bk.length;
+  el('nb-bk').textContent=allLen;
+  var dsBk=el('ds-bk'); if(dsBk) dsBk.textContent=allLen;
+  if(filter!=='all') bk=bk.filter(function(b){ return b.status===filter; });
+  var list=el('bookings-list'); if(!list) return;
+  if(!bk.length){ list.innerHTML='<div class="empty-state"><i class="fas fa-calendar"></i><p>No bookings found</p></div>'; return; }
+  list.innerHTML=[...bk].reverse().map(function(b){
+    var sc={pending:'by',confirmed:'bb',completed:'bg',cancelled:'br'}[b.status||'pending']||'by';
+    var ds=b.date?new Date(b.date+'T00:00:00').toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'—';
+    var nh=b.notes?'<div style="font-size:.8rem;color:var(--text2);margin-bottom:10px;padding:8px 10px;background:var(--surface2);border-radius:7px">'+b.notes+'</div>':'';
+    var wh=b.phone?'<a href="https://wa.me/'+b.phone.replace(/\D/g,'')+'" target="_blank" class="btn btn-success btn-sm"><i class="fab fa-whatsapp"></i>WhatsApp</a>':'';
+    var eh=b.email?'<a href="mailto:'+b.email+'" class="btn btn-ghost btn-sm"><i class="fas fa-envelope"></i>Email</a>':'';
+    return '<div style="padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">'
+      +'<div><div style="font-weight:700;color:var(--text);font-size:.9rem">'+b.name+' <span style="font-size:.75rem;color:var(--text3)">· '+b.phone+'</span></div>'
+      +'<div style="font-size:.76rem;color:var(--text3)">#'+b.id+' · '+(b.submitted||'')+'</div></div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +'<span class="badge bb">'+(b.service||'General')+'</span>'
+      +'<span class="badge '+sc+'">'+(b.status||'pending')+'</span></div></div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--surface2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:.8rem">'
+      +'<div><div style="color:var(--text3)">Date</div><div style="color:var(--text);font-weight:600">'+ds+'</div></div>'
+      +'<div><div style="color:var(--text3)">Time</div><div style="color:var(--text);font-weight:600">'+(b.time||'—')+'</div></div>'
+      +'<div><div style="color:var(--text3)">Location</div><div style="color:var(--text);font-weight:600">'+(b.location||'—')+'</div></div></div>'
+      +nh
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<select class="bk-status-sel" data-bid="'+b.id+'" style="padding:5px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:.77rem;font-family:DM Sans,sans-serif">'
+      +'<option value="pending" '+(b.status==='pending'?'selected':'')+'>Pending</option>'
+      +'<option value="confirmed" '+(b.status==='confirmed'?'selected':'')+'>Confirmed</option>'
+      +'<option value="completed" '+(b.status==='completed'?'selected':'')+'>Completed</option>'
+      +'<option value="cancelled" '+(b.status==='cancelled'?'selected':'')+'>Cancelled</option>'
+      +'</select>'+wh+eh
+      +'<button class="btn btn-danger btn-sm btn-icon del-bk-btn" data-bid="'+b.id+'"><i class="fas fa-trash"></i></button>'
+      +'</div></div>';
+  }).join('');
+  list.querySelectorAll('.bk-status-sel').forEach(function(s){ s.addEventListener('change',function(){ updateBookingStatus(this.dataset.bid,this.value); }); });
+  list.querySelectorAll('.del-bk-btn').forEach(function(b){ b.addEventListener('click',function(){ deleteBooking(this.dataset.bid); }); });
+}
+function updateBookingStatus(id,status){ var bk=gs('haritechBookings')||[]; var i=bk.findIndex(function(x){ return x.id===id; }); if(i<0) return; bk[i].status=status; ss('haritechBookings',bk); renderBookings(); toast('Booking updated!'); }
+function deleteBooking(id){ if(!confirm('Delete this booking?')) return; ss('haritechBookings',(gs('haritechBookings')||[]).filter(function(x){ return x.id!==id; })); renderBookings(); toast('Deleted','i'); }
+function clearBookings(){ if(!confirm('Clear all bookings?')) return; ss('haritechBookings',[]); renderBookings(); toast('Cleared','i'); }
+
+// ── SUBSCRIBERS ─────────────────────────────────────────────
+function renderSubscribers(){
+  var subs=gs('haritechSubscribers')||[];
+  el('nb-sub').textContent=subs.length;
+  var list=el('subscribers-list'); if(!list) return;
+  if(!subs.length){ list.innerHTML='<div class="empty-state"><i class="fas fa-mail-bulk"></i><p>No subscribers yet</p></div>'; return; }
+  var rows=[...subs].reverse().map(function(s,i){
+    return '<tr>'
+      +'<td style="color:var(--text3)">'+(subs.length-i)+'</td>'
+      +'<td style="color:var(--text);font-weight:600">'+s.email+'</td>'
+      +'<td style="color:var(--text3)">'+(s.date||'—')+'</td>'
+      +'<td><button class="btn btn-danger btn-sm btn-icon del-sub-btn" data-idx="'+(subs.length-1-i)+'"><i class="fas fa-trash"></i></button></td>'
+      +'</tr>';
+  }).join('');
+  list.innerHTML='<div style="margin-bottom:10px;font-size:.82rem;color:var(--text3)">'+subs.length+' subscriber'+(subs.length!==1?'s':'')+'</div>'
+    +'<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Email</th><th>Date</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  list.querySelectorAll('.del-sub-btn').forEach(function(b){ b.addEventListener('click',function(){ deleteSub(parseInt(this.dataset.idx)); }); });
+}
+function deleteSub(i){ var s=gs('haritechSubscribers')||[]; s.splice(i,1); ss('haritechSubscribers',s); renderSubscribers(); toast('Removed','i'); }
+function clearSubscribers(){ if(!confirm('Delete all subscribers?')) return; ss('haritechSubscribers',[]); renderSubscribers(); toast('Cleared','i'); }
+function exportSubscribers(){
+  var subs=gs('haritechSubscribers')||[];
+  if(!subs.length){ toast('No subscribers to export','i'); return; }
+  var lines=['Email,Date'].concat(subs.map(function(s){ return s.email+','+(s.date||''); }));
+  var csv=lines.join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='haritech-subscribers-'+Date.now()+'.csv';
+  a.click(); toast('Exported!');
+}
+
+// ── FAQ ─────────────────────────────────────────────────────
+function renderFaqs(){
+  var faqs=gs('haritechFaqs')||[];
+  var list=el('faq-admin-list'); if(!list) return;
+  if(!faqs.length){ list.innerHTML='<div class="empty-state"><i class="fas fa-question-circle"></i><p>No FAQs yet</p></div>'; return; }
+  list.innerHTML=faqs.map(function(f,i){
+    return '<div style="padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+      +'<div style="flex:1"><div style="font-weight:700;color:var(--text);font-size:.9rem;margin-bottom:6px">'+f.q+'</div>'
+      +'<div style="font-size:.82rem;color:var(--text3);line-height:1.6">'+f.a+'</div></div>'
+      +'<div style="display:flex;gap:5px;flex-shrink:0">'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="edit-faq"><i class="fas fa-edit"></i></button>'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="up-faq" '+(i===0?'disabled':'')+'>&#8593;</button>'
+      +'<button class="btn btn-ghost btn-sm btn-icon" data-idx="'+i+'" data-action="dn-faq" '+(i===faqs.length-1?'disabled':'')+'>&#8595;</button>'
+      +'<button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="del-faq"><i class="fas fa-trash"></i></button>'
+      +'</div></div></div>';
+  }).join('');
+  list.querySelectorAll('[data-action="edit-faq"]').forEach(function(b){ b.addEventListener('click',function(){ openFaqModal(parseInt(this.dataset.idx)); }); });
+  list.querySelectorAll('[data-action="up-faq"]').forEach(function(b){ b.addEventListener('click',function(){ moveFaq(parseInt(this.dataset.idx),-1); }); });
+  list.querySelectorAll('[data-action="dn-faq"]').forEach(function(b){ b.addEventListener('click',function(){ moveFaq(parseInt(this.dataset.idx),1); }); });
+  list.querySelectorAll('[data-action="del-faq"]').forEach(function(b){ b.addEventListener('click',function(){ delFaq(parseInt(this.dataset.idx)); }); });
+}
+function openFaqModal(idx){ var isEdit=idx!==undefined&&idx!==null; el('faq-mtitle').textContent=isEdit?'Edit Question':'Add Question'; el('faq-id').value=isEdit?idx:''; if(isEdit){ var f=(gs('haritechFaqs')||[])[idx]; el('faq-q').value=f.q||''; el('faq-a').value=f.a||''; } else { el('faq-q').value=''; el('faq-a').value=''; } openM('faq-modal'); }
+function saveFaq(){ var id=el('faq-id').value, q=el('faq-q').value.trim(), a=el('faq-a').value.trim(); if(!q||!a){ toast('Both fields required','e'); return; } var faqs=gs('haritechFaqs')||[]; if(id!=='') faqs[parseInt(id)]={q:q,a:a}; else faqs.push({q:q,a:a}); ss('haritechFaqs',faqs); closeM('faq-modal'); renderFaqs(); toast('FAQ saved!'); }
+function delFaq(i){ if(!confirm('Delete?')) return; var f=gs('haritechFaqs')||[]; f.splice(i,1); ss('haritechFaqs',f); renderFaqs(); toast('Deleted','i'); }
+function moveFaq(i,dir){ var f=gs('haritechFaqs')||[]; var ni=i+dir; if(ni<0||ni>=f.length) return; var tmp=f[i]; f[i]=f[ni]; f[ni]=tmp; ss('haritechFaqs',f); renderFaqs(); }
+
+// ── PROMO BANNER ────────────────────────────────────────────
+function loadPromoPage(){
+  var cfg=gs('haritechPromo')||{};
+  var en=el('promo-enabled'); if(en) en.checked=!!cfg.enabled;
+  var tx=el('promo-text'); if(tx) tx.value=cfg.text||'';
+  var bg=el('promo-bg'); if(bg) bg.value=cfg.bg||'#0d2240';
+  var cl=el('promo-color'); if(cl) cl.value=cfg.color||'#ffffff';
+  previewPromo();
+}
+function previewPromo(){ var text=el('promo-text')?el('promo-text').value:''; var bg=el('promo-bg')?el('promo-bg').value:'#0d2240'; var color=el('promo-color')?el('promo-color').value:'#ffffff'; var prev=el('promo-preview'); if(prev){ prev.innerHTML=text; prev.style.background=bg; prev.style.color=color; } }
+function savePromo(){ ss('haritechPromo',{enabled:el('promo-enabled')?el('promo-enabled').checked:false,text:el('promo-text')?el('promo-text').value:'',bg:el('promo-bg')?el('promo-bg').value:'#0d2240',color:el('promo-color')?el('promo-color').value:'#ffffff'}); previewPromo(); toast('Promo banner saved!'); }
+
+// ── PAYMENT METHODS ─────────────────────────────────────────
+var PM_METHODS=['paystack','flutterwave','bank','whatsapp','cod','ussd'];
+function pmToggle(method){ var on=el('pm-'+method+'-on').checked; var body=el('pm-'+method+'-body'); var card=el('pm-card-'+method); if(body) body.style.display=on?'block':'none'; if(card) card.classList.toggle('pm-method-active',on); updatePmActiveCounts(); }
+function updatePmActiveCounts(){ var n=PM_METHODS.filter(function(m){ var e=el('pm-'+m+'-on'); return e&&e.checked; }).length; var pmc=el('pm-active-count'); if(pmc) pmc.textContent=n; }
+function loadPaymentMethods(){
+  var pm=gs('haritechPayment')||{};
+  var curr=el('pm-currency'); if(curr&&pm.currency) curr.value=pm.currency;
+  if(pm.pageTitle&&el('pm-page-title')) el('pm-page-title').value=pm.pageTitle;
+  if(pm.confirmEmail&&el('pm-confirm-email')) el('pm-confirm-email').value=pm.confirmEmail;
+  if(pm.minOrder&&el('pm-min-order')) el('pm-min-order').value=pm.minOrder;
+  if(pm.btnText&&el('pm-btn-text')) el('pm-btn-text').value=pm.btnText;
+  if(pm.successMsg&&el('pm-success-msg')) el('pm-success-msg').value=pm.successMsg;
+  if(pm.instructions&&el('pm-instructions')) el('pm-instructions').value=pm.instructions;
+  function loadMethod(key,fields){ var cfg=pm[key]||{}; var onEl=el('pm-'+key+'-on'); if(onEl){ onEl.checked=!!cfg.enabled; if(cfg.enabled) pmToggle(key); } fields.forEach(function(f){ var e=el('pm-'+key+'-'+f); if(e&&cfg[f]) e.value=cfg[f]; }); }
+  loadMethod('paystack',['pubkey','seckey','label']);
+  loadMethod('flutterwave',['pubkey','seckey','label']);
+  loadMethod('bank',['name','acctname','acctno','sort','label','instructions']);
+  loadMethod('whatsapp',['number','msg','label']);
+  loadMethod('cod',['areas','fee','label','time']);
+  loadMethod('ussd',['label']);
+  if(pm.ussd&&pm.ussd.banks) renderUssdBanks(pm.ussd.banks);
+  updatePmActiveCounts(); updateOrderStats();
+}
+function saveCurrency(){ var pm=gs('haritechPayment')||{}; pm.currency=el('pm-currency').value; ss('haritechPayment',pm); toast('Currency saved!'); }
+function savePaymentGeneral(){ var pm=gs('haritechPayment')||{}; pm.pageTitle=el('pm-page-title').value; pm.confirmEmail=el('pm-confirm-email').value; pm.minOrder=el('pm-min-order').value; pm.btnText=el('pm-btn-text').value; pm.successMsg=el('pm-success-msg').value; pm.instructions=el('pm-instructions').value; ss('haritechPayment',pm); toast('Settings saved!'); }
+function savePaymentMethod(method){
+  var pm=gs('haritechPayment')||{};
+  if(method==='paystack'){ var ch=[]; if(el('pm-ps-card')&&el('pm-ps-card').checked) ch.push('card'); if(el('pm-ps-bank')&&el('pm-ps-bank').checked) ch.push('bank'); if(el('pm-ps-ussd')&&el('pm-ps-ussd').checked) ch.push('ussd'); if(el('pm-ps-momo')&&el('pm-ps-momo').checked) ch.push('mobile_money'); pm.paystack={enabled:el('pm-paystack-on').checked,pubkey:el('pm-paystack-pubkey').value,seckey:el('pm-paystack-seckey').value,label:el('pm-paystack-label').value,channels:ch}; if(!pm.paystack.pubkey){ toast('Paystack Public Key required','e'); return; } }
+  else if(method==='flutterwave'){ pm.flutterwave={enabled:el('pm-flutterwave-on').checked,pubkey:el('pm-flutterwave-pubkey').value,seckey:el('pm-flutterwave-seckey').value,label:el('pm-flutterwave-label').value}; if(!pm.flutterwave.pubkey){ toast('Flutterwave Public Key required','e'); return; } }
+  else if(method==='bank'){ pm.bank={enabled:el('pm-bank-on').checked,bankName:el('pm-bank-name').value,acctName:el('pm-bank-acctname').value,acctNo:el('pm-bank-acctno').value,sortCode:el('pm-bank-sort').value,label:el('pm-bank-label').value,instructions:el('pm-bank-instructions').value}; }
+  else if(method==='whatsapp'){ pm.whatsapp={enabled:el('pm-whatsapp-on').checked,number:el('pm-whatsapp-number').value,msg:el('pm-whatsapp-msg').value,label:el('pm-whatsapp-label').value}; }
+  else if(method==='cod'){ pm.cod={enabled:el('pm-cod-on').checked,areas:el('pm-cod-areas').value,fee:el('pm-cod-fee').value||0,label:el('pm-cod-label').value,time:el('pm-cod-time').value}; }
+  else if(method==='ussd'){ pm.ussd={enabled:el('pm-ussd-on').checked,label:el('pm-ussd-label').value,banks:getUssdBanks()}; }
+  ss('haritechPayment',pm); updatePmActiveCounts(); toast(method.charAt(0).toUpperCase()+method.slice(1)+' saved!');
+}
+function renderUssdBanks(banks){ var list=el('ussd-banks-list'); if(!list) return; if(!banks||!banks.length){ list.innerHTML=''; return; } list.innerHTML=banks.map(function(b,i){ return '<div style="display:flex;gap:7px;align-items:center;margin-bottom:7px"><input type="text" value="'+b.name+'" placeholder="Bank Name" style="flex:1;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.8rem" id="ussd-bank-name-'+i+'"><input type="text" value="'+b.code+'" placeholder="*737#" style="flex:1;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.8rem" id="ussd-bank-code-'+i+'"><button class="btn btn-danger btn-sm btn-icon" data-idx="'+i+'" data-action="rm-ussd"><i class="fas fa-times"></i></button></div>'; }).join(''); list.querySelectorAll('[data-action="rm-ussd"]').forEach(function(b){ b.addEventListener('click',function(){ removeUssdBank(parseInt(this.dataset.idx)); }); }); window._ussdBankCount=banks.length; }
+function addUssdBank(){ renderUssdBanks(getUssdBanks().concat([{name:'',code:''}])); }
+function removeUssdBank(i){ var b=getUssdBanks(); b.splice(i,1); renderUssdBanks(b); }
+function getUssdBanks(){ var n=el('ussd-banks-list')?el('ussd-banks-list').querySelectorAll('[id^="ussd-bank-name-"]').length:0; var b=[]; for(var i=0;i<n;i++){ var nm=el('ussd-bank-name-'+i), cd=el('ussd-bank-code-'+i); if(nm&&cd) b.push({name:nm.value,code:cd.value}); } return b; }
+
+// ── ANALYTICS CHARTS ────────────────────────────────────────
+var _charts={};
+function initCharts(){
+  if(typeof Chart==='undefined') return;
+  Object.values(_charts).forEach(function(c){ try{ c.destroy(); }catch(e){} }); _charts={};
+  var orders=(gs('haritechOrders')||[]).length, messages=(gs('haritechMessages')||[]).length, bookings=(gs('haritechBookings')||[]).length;
+  var products=(gs('haritechProducts')||[]).length, services=(gs('haritechServices')||[]).length, blogs=(gs('haritechBlogs')||[]).length, reviews=(gs('haritechTestimonials')||[]).length;
+  var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  function spread(total){ if(!total) return [0,0,0,0,0,0,0]; var arr=[]; var left=total; for(var i=0;i<6;i++){ var v=Math.floor(Math.random()*Math.ceil(left/2)||0); arr.push(v); left-=v; if(left<0)left=0; } arr.push(left); arr.sort(function(){ return Math.random()-.5; }); return arr; }
+  var actCtx=el('chart-activity');
+  if(actCtx) _charts.activity=new Chart(actCtx,{type:'line',data:{labels:days,datasets:[{label:'Orders',data:spread(orders),borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,.08)',fill:true,tension:.4,pointRadius:3},{label:'Messages',data:spread(messages),borderColor:'#00e5b4',backgroundColor:'rgba(0,229,180,.06)',fill:true,tension:.4,pointRadius:3},{label:'Bookings',data:spread(bookings),borderColor:'#f7c948',backgroundColor:'rgba(247,201,72,.06)',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,plugins:{legend:{labels:{color:'#8890a8',font:{size:11},boxWidth:12}}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#545d7a',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#545d7a',font:{size:10},precision:0},beginAtZero:true}}}});
+  var mixCtx=el('chart-mix');
+  if(mixCtx) _charts.mix=new Chart(mixCtx,{type:'doughnut',data:{labels:['Products','Services','Blog','Reviews'],datasets:[{data:[products||1,services||1,blogs||1,reviews||1],backgroundColor:['#4f8ef7','#00e5b4','#f7c948','#f74f6b'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{color:'#8890a8',font:{size:10},boxWidth:10,padding:10}}}}});
+}
+
+// ── DASHBOARD ALERTS ────────────────────────────────────────
+function renderDashboardAlerts(){
+  var container=el('ds-alerts'); if(!container) return;
+  var alerts=[];
+  var pendingBk=(gs('haritechBookings')||[]).filter(function(b){ return b.status==='pending'; }).length;
+  var pendingOrd=(gs('haritechOrders')||[]).filter(function(o){ return o.status==='pending'; }).length;
+  var msgs=(gs('haritechMessages')||[]).length;
+  if(pendingBk) alerts.push({icon:'fa-calendar-check',text:pendingBk+' pending booking'+(pendingBk>1?'s':''),color:'var(--accent3)',bg:'rgba(247,201,72,.1)',page:'bookings'});
+  if(pendingOrd) alerts.push({icon:'fa-shopping-cart',text:pendingOrd+' pending order'+(pendingOrd>1?'s':''),color:'var(--accent)',bg:'rgba(79,142,247,.1)',page:'orders'});
+  if(msgs) alerts.push({icon:'fa-envelope',text:msgs+' message'+(msgs>1?'s':''),color:'var(--danger)',bg:'rgba(247,79,107,.1)',page:'messages'});
+  if(!alerts.length){ container.innerHTML=''; return; }
+  container.innerHTML=alerts.map(function(a){
+    return '<div data-page="'+a.page+'" class="alert-chip" style="display:flex;align-items:center;gap:8px;padding:9px 14px;background:'+a.bg+';border:1px solid '+a.color+'33;border-radius:9px;cursor:pointer;font-size:.82rem;font-weight:600;color:'+a.color+'">'
+      +'<i class="fas '+a.icon+'"></i>'+a.text+' — click to view</div>';
+  }).join('');
+  container.querySelectorAll('.alert-chip').forEach(function(c){ c.addEventListener('click',function(){ goPage(this.dataset.page); }); });
+}
+
+// ── INIT DEFAULTS ───────────────────────────────────────────
+function initDefaults(){
+  var defaults=[
+    ['haritechServices',[]],['haritechProducts',[]],['haritechBlogs',[]],
+    ['haritechContact',{phone:'',email:'',whatsapp:'',location:'',hours:''}],
+    ['haritechSocial',{}],['haritechSettings',{siteName:'HARITECH EXCLUSIVE SERVICES',tagline:'Premium Tech Solutions',footerDesc:''}],
+    ['haritechHero',{}],['haritechTheme',{primary:'#1e3a5f',accent:'#00d4aa'}],
+    ['haritechStats',{clients:'500+',projects:'50+',years:'5+',support:'24/7'}],
+    ['haritechMessages',[]],['haritechOrders',[]],['haritechPayment',{currency:'NGN'}],
+    ['haritechTestimonials',[]],['haritechBookings',[]],['haritechFaqs',[]],
+    ['haritechPromo',{enabled:false,text:'',bg:'',color:''}],['haritechSubscribers',[]]
+  ];
+  defaults.forEach(function(pair){ if(!localStorage.getItem(pair[0])) ss(pair[0],pair[1]); });
+}
+
+// ── LOAD ALL ────────────────────────────────────────────────
+function loadAll(){
+  renderSvc(); renderProd(); renderBlog();
+  loadHero(); loadContact(); loadSocial(); loadAppearance();
+  renderMessages(); loadSettingsPage();
+  loadPaymentMethods(); renderOrders();
+  renderTestimonials(); renderBookings(); renderSubscribers();
+  if(el('chart-activity')) initCharts();
+  renderDashboardAlerts();
+  // Update sidebar logo
+  var logo=localStorage.getItem('haritechLogo'); updateSbLogo(logo);
+  var st=gs('haritechSettings')||{};
+  var sbn=el('sb-brand-name'); if(sbn) sbn.textContent=(st.siteName||'HARITECH').split(' ')[0];
+}
+
+// ── CLOSE MODALS ON BACKDROP ────────────────────────────────
+document.querySelectorAll('.modal-ov').forEach(function(o){
+  o.addEventListener('click',function(e){ if(e.target===o) o.classList.remove('open'); });
+});
+
+// ── START ───────────────────────────────────────────────────
+initDefaults();
+loadAll();
+</script>
+
+
+<!-- ORDER VIEW MODAL -->
+<div class="modal-ov" id="order-modal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr"><span class="modal-ttl">Order Details</span><button class="modal-close" onclick="closeM('order-modal')">&times;</button></div>
+    <div class="modal-body" id="order-modal-body"></div>
+    <div class="modal-ftr" id="order-modal-ftr"></div>
+  </div>
+</div>
+</body>
+</html>
