@@ -159,6 +159,21 @@ const IdentityCheckPanel: React.FC = () => {
           {option.help}
         </p>
 
+        {/* Once the full number is typed, hand them the form route too. */}
+        {number.length === 11 && (
+          <p className="mt-2 text-[11px] text-[#5F6B5C] leading-relaxed">
+            Want the desk to act on it instead of an automated check?{' '}
+            <a
+              href="#identity-whatsapp"
+              className="font-semibold text-[#0B6B3B] hover:text-[#074D2A] underline underline-offset-4 decoration-[#B08D2E]/60"
+              onClick={() => window.dispatchEvent(new CustomEvent('haritech:identity-whatsapp', { detail: { number, kind } }))}
+            >
+              Send it to the desk on WhatsApp
+            </a>
+            .
+          </p>
+        )}
+
         <label className="mt-4 flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"

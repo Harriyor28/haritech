@@ -1002,6 +1002,36 @@ test('site faq chips display as readable questions', () => {
   assert.ok(/How much is a website\?/.test(chip) || /^[A-Z]/.test(chip), 'chip reads as a question');
 });
 
+/* ── NIN/BVN digits typed in chat ────────────────────────────────────── */
+
+test('an 11-digit number in chat routes to the WhatsApp form, never echoed', () => {
+  const result = answerAnyQuestion('check my nin 01234567890 please');
+  assert.equal(result.entryId, 'identity-whatsapp');
+  assert.ok(!result.answer.includes('01234567890'), 'the digits are not echoed back');
+  assert.ok(result.link && result.link.to.includes('identity-whatsapp'), 'links the WhatsApp form');
+});
+
+test('digits typed alone still route to the WhatsApp form', () => {
+  const result = answerAnyQuestion('12345678901');
+  assert.equal(result.entryId, 'identity-whatsapp');
+  assert.ok(!result.answer.includes('12345678901'));
+});
+
+test('every entry keeps NIN/BVN digits out of the answer text', () => {
+  const digitPattern = /\b\d{11}\b/;
+  for (const entry of HARI_FAQ) {
+    assert.ok(!digitPattern.test(entry.answer), `${entry.id} contains no 11-digit number`);
+    assert.ok(!digitPattern.test(entry.questions.join(' ') + entry.keywords.join(' ')), `${entry.id} search terms hold no 11-digit number`);
+  }
+});
+
+test('the WhatsApp-form answer never invents a fee', () => {
+  const result = answerAnyQuestion('i want to send my bvn on whatsapp');
+  assert.equal(result.entryId, 'identity-whatsapp');
+  assert.ok(!/₦/.test(result.answer), 'no NIN/BVN fee is quoted');
+  assert.match(result.answer, /confirms the fee/);
+});
+
 /* ── Deep-solar retrieval context for the live LLM ───────────────────── */
 
 test('retrieval context carries deep solar knowledge to the LLM', () => {

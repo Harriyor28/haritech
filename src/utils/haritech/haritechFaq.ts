@@ -49,6 +49,7 @@ export const HARI_FAQ_ENTRY_IDS = [
   'nin-verification',
   'bvn-verification',
   'identity-applications',
+  'identity-whatsapp',
   'importation-overview',
   'importation-duty',
   'project-management',
@@ -259,7 +260,7 @@ export const HARI_FAQ: FaqEntry[] = [
     ],
     keywords: ['nin', 'national identification', 'nimc', 'identity check', 'identity verification'],
     answer:
-      'NIN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit NIN; the name and date of birth on the record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nHaritech does not issue NIN — NIMC does. If you have not enrolled, or the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk): the desk prepares the paperwork, books the NIMC appointment and follows the file.',
+      'NIN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit NIN; the name and date of birth on the record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nHaritech does not issue NIN — NIMC does. If you have not enrolled, or the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk), or hand the number straight to the desk through the WhatsApp form (/haritech/cac-registration#identity-whatsapp).',
     link: { to: '/haritech/cac-registration#identity-checks', label: 'Identity checks' },
     related: ['cac-registration', 'bvn-verification', 'identity-applications', 'contact-human'],
   },
@@ -276,7 +277,7 @@ export const HARI_FAQ: FaqEntry[] = [
     ],
     keywords: ['bvn', 'bank verification', 'nibss', 'identity check', 'identity verification'],
     answer:
-      'BVN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit BVN; the name and date of birth on the bank record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nDial *565*0# from the phone number registered with your bank to retrieve a BVN. Haritech does not issue BVN — your bank and NIBSS do. If the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk): the desk prepares the correction request for your bank.',
+      'BVN checks are on the CAC page under Identity Checks: /haritech/cac-registration#identity-checks.\n\nThe check runs against Haritech’s licensed identity-verification provider. You need the 11-digit BVN; the name and date of birth on the bank record must match. Only the last four digits are shown back, and the full number is not stored on this website.\n\nDial *565*0# from the phone number registered with your bank to retrieve a BVN. Haritech does not issue BVN — your bank and NIBSS do. If the record needs a correction, apply at the Identity application desk on the same page (/haritech/cac-registration#identity-desk), or hand the number straight to the desk through the WhatsApp form (/haritech/cac-registration#identity-whatsapp).',
     link: { to: '/haritech/cac-registration#identity-checks', label: 'Identity checks' },
     related: ['cac-registration', 'nin-verification', 'identity-applications', 'contact-human'],
   },
@@ -300,7 +301,27 @@ export const HARI_FAQ: FaqEntry[] = [
     answer:
       'You can apply for identity services right on the CAC page: /haritech/cac-registration#identity-desk, just below the Identity Checks panel.\n\nThe desk covers five services: first-time NIN registration, NIN record modification, NIN slip retrieval or reprint, BVN record correction and BVN retrieval. It is a five-step form — service, applicant details, your number today, the details of the change, documents — and everything the service needs to know is listed for you as you go. A NID-XXXXXXXX reference is issued when you submit; track the file the same way, with the reference plus the phone number or email used on it.\n\nTwo honest rules: the form never asks for your NIN or BVN — the desk confirms it with you directly — and the fee is confirmed with you before any booking rather than quoted on the website. Haritech prepares, books and follows the file; NIMC issues the NIN, and your bank with NIBSS decides BVN corrections.',
     link: { to: '/haritech/cac-registration#identity-desk', label: 'Identity application desk' },
-    related: ['nin-verification', 'bvn-verification', 'cac-application-desk', 'contact-human'],
+    related: ['nin-verification', 'bvn-verification', 'identity-whatsapp', 'cac-application-desk', 'contact-human'],
+  },
+  {
+    id: 'identity-whatsapp',
+    questions: [
+      'send my nin on whatsapp',
+      'send my bvn on whatsapp',
+      'i have my nin here',
+      'i have my bvn here',
+      'who do i send my nin to',
+      'who do i send my bvn to',
+      'submit nin to haritech',
+      'submit bvn to haritech',
+      'here is my nin',
+      'here is my bvn',
+    ],
+    keywords: ['whatsapp', 'send', 'form'],
+    answer:
+      'Please do not send NIN or BVN digits inside this chat — keep them out of it entirely.\n\nInstead, use the form on the CAC page: /haritech/cac-registration#identity-whatsapp. Fill in your name, the number (NIN or BVN) and what you need, and the details open inside your own WhatsApp ready to send to the desk. The website does not store what you type there.\n\nFrom that message the desk replies with the next steps and confirms the fee before any booking.',
+    link: { to: '/haritech/cac-registration#identity-whatsapp', label: 'Send on WhatsApp' },
+    related: ['nin-verification', 'bvn-verification', 'identity-applications', 'contact-human'],
   },
   {
     id: 'importation-overview',
@@ -559,6 +580,15 @@ export interface HarichMatch {
 export const matchHaritechFaq = (question: string): HarichMatch | null => {
   const text = norm(question);
   if (!text) return null;
+
+  /* An 11-digit run in the question is almost always a NIN, a BVN or a phone
+     number the visitor pasted — in every case the honest route is the same:
+     stop, do not echo the digits, and hand them the WhatsApp submission
+     form. This rule outranks any keyword match. */
+  if (/\b\d{11}\b/.test(text)) {
+    const entry = HARI_FAQ.find((row) => row.id === 'identity-whatsapp');
+    if (entry) return { entry, score: 999 };
+  }
 
   let best: HarichMatch | null = null;
   for (const entry of HARI_FAQ) {

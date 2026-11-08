@@ -8,6 +8,7 @@ import CacApplicationWizard from '../../components/haritech/CacApplicationWizard
 import CacStatusTracker from '../../components/haritech/CacStatusTracker';
 import IdentityApplicationWizard from '../../components/haritech/IdentityApplicationWizard';
 import IdentityStatusTracker from '../../components/haritech/IdentityStatusTracker';
+import IdentityWhatsAppForm from '../../components/haritech/IdentityWhatsAppForm';
 import IdentityCheckPanel from '../../components/haritech/IdentityCheckPanel';
 
 /* ── CAC Registry identity ───────────────────────────────────────────────
@@ -96,6 +97,22 @@ const CACRegistration: React.FC = () => {
   const [faqs, setFaqs] = useState<any[]>(() => getArr(CAC_FAQ_KEY, defaultFaqs));
   const [deskTab, setDeskTab] = useState<'apply' | 'track'>('apply');
   const [identityDeskTab, setIdentityDeskTab] = useState<'apply' | 'track'>('apply');
+  const [identityWhatsAppPrefill, setIdentityWhatsAppPrefill] = useState<{
+    number: string;
+    kind: 'nin' | 'bvn';
+  }>({ number: '', kind: 'nin' });
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ number?: unknown; kind?: unknown }>).detail;
+      setIdentityWhatsAppPrefill({
+        number: typeof detail?.number === 'string' ? detail.number : '',
+        kind: detail?.kind === 'bvn' ? 'bvn' : 'nin',
+      });
+    };
+    window.addEventListener('haritech:identity-whatsapp', handler);
+    return () => window.removeEventListener('haritech:identity-whatsapp', handler);
+  }, []);
 
   /* Registration details are only public once the owner supplies them; until
      then the flag value is replaced with neutral wording instead of showing
@@ -454,6 +471,52 @@ const CACRegistration: React.FC = () => {
             <FadeInView delay={0.12}>
               <IdentityCheckPanel />
             </FadeInView>
+          </div>
+
+          {/* Identity WhatsApp form — the manual route beside the checks */}
+          <div id="identity-whatsapp" className="mt-10 pt-10 border-t border-[#DED3AC] scroll-mt-24">
+            <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
+              <FadeInView>
+                <div>
+                  <h3 className={`${SERIF} text-2xl md:text-3xl text-[#1E2B20] mb-3`}>Hand it to the desk</h3>
+                  <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
+                    If you would rather deal with a person — a failed check, a change request,
+                    anything about a NIN or BVN — fill the form beside this and it opens in your
+                    WhatsApp to send. The desk answers with the next steps.
+                  </p>
+                  <ul className="border-t border-[#DED3AC]">
+                    {[
+                      'Your details open inside your own WhatsApp, ready to send.',
+                      'Nothing typed here is stored on this website or its database.',
+                      'The desk confirms the service fee before any booking.',
+                      'NIMC issues the NIN; your bank with NIBSS decides BVN changes.',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-3 border-b border-[#DED3AC] py-3">
+                        <span className="mt-0.5 w-4 h-4 shrink-0 bg-[#0B6B3B] flex items-center justify-center">
+                          <Check className="h-2.5 w-2.5 text-[#F7F2E6]" />
+                        </span>
+                        <span className="text-sm text-[#2A352C]">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 border-l-2 border-[#C6B98F] pl-4">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">Check first?</p>
+                    <p className="text-xs text-[#5F6B5C] leading-relaxed">
+                      The live check above is still the fastest way to confirm a record. This form
+                      is for when you want the desk to do the work with you.
+                    </p>
+                  </div>
+                </div>
+              </FadeInView>
+
+              <FadeInView delay={0.12}>
+                <IdentityWhatsAppForm
+                  key={`${identityWhatsAppPrefill.kind}-${identityWhatsAppPrefill.number}`}
+                  initialNumber={identityWhatsAppPrefill.number}
+                  initialKind={identityWhatsAppPrefill.kind}
+                />
+              </FadeInView>
+            </div>
           </div>
 
           {/* Identity Application Desk — below the checks grid */}
