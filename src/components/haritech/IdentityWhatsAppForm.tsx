@@ -243,9 +243,9 @@ const IdentityWhatsAppForm: React.FC<IdentityWhatsAppFormProps> = ({
 
       <div className="border-t border-[#DED3AC] px-5 md:px-8 py-4">
         <p className="text-[11px] text-[#8B9284] leading-relaxed">
-          The desk replies with the next steps and confirms the fee before any booking. Prefer the
-          automated route? The check panel above verifies a number live through the licensed
-          provider.
+          Verification is done by a person at Haritech — never by an automated website check. The
+          desk replies with the next steps and confirms the fee directly with you before any
+          booking.
         </p>
       </div>
     </motion.div>

@@ -473,12 +473,12 @@ const CacApplicationWizard: React.FC<CacApplicationWizardProps> = ({ onTrack }) 
                 <p className="text-[11px] text-[#8B9284] mb-4 leading-relaxed">
                   Need to confirm a NIN or BVN first?{' '}
                   <a
-                    href="#identity-checks"
+                    href="#identity-whatsapp"
                     className="text-[#0B6B3B] font-semibold underline underline-offset-4 decoration-[#B08D2E]/60"
                   >
-                    Use the identity checks
+                    Send it to the desk on WhatsApp
                   </a>{' '}
-                  below. Numbers are never stored with this application.
+                  and Haritech verifies it with you directly. Numbers are never stored with this application.
                 </p>
                 <div className="space-y-3">
                   {draft.members.map((member, index) => (

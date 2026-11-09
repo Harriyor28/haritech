@@ -1032,6 +1032,19 @@ test('the WhatsApp-form answer never invents a fee', () => {
   assert.match(result.answer, /confirms the fee/);
 });
 
+test('verification answers point to a person, never an automated provider', () => {
+  for (const question of ['verify my nin', 'check my bvn']) {
+    const result = answerAnyQuestion(question);
+    assert.match(result.answer, /directly|person/i, `${question}: verification is personal`);
+    assert.doesNotMatch(result.answer, /licensed provider|automated check runs|identity-verification provider/i);
+  }
+  /* No knowledge-base entry may still advertise an automated identity check. */
+  for (const entry of HARI_FAQ) {
+    assert.doesNotMatch(entry.answer, /licen[cs]ed (identity-)?verification provider/i, `${entry.id} drops the provider claim`);
+    assert.ok(!entry.answer.includes('#identity-checks\\n') || entry.answer.includes('identity-whatsapp'), `${entry.id} routes somewhere that exists`);
+  }
+});
+
 /* ── Deep-solar retrieval context for the live LLM ───────────────────── */
 
 test('retrieval context carries deep solar knowledge to the LLM', () => {

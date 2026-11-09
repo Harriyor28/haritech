@@ -9,7 +9,6 @@ import CacStatusTracker from '../../components/haritech/CacStatusTracker';
 import IdentityApplicationWizard from '../../components/haritech/IdentityApplicationWizard';
 import IdentityStatusTracker from '../../components/haritech/IdentityStatusTracker';
 import IdentityWhatsAppForm from '../../components/haritech/IdentityWhatsAppForm';
-import IdentityCheckPanel from '../../components/haritech/IdentityCheckPanel';
 
 /* ── CAC Registry identity ───────────────────────────────────────────────
    Deliberately distinct from the rest of the Haritech site:
@@ -97,22 +96,6 @@ const CACRegistration: React.FC = () => {
   const [faqs, setFaqs] = useState<any[]>(() => getArr(CAC_FAQ_KEY, defaultFaqs));
   const [deskTab, setDeskTab] = useState<'apply' | 'track'>('apply');
   const [identityDeskTab, setIdentityDeskTab] = useState<'apply' | 'track'>('apply');
-  const [identityWhatsAppPrefill, setIdentityWhatsAppPrefill] = useState<{
-    number: string;
-    kind: 'nin' | 'bvn';
-  }>({ number: '', kind: 'nin' });
-
-  useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent<{ number?: unknown; kind?: unknown }>).detail;
-      setIdentityWhatsAppPrefill({
-        number: typeof detail?.number === 'string' ? detail.number : '',
-        kind: detail?.kind === 'bvn' ? 'bvn' : 'nin',
-      });
-    };
-    window.addEventListener('haritech:identity-whatsapp', handler);
-    return () => window.removeEventListener('haritech:identity-whatsapp', handler);
-  }, []);
 
   /* Registration details are only public once the owner supplies them; until
      then the flag value is replaced with neutral wording instead of showing
@@ -431,24 +414,25 @@ const CACRegistration: React.FC = () => {
         </div>
       </section>
 
-      {/* Identity Checks */}
+      {/* Identity verification — handled personally by Haritech */}
       <section id="identity-checks" className="py-20 bg-[#F1E9D6] border-y border-[#DED3AC] scroll-mt-24">
         <div className="container mx-auto px-6">
           <Rule label="Schedule VI" />
           <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
             <FadeInView>
               <div>
-                <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-3`}>Identity Checks</h2>
+                <h2 className={`${SERIF} text-3xl md:text-4xl text-[#1E2B20] mb-3`}>Verification, done with a person</h2>
                 <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
-                  CAC filings need the NIN and BVN of the people listed. Check either number here
-                  against Haritech’s licensed identity-verification provider before you submit a file.
+                  CAC filings need the NIN and BVN of the people listed. Haritech verifies these
+                  numbers directly with you — the owner works on it personally; there is no
+                  automated check on this website.
                 </p>
                 <ul className="border-t border-[#DED3AC]">
                   {[
-                    'NIN and BVN checks — both are 11 digits.',
-                    'Results come from a licensed provider, not from this website.',
-                    'The number is sent securely and is not stored here.',
-                    'Enrolment, retrieval and correction help if a check fails.',
+                    'Send your details for the WhatsApp form below and the desk takes it from there.',
+                    'The fee for any identity service is confirmed with you before any booking.',
+                    'Nothing you send is stored on this website or its database.',
+                    'NIMC issues the NIN; your bank and NIBSS decide BVN changes.',
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 border-b border-[#DED3AC] py-3">
                       <span className="mt-0.5 w-4 h-4 shrink-0 bg-[#0B6B3B] flex items-center justify-center">
@@ -462,18 +446,44 @@ const CACRegistration: React.FC = () => {
                   <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">What this is not</p>
                   <p className="text-xs text-[#5F6B5C] leading-relaxed">
                     Haritech does not issue NIN or BVN. NIN is issued by NIMC and BVN by your bank
-                    through NIBSS. This desk checks a number and helps you correct what is wrong.
+                    through NIBSS. This desk checks a number with you and helps you correct what is
+                    wrong.
                   </p>
                 </div>
               </div>
             </FadeInView>
 
             <FadeInView delay={0.12}>
-              <IdentityCheckPanel />
+              <div className="bg-[#FDFBF4] border border-[#DED3AC] px-6 md:px-8 py-8">
+                <h3 className={`${SERIF} text-xl text-[#1E2B20] mb-2`}>How to reach the desk</h3>
+                <p className="text-sm text-[#5F6B5C] leading-relaxed mb-6">
+                  Two ways, both straight to the owner. The WhatsApp form is the fastest — your
+                  details arrive in one message, ready to work on.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="#identity-whatsapp"
+                    className="inline-flex items-center gap-2 bg-[#0B6B3B] hover:bg-[#074D2A] text-[#F7F2E6] text-sm font-semibold px-6 py-3 transition-colors"
+                  >
+                    Use the WhatsApp form
+                  </a>
+                  <a
+                    href="/haritech/contact"
+                    className="inline-flex items-center gap-2 border border-[#0B6B3B]/40 text-[#0B6B3B] hover:bg-[#0B6B3B]/5 text-sm font-semibold px-6 py-3 transition-colors"
+                  >
+                    Contact Haritech
+                  </a>
+                </div>
+                <p className="mt-6 text-[11px] text-[#8B9284] leading-relaxed">
+                  If you would rather speak first, the contact page lists the phone, WhatsApp and
+                  office hours. Verification is never automated: a person confirms every number
+                  with you directly.
+                </p>
+              </div>
             </FadeInView>
           </div>
 
-          {/* Identity WhatsApp form — the manual route beside the checks */}
+          {/* Identity WhatsApp form — the personal submission route */}
           <div id="identity-whatsapp" className="mt-10 pt-10 border-t border-[#DED3AC] scroll-mt-24">
             <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
               <FadeInView>
@@ -500,26 +510,23 @@ const CACRegistration: React.FC = () => {
                     ))}
                   </ul>
                   <div className="mt-6 border-l-2 border-[#C6B98F] pl-4">
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">Check first?</p>
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#7A6A33] mb-1">Prefer to talk?</p>
                     <p className="text-xs text-[#5F6B5C] leading-relaxed">
-                      The live check above is still the fastest way to confirm a record. This form
-                      is for when you want the desk to do the work with you.
+                      Every identity number is handled by a person at Haritech — the owner
+                      themselves. The contact page lists the phone, WhatsApp and office hours for
+                      a call first.
                     </p>
                   </div>
                 </div>
               </FadeInView>
 
               <FadeInView delay={0.12}>
-                <IdentityWhatsAppForm
-                  key={`${identityWhatsAppPrefill.kind}-${identityWhatsAppPrefill.number}`}
-                  initialNumber={identityWhatsAppPrefill.number}
-                  initialKind={identityWhatsAppPrefill.kind}
-                />
+                <IdentityWhatsAppForm />
               </FadeInView>
             </div>
           </div>
 
-          {/* Identity Application Desk — below the checks grid */}
+          {/* Identity Application Desk — below the WhatsApp submission */}
           <div id="identity-desk" className="mt-14 pt-12 border-t border-[#DED3AC] scroll-mt-24">
             <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 items-start">
               <FadeInView>
