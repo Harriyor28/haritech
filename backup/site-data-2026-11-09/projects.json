@@ -1,0 +1,158 @@
+[
+ {
+  "approved": true,
+  "id": 1,
+  "title": "Haritech Cyber Café — Digital Services & Online Registration",
+  "category": "Cyber Café",
+  "description": "Our one-stop digital service centre in Port Harcourt. Walk in for typing, printing and scanning, document processing, photocopying and reliable internet — and leave with your JAMB, WAEC, NYSC or other online registrations done the same day.",
+  "image": "/portfolio-posters/cyber-cafe.jpg",
+  "tags": [
+   "Port Harcourt",
+   "Walk-in service",
+   "Same-day"
+  ],
+  "year": "2026",
+  "desktopImage": "/portfolio-posters/cyber-cafe.jpg",
+  "tabletImage": "/portfolio-posters/cyber-cafe.jpg",
+  "mobileImage": "/portfolio-posters/cyber-cafe.jpg",
+  "liveDemo": "/haritech/services",
+  "challenges": "Customers usually arrive with urgent deadlines the same day — an exam closing at midnight, a printout needed for a morning meeting.",
+  "solutions": "A desk organised around speed and confidentiality: trained staff, dependable internet, printing on the spot, and every registration confirmed before the customer leaves.",
+  "features": [
+   "Computer services — typing, printing and scanning",
+   "Online registration — JAMB, WAEC, NYSC and more",
+   "Document processing and digital services",
+   "Printing and photocopy",
+   "Reliable internet access",
+   "Professional, fast and confidential support"
+  ],
+  "technology": [
+   "Online Registration",
+   "Document Processing",
+   "Printing & Scanning",
+   "High-speed Internet"
+  ],
+  "metrics": {
+   "loadTime": "",
+   "performanceScore": 0,
+   "mobileScore": 0
+  }
+ },
+ {
+  "approved": true,
+  "id": 2,
+  "title": "Haritech Tech Store — Laptops, Devices & Accessories",
+  "category": "Laptop & Tech Retail",
+  "description": "The retail arm of Haritech: a showroom of genuine laptops and desktops from HP, Dell, Lenovo, Asus and Apple, plus the accessories that keep them working — chargers, keyboards, mice, storage and networking gear — with advice to match the device to the work.",
+  "image": "/portfolio-posters/tech-store.jpg",
+  "tags": [
+   "Showroom",
+   "Genuine products",
+   "After-sales support"
+  ],
+  "year": "2026",
+  "desktopImage": "/portfolio-posters/tech-store.jpg",
+  "tabletImage": "/portfolio-posters/tech-store.jpg",
+  "mobileImage": "/portfolio-posters/tech-store.jpg",
+  "liveDemo": "/haritech/what-we-do",
+  "challenges": "Buyers are spoiled for choice and wary of clones: the wrong device wastes money, and the wrong charger can damage it.",
+  "solutions": "We stock only genuine products, demonstrate each device before purchase, and stand behind what we sell with after-sales support.",
+  "features": [
+   "Laptops and desktops — HP, Dell, Lenovo, Asus, Apple",
+   "Chargers and power adapters",
+   "Keyboards and mice",
+   "Storage devices",
+   "Networking equipment",
+   "Genuine products with expert advice and after-sales support"
+  ],
+  "technology": [
+   "Laptops",
+   "Accessories",
+   "Networking",
+   "Storage"
+  ],
+  "metrics": {
+   "loadTime": "",
+   "performanceScore": 0,
+   "mobileScore": 0
+  }
+ },
+ {
+  "approved": true,
+  "id": 3,
+  "title": "3D Epoxy Flooring & Luxury Interior Design",
+  "category": "3D Epoxy & Interior Décor",
+  "description": "A showcase of Haritech spaces: marble-effect 3D epoxy floors, layered lighting, designed room and office layouts and ceiling treatments finished as one job. Style, durability and elegance in the same space.",
+  "image": "/portfolio-posters/epoxy-interior.jpg",
+  "tags": [
+   "Premium quality",
+   "On-time delivery",
+   "Creative designs"
+  ],
+  "year": "2026",
+  "desktopImage": "/portfolio-posters/epoxy-interior.jpg",
+  "tabletImage": "/portfolio-posters/epoxy-interior.jpg",
+  "mobileImage": "/portfolio-posters/epoxy-interior.jpg",
+  "liveDemo": "/haritech/3d-epoxy",
+  "challenges": "A floor or a room is lived on every day — the finish has to survive foot traffic and cleaning without losing the look the client fell for.",
+  "solutions": "Premium epoxy systems, 3D designs planned to scale, and finishing handled end to end — flooring, painting, ceilings and fittings — so the space arrives on time and stays beautiful.",
+  "features": [
+   "3D epoxy flooring",
+   "Interior design and décor",
+   "Ceiling solutions",
+   "Painting and finishing",
+   "Modern office and home setup",
+   "Renovation services"
+  ],
+  "technology": [
+   "3D Epoxy",
+   "Interior Design",
+   "Renovation",
+   "Custom Finishes"
+  ],
+  "metrics": {
+   "loadTime": "",
+   "performanceScore": 0,
+   "mobileScore": 0
+  }
+ },
+ {
+  "approved": true,
+  "id": 4,
+  "title": "Print, Brand, Stand Out — Haritech Branding Studio",
+  "category": "Printing & Branding",
+  "description": "Business cards and flyers, banners and roll-ups, printed mugs and branded gift bags — the studio takes an idea from design to a finished, touchable product, with the same care on a single business card as on a full event run.",
+  "image": "/portfolio-posters/printing-branding.jpg",
+  "tags": [
+   "Brand identity",
+   "Fast turnaround",
+   "Competitive pricing"
+  ],
+  "year": "2026",
+  "desktopImage": "/portfolio-posters/printing-branding.jpg",
+  "tabletImage": "/portfolio-posters/printing-branding.jpg",
+  "mobileImage": "/portfolio-posters/printing-branding.jpg",
+  "liveDemo": "/haritech/request-quote",
+  "challenges": "Brand items must match across every surface — paper, fabric, ceramics — and delays are visible at the very event they were made for.",
+  "solutions": "Everything in one studio: creative design, large-format printing and branded merchandise produced in-house with fast turnaround and competitive pricing.",
+  "features": [
+   "Business cards and flyers",
+   "Banners and roll-ups",
+   "Branded merchandise — mugs, bags and more",
+   "Graphic design services",
+   "Document printing and photocopy",
+   "Premium quality with fast turnaround"
+  ],
+  "technology": [
+   "Graphic Design",
+   "Large-format Printing",
+   "Branding",
+   "Merchandise"
+  ],
+  "metrics": {
+   "loadTime": "",
+   "performanceScore": 0,
+   "mobileScore": 0
+  }
+ }
+]
