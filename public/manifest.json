@@ -1,18 +1,51 @@
 {
+  "id": "/",
   "name": "Haritech Exclusive Business",
   "short_name": "Haritech",
   "description": "Haritech Exclusive Business - Smart Tech, Smart Living.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#04060a",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
   "theme_color": "#04060a",
   "lang": "en",
+  "categories": ["business", "shopping", "utilities"],
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portfolio",
+      "url": "/haritech/portfolio",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Request a quote",
+      "url": "/haritech/request-quote",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Solar advisor",
+      "url": "/haritech/solar-advisor",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

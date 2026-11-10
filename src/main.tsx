@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import CloudSync from './components/CloudSync';
+import PwaInstallPrompt from './components/PwaInstallPrompt';
 import HaritechWelcomeChatWidget from './components/HaritechWelcomeChatWidget';
 import { HaritechHelper } from './components/haritech/HaritechHelper';
 import { initSmoothScroll, scrollToElement, scrollToTop } from './utils/smoothScroll';
@@ -78,12 +79,23 @@ const RouteFallback: React.FC = () => (
 initSmoothScroll();
 migrateLegacyHaritechContent();
 
+/* PWA: register the service worker in production builds only — in dev the
+   pre-cached shell would serve stale bundles over Vite's live modules. */
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* without a worker the site still works; it is just not installable */
+    });
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <MotionConfig reducedMotion="user">
         <ScrollReset />
         <CloudSync />
+        <PwaInstallPrompt />
         <ChatGate />
         <Suspense fallback={<RouteFallback />}>
           <Routes>
