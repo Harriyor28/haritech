@@ -1,16 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { LayoutDashboard, FolderOpen, MessageSquare, Settings, Plus, Edit, Trash2, Eye, Search, Save, X, Check, AlertCircle, BarChart3, FileText, Code2, TrendingUp, Activity, ArrowUpRight, Upload, Image as ImageIcon, Building2, Menu, LogOut, Palette, Mail, RefreshCw, Kanban } from 'lucide-react';
-import { getStoredProjects, setStoredProjects } from '../utils/projects';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import {
+  AlertCircle,
+  Building2,
+  Check,
+  ChevronRight,
+  Command,
+  ExternalLink,
+  FileText,
+  FolderOpen,
+  Kanban,
+  LayoutDashboard,
+  Mail,
+  Menu,
+  Palette,
+  Plus,
+  Search,
+  Settings,
+  Star,
+  X,
+} from 'lucide-react';
+import { getSupabase } from '../utils/supabaseClient';
 import type { ProjectData } from '../utils/projects';
-import { getStoredBrandLogo, setStoredBrandLogo } from '../utils/brand';
-import { fileToSizedDataUrl } from '../utils/image';
-import { getStoredSettings, setStoredSettings } from '../utils/settings';
-import type { SiteSettings } from '../utils/settings';
-import { getStoredTestimonials, setStoredTestimonials } from '../utils/testimonials';
-import { getSupabase, isCloudConfigured } from '../utils/supabaseClient';
 import type { Testimonial } from '../utils/testimonials';
+import AdminSidebar, { type ConsoleNavGroup } from '../components/admin/console/AdminSidebar';
+import CommandPalette, { type PaletteItem } from '../components/admin/console/CommandPalette';
+import DashboardOverview from '../components/admin/console/DashboardOverview';
+import ProjectsPanel from '../components/admin/console/ProjectsPanel';
+import TestimonialsPanel from '../components/admin/console/TestimonialsPanel';
+import MessagesPanel from '../components/admin/console/MessagesPanel';
+import SettingsPanel from '../components/admin/console/SettingsPanel';
+import { ProjectForm, TestimonialForm } from '../components/admin/console/AdminForms';
+import { useAdminData } from '../components/admin/console/useAdminData';
+import { cx } from '../components/admin/console/ui';
 import HaritechContentManager from '../components/admin/HaritechContentManager';
 import HaritechServicesManager from '../components/admin/HaritechServicesManager';
 import HaritechTeamManager from '../components/admin/HaritechTeamManager';
@@ -31,1286 +53,739 @@ import HaritechEpoxyManager from '../components/admin/HaritechEpoxyManager';
 import HaritechWhatWeDoManager from '../components/admin/HaritechWhatWeDoManager';
 import HaritechDesignManager from '../components/admin/HaritechDesignManager';
 
-type Tab = 'dashboard' | 'projects' | 'testimonials' | 'services' | 'settings' | 'haritech' | 'design' | 'messages' | 'projecthub';
+const TABS = [
+  'dashboard',
+  'projects',
+  'projecthub',
+  'testimonials',
+  'services',
+  'haritech',
+  'design',
+  'messages',
+  'settings',
+] as const;
 
-interface ContactMessageRow {
-  id: number;
-  form: string;
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-  budget: string;
-  timeline: string;
-  contact_method: string;
-  created_at: string;
-  category?: string;
-  consent_marketing?: boolean;
-  source_page?: string;
-  status: string;
-  notification_status: string;
-  notification_error?: string;
-  notified_at?: string;
-}
+type Tab = (typeof TABS)[number];
 
-// Mini SVG Chart Component
-const MiniChart: React.FC<{ data: number[]; color: string; height?: number }> = ({ data, color, height = 40 }) => {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const width = 120;
-  const points = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * width;
-    const y = height - ((v - min) / range) * (height - 4);
-    return `${x},${y}`;
-  }).join(' ');
+const isTab = (value: string | null): value is Tab =>
+  value !== null && (TABS as readonly string[]).includes(value);
 
-  return (
-    <svg width={width} height={height} className="overflow-visible">
-      <defs>
-        <linearGradient id={`grad-${color}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polygon
-        points={`0,${height} ${points} ${width},${height}`}
-        fill={`url(#grad-${color})`}
-      />
-      <polyline
-        points={points}
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+const TAB_LABELS: Record<Tab, string> = {
+  dashboard: 'Overview',
+  projects: 'Projects',
+  projecthub: 'Project board',
+  testimonials: 'Testimonials',
+  services: 'Services',
+  haritech: 'Haritech content',
+  design: 'Design system',
+  messages: 'Inbox',
+  settings: 'Settings',
 };
+
+const SECTION_INTROS: Partial<Record<Tab, { title: string; description: string }>> = {
+  projecthub: {
+    title: 'Project board',
+    description:
+      'Delivery phases, client assignments and portal access — all in one operating board.',
+  },
+  haritech: {
+    title: 'Haritech content',
+    description: 'Every Haritech Exclusive Business page, service and application desk.',
+  },
+  design: {
+    title: 'Design system',
+    description: 'Accent colour and typography used across the public site and this console.',
+  },
+  services: {
+    title: 'Services',
+    description: 'Service cards shown across the site. Changes publish to every visitor.',
+  },
+};
+
+const HARITECH_SUBTABS = [
+  { id: 'content', label: 'Content' },
+  { id: 'services', label: 'Services' },
+  { id: 'team', label: 'Team' },
+  { id: 'whatwedo', label: 'What we do' },
+  { id: 'solar', label: 'Solar energy' },
+  { id: 'solaradvisor', label: 'Solar advisor' },
+  { id: 'import', label: 'Importation' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'epoxy', label: 'Epoxy & décor' },
+  { id: 'industries', label: 'Industries' },
+  { id: 'faq', label: 'FAQ' },
+  { id: 'blog', label: 'Blog' },
+  { id: 'cac', label: 'CAC info' },
+  { id: 'cacapplications', label: 'CAC applications' },
+  { id: 'contact', label: 'Contact' },
+  { id: 'logo', label: 'Logo' },
+] as const;
+
+const SIDEBAR_KEY = 'haritech-admin-sidebar-collapsed';
 
 const AdminDashboard: React.FC = () => {
-  console.log('AdminDashboard RENDERED');
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [projects, setProjects] = useState<ProjectData[]>(() => getStoredProjects());
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingProject, setEditingProject] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState('All');
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: Tab = isTab(tabParam) ? tabParam : 'dashboard';
 
-const handleLogout = async () => {
-  const sb = getSupabase();
-  if (sb) await sb.auth.signOut();
-};
-  const [logoUrl, setLogoUrl] = useState<string>(() => getStoredBrandLogo());
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [settings, setSettings] = useState<SiteSettings>(() => getStoredSettings());
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getStoredTestimonials());
+  const {
+    projects,
+    testimonials,
+    settings,
+    logo,
+    messages,
+    messagesLoading,
+    messagesError,
+    applications,
+    sessionEmail,
+    cloudConfigured,
+    newMessageCount,
+    syncedAt,
+    syncing,
+    saveProjects,
+    saveTestimonials,
+    saveSettings,
+    saveLogo,
+    refreshMessages,
+    updateMessageStatus,
+    deleteMessages,
+    syncNow,
+  } = useAdminData();
+
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(SIDEBAR_KEY) === 'true';
+  });
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [haritechSubTab, setHaritechSubTab] = useState<string>('content');
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<ProjectData | null>(null);
+  const [testimonialModalOpen, setTestimonialModalOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
-  const [isAddingTestimonial, setIsAddingTestimonial] = useState(false);
-  const [haritechSubTab, setHaritechSubTab] = useState('content');
-  const [messages, setMessages] = useState<ContactMessageRow[]>([]);
-  const [messagesLoading, setMessagesLoading] = useState(false);
-  const [messagesError, setMessagesError] = useState<string | null>(null);
-  const [messagesVersion, setMessagesVersion] = useState(0);
-  const [messagesSearch, setMessagesSearch] = useState('');
-  const [messagesStatusFilter, setMessagesStatusFilter] = useState('all');
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  const toastTimer = useRef<number | null>(null);
 
-  useEffect(() => {
-    setLogoUrl(getStoredBrandLogo());
+  const notify = useCallback((type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setNotification(null), 5000);
   }, []);
 
+  useEffect(
+    () => () => {
+      if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    },
+    []
+  );
+
+  const setTab = useCallback(
+    (tab: string) => {
+      const next = new URLSearchParams(searchParams);
+      if (tab === 'dashboard') next.delete('tab');
+      else next.set('tab', tab);
+      setSearchParams(next, { replace: true });
+      setMobileSidebarOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [searchParams, setSearchParams]
+  );
+
   useEffect(() => {
-    if (activeTab !== 'messages') return;
-    const sb = getSupabase();
-    if (!sb) {
-      setMessagesError('Cloud sync is not configured — cannot load messages.');
-      setMessagesLoading(false);
-      return;
-    }
-    let cancelled = false;
-    setMessagesLoading(true);
-    setMessagesError(null);
-    // Ask for every column the current schema defines. If the live table
-    // predates the migration PostgREST rejects the whole select (42703), so
-    // fall back to whatever columns the table does have instead of blanking.
-    const FULL_SELECT = '*, status, notification_status, notification_error, notified_at, category, consent_marketing, source_page, user_agent';
-    const load = async () => {
-      let res = await sb
-        .from('contact_messages')
-        .select(FULL_SELECT)
-        .order('created_at', { ascending: false })
-        .limit(200);
-      let schemaOutdated = false;
-      if (res.error && (res.error.code === 'PGRST205' || /does not exist|schema cache/i.test(res.error.message))) {
-        schemaOutdated = true;
-        res = await sb
-          .from('contact_messages')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(200);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setPaletteOpen((open) => !open);
       }
-      if (cancelled) return;
-      if (res.error) {
-        const missing = /does not exist|schema cache/i.test(res.error.message);
-        setMessagesError(
-          missing
-            ? 'Table "contact_messages" is missing — run the contact_messages section of supabase/schema.sql in the Supabase SQL editor.'
-            : res.error.message
-        );
-      } else {
-        setMessages((res.data as ContactMessageRow[]) ?? []);
-        if (schemaOutdated) {
-          setMessagesError(
-            'Your contact_messages table is missing its newer columns (status, notification_status, category, consent_marketing, source_page, user_agent). Run the "upgrade path" ALTER statements from supabase/schema.sql in the Supabase SQL editor, then hit Refresh. Messages below are still listed with safe defaults.'
-          );
-        }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((current) => {
+      const next = !current;
+      try {
+        window.localStorage.setItem(SIDEBAR_KEY, String(next));
+      } catch {
+        /* a layout preference should never break the console */
       }
-      setMessagesLoading(false);
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeTab, messagesVersion]);
+      return next;
+    });
+  }, []);
 
-  const deleteMessage = async (id: number) => {
-    const sb = getSupabase();
-    if (!sb) return;
-    const { error } = await sb.from('contact_messages').delete().eq('id', id);
-    if (error) {
-      showNotification('error', /does not exist/i.test(error.message)
-        ? 'Delete failed: your contact_messages table is missing columns — run the schema.sql upgrade in Supabase first.'
-        : `Could not delete: ${error.message}`);
-      return;
-    }
-    setMessages((prev) => prev.filter((m) => m.id !== id));
-    showNotification('success', 'Message deleted');
-  };
-
-  const updateMessageStatus = async (id: number, status: string) => {
-    const sb = getSupabase();
-    if (!sb) return;
-    const { error } = await sb.from('contact_messages').update({ status }).eq('id', id);
-    if (error) {
-      showNotification('error', /does not exist/i.test(error.message)
-        ? 'Status update failed: your contact_messages table has no status column — run the schema.sql upgrade in Supabase first.'
-        : `Could not update: ${error.message}`);
-      return;
-    }
-    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
-    showNotification('success', status === 'spam' ? 'Marked as spam' : 'Status updated');
-  };
-
-  const exportMessagesCsv = () => {
-    const head = ['id', 'form', 'category', 'name', 'email', 'phone', 'subject', 'budget', 'timeline', 'contact_method', 'consent_marketing', 'source_page', 'status', 'notification_status', 'created_at'];
-    const rows = filteredMessages.map((m) => [
-      m.id, m.form, m.category ?? '', m.name, m.email, m.phone, m.subject, m.budget, m.timeline,
-      m.contact_method, m.consent_marketing ? 'yes' : 'no', m.source_page ?? '', m.status,
-      m.notification_status, new Date(m.created_at).toISOString(),
-    ]
-      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
-      .join(','));
-    const csv = [head.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `haritech-enquiries-${new Date().toISOString().slice(0, 10)}.csv`;
-    URL.revokeObjectURL(url);
-    a.click();
-    showNotification('success', 'CSV exported');
-  };
-
-  const filteredMessages = messages.filter((m) => {
-    if (messagesStatusFilter !== 'all') {
-      if (messagesStatusFilter !== m.status) return false;
-    }
-    const q = messagesSearch.trim().toLowerCase();
-    if (!q) return true;
-    return [m.name, m.email, m.phone, m.subject, m.category, m.message, m.budget]
-      .some((v) => String(v ?? '').toLowerCase().includes(q));
-  });
-
-  const showNotification = (type: 'success' | 'error', message: string) => {
-    setNotification({ type, message });
-    setTimeout(() => setNotification(null), 3000);
-  };
-
-  /** A write that only reached this browser is a real failure: the next visit
-      or another device would not show it, so say so instead of claiming success. */
-  const reportCloudSave = (saved: boolean, what: string) => {
-    if (saved) return;
-    showNotification(
-      'error',
-      `${what} saved on this device only — sign in as the site owner so it reaches the live site.`
-    );
-  };
-
-  const handleDeleteTestimonial = (id: number) => {
-    const updated = testimonials.filter(t => t.id !== id);
-    setTestimonials(updated);
-    void setStoredTestimonials(updated).then(saved => reportCloudSave(saved, 'Testimonial change'));
-    showNotification('success', 'Testimonial deleted successfully');
-  };
-
-  const handleSaveTestimonial = (t: Testimonial) => {
-    let updated: Testimonial[];
-    if (editingTestimonial) {
-      updated = testimonials.map(item => item.id === t.id ? t : item);
-      showNotification('success', 'Testimonial updated successfully');
-    } else {
-      updated = [...testimonials, { ...t, id: Date.now() }];
-      showNotification('success', 'Testimonial added successfully');
-    }
-    setTestimonials(updated);
-    void setStoredTestimonials(updated).then(saved => reportCloudSave(saved, 'Testimonial change'));
-    setEditingTestimonial(null);
-    setIsAddingTestimonial(false);
-  };
-
-  const persistProjects = (updated: ProjectData[]) => {
-    setProjects(updated);
-    void setStoredProjects(updated).then(saved => reportCloudSave(saved, 'Project change'));
-  };
-
-  const handleDeleteProject = (id: number) => {
-    persistProjects(projects.filter(p => p.id !== id));
-    showNotification('success', 'Project deleted successfully');
-  };
-
-  const handleSaveProject = (project: any) => {
-    let updated: ProjectData[];
-    if (editingProject) {
-      updated = projects.map(p => p.id === editingProject.id ? { ...project, id: editingProject.id } : p);
-      showNotification('success', 'Project updated successfully');
-    } else {
-      updated = [...projects, { ...project, id: Date.now() }];
-      showNotification('success', 'Project added successfully');
-    }
-    persistProjects(updated);
-    setIsEditing(false);
+  const openNewProject = useCallback(() => {
     setEditingProject(null);
+    setProjectModalOpen(true);
+  }, []);
+
+  const openEditProject = useCallback((project: ProjectData) => {
+    setEditingProject(project);
+    setProjectModalOpen(true);
+  }, []);
+
+  const openNewTestimonial = useCallback(() => {
+    setEditingTestimonial(null);
+    setTestimonialModalOpen(true);
+  }, []);
+
+  const openEditTestimonial = useCallback((testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setTestimonialModalOpen(true);
+  }, []);
+
+  const handleSaveProject = async (project: ProjectData) => {
+    const isEdit = project.id > 0;
+    const saved = isEdit
+      ? project
+      : { ...project, id: Date.now() };
+    const updated = isEdit
+      ? projects.map((item) => (item.id === project.id ? saved : item))
+      : [...projects, saved];
+    const pushed = await saveProjects(updated);
+    setProjectModalOpen(false);
+    setEditingProject(null);
+    if (pushed) {
+      notify('success', isEdit ? 'Project updated and published.' : 'Project published.');
+    } else {
+      notify(
+        'error',
+        'Project saved on this device only — sign in as the site owner so it reaches the live site.'
+      );
+    }
   };
 
-  const filteredProjects = projects.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = filterCategory === 'All' || p.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleDeleteProjects = async (ids: number[]) => {
+    const pushed = await saveProjects(projects.filter((project) => !ids.includes(project.id)));
+    if (pushed) {
+      notify('success', `${ids.length} ${ids.length === 1 ? 'project' : 'projects'} deleted.`);
+    } else {
+      notify('error', 'Deleted on this device only — sign in as the site owner to remove it everywhere.');
+    }
+  };
 
-  const stats = [
-    { label: 'Total Projects', value: projects.length, icon: FolderOpen, color: 'from-cyan-500 to-blue-600', trend: '+12%', chartData: [3, 5, 4, 7, 6, 8, projects.length], chartColor: '#06b6d4' },
-    { label: 'Categories', value: new Set(projects.map(p => p.category)).size, icon: BarChart3, color: 'from-emerald-500 to-teal-600', trend: '+8%', chartData: [2, 3, 3, 4, 5, 5, new Set(projects.map(p => p.category)).size], chartColor: '#10b981' },
-    { label: 'Testimonials', value: 12, icon: MessageSquare, color: 'from-purple-500 to-violet-600', trend: '+24%', chartData: [4, 6, 5, 8, 9, 10, 12], chartColor: '#8b5cf6' },
-    { label: 'Active Services', value: 16, icon: FileText, color: 'from-orange-500 to-pink-600', trend: '+5%', chartData: [8, 10, 12, 11, 14, 15, 16], chartColor: '#f97316' }
-  ];
+  const handleSaveTestimonial = async (testimonial: Testimonial) => {
+    const isEdit = testimonial.id > 0;
+    const saved = isEdit ? testimonial : { ...testimonial, id: Date.now() };
+    const updated = isEdit
+      ? testimonials.map((item) => (item.id === testimonial.id ? saved : item))
+      : [...testimonials, saved];
+    const pushed = await saveTestimonials(updated);
+    setTestimonialModalOpen(false);
+    setEditingTestimonial(null);
+    if (pushed) {
+      notify('success', isEdit ? 'Testimonial updated.' : 'Testimonial published.');
+    } else {
+      notify(
+        'error',
+        'Testimonial saved on this device only — sign in as the site owner so visitors see it.'
+      );
+    }
+  };
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'projects', label: 'Projects', icon: FolderOpen },
-    { id: 'projecthub', label: 'Project Manager', icon: Kanban },
-    { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
-    { id: 'services', label: 'Services', icon: Settings },
-    { id: 'haritech', label: 'Haritech', icon: Building2 },
-    { id: 'design', label: 'Design', icon: Palette },
-    { id: 'messages', label: 'Messages', icon: Mail },
-    { id: 'settings', label: 'Settings', icon: Settings }
-  ];
+  const handleDeleteTestimonial = async (id: number): Promise<boolean> => {
+    const pushed = await saveTestimonials(testimonials.filter((item) => item.id !== id));
+    if (!pushed) {
+      notify('error', 'Deleted on this device only — sign in as the site owner to remove it everywhere.');
+    }
+    return pushed;
+  };
+
+  const handleLogout = async () => {
+    const sb = getSupabase();
+    if (sb) await sb.auth.signOut();
+  };
+
+  const navGroups: ConsoleNavGroup[] = useMemo(
+    () => [
+      {
+        label: 'Workspace',
+        items: [
+          { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+          { id: 'messages', label: 'Inbox', icon: Mail, badge: newMessageCount },
+        ],
+      },
+      {
+        label: 'Content',
+        items: [
+          { id: 'projects', label: 'Projects', icon: FolderOpen },
+          { id: 'projecthub', label: 'Project board', icon: Kanban },
+          { id: 'testimonials', label: 'Testimonials', icon: Star },
+          { id: 'services', label: 'Services', icon: FileText },
+        ],
+      },
+      {
+        label: 'Haritech suite',
+        items: [
+          { id: 'haritech', label: 'Haritech content', icon: Building2 },
+          { id: 'design', label: 'Design system', icon: Palette },
+        ],
+      },
+      { label: 'System', items: [{ id: 'settings', label: 'Settings', icon: Settings }] },
+    ],
+    [newMessageCount]
+  );
+
+  const paletteItems: PaletteItem[] = useMemo(() => {
+    const navigation: PaletteItem[] = navGroups
+      .flatMap((group) => group.items)
+      .map((item) => ({
+        id: `nav-${item.id}`,
+        label: item.label,
+        group: 'Navigate',
+        hint: 'Open this section',
+        run: () => setTab(item.id),
+      }));
+
+    const actions: PaletteItem[] = [
+      {
+        id: 'action-add-project',
+        label: 'Add a project',
+        group: 'Actions',
+        hint: 'Publish a new case study',
+        keywords: 'new create portfolio',
+        run: openNewProject,
+      },
+      {
+        id: 'action-add-testimonial',
+        label: 'Add a testimonial',
+        group: 'Actions',
+        hint: 'Publish real client feedback',
+        keywords: 'new create review',
+        run: openNewTestimonial,
+      },
+      {
+        id: 'action-refresh',
+        label: 'Refresh enquiries',
+        group: 'Actions',
+        hint: 'Reload messages from Supabase',
+        keywords: 'sync reload inbox',
+        run: () => {
+          refreshMessages();
+          notify('success', 'Refreshing enquiries…');
+        },
+      },
+      {
+        id: 'action-sync',
+        label: 'Sync content with the cloud',
+        group: 'Actions',
+        hint: 'Pull the latest published rows',
+        keywords: 'cloud supabase update',
+        run: () => void syncNow(),
+      },
+      {
+        id: 'action-view-site',
+        label: 'Open the live site',
+        group: 'Actions',
+        hint: 'View the public website',
+        keywords: 'preview website',
+        run: () => window.open('/', '_blank', 'noopener'),
+      },
+    ];
+
+    const projectItems: PaletteItem[] = projects.slice(0, 12).map((project) => ({
+      id: `project-${project.id}`,
+      label: project.title,
+      group: 'Projects',
+      hint: `${project.category}${project.year ? ` · ${project.year}` : ''}`,
+      keywords: `${project.description} ${project.technology.join(' ')}`,
+      run: () => openEditProject(project),
+    }));
+
+    return [...navigation, ...actions, ...projectItems];
+  }, [
+    navGroups,
+    projects,
+    setTab,
+    openNewProject,
+    openNewTestimonial,
+    openEditProject,
+    refreshMessages,
+    syncNow,
+    notify,
+  ]);
+
+  const intro = SECTION_INTROS[activeTab];
 
   return (
-    <div className="min-h-screen bg-[#070a13] text-white">
-      {/* Notification */}
-      <AnimatePresence>
-        {notification && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, x: '-50%' }}
-            animate={{ opacity: 1, y: 0, x: '-50%' }}
-            exit={{ opacity: 0, y: -50, x: '-50%' }}
-            className={`fixed top-4 left-1/2 z-[60] px-6 py-4 rounded-xl flex items-center gap-3 shadow-2xl border ${
-              notification.type === 'success' 
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                : 'bg-red-500/10 border-red-500/20 text-red-400'
-            }`}
-          >
-            {notification.type === 'success' ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-            <span className="text-sm font-bold">{notification.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="relative min-h-screen bg-[#050810] text-slate-200">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 opacity-60"
+        style={{
+          background:
+            'radial-gradient(900px 380px at 18% -8%, rgba(34,211,238,0.06), transparent 60%), radial-gradient(800px 360px at 92% 4%, rgba(139,92,246,0.05), transparent 60%)',
+        }}
+      />
 
-      <div className="flex">
-        {/* Mobile Sidebar Backdrop */}
-        {mobileSidebarOpen && (
-          <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setMobileSidebarOpen(false)} />
-        )}
+      <div className="relative flex min-h-screen">
+        <AdminSidebar
+          groups={navGroups}
+          activeTab={activeTab}
+          onSelect={setTab}
+          collapsed={collapsed}
+          onToggleCollapsed={toggleCollapsed}
+          mobileOpen={mobileSidebarOpen}
+          onCloseMobile={() => setMobileSidebarOpen(false)}
+          logo={logo}
+          cloudConfigured={cloudConfigured}
+          sessionEmail={sessionEmail}
+          onLogout={() => void handleLogout()}
+        />
 
-        {/* Sidebar */}
-        <aside className={`${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} w-72 bg-[#0a0e1a] min-h-screen p-6 fixed border-r border-white/5 transition-all duration-300 z-50 lg:z-40 ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} overflow-y-auto`}>
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
-              {!sidebarCollapsed && (
-                <div>
-                  <h1 className="text-white font-bold text-lg tracking-tight">HARITECH</h1>
-                  <p className="text-slate-600 text-[10px] uppercase tracking-[0.2em] font-mono">Admin Console</p>
-                </div>
-              )}
-            </div>
-            <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-slate-400 transition-colors" aria-label="Close sidebar">
-              <X className="h-5 w-5" />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-[#050810]/85 px-3 backdrop-blur-xl sm:px-5 lg:px-8">
+            <button
+              type="button"
+              onClick={() => setMobileSidebarOpen(true)}
+              className="rounded-lg border border-white/[0.07] p-2 text-slate-400 transition-colors hover:text-white lg:hidden"
+              aria-label="Open navigation"
+            >
+              <Menu className="h-4 w-4" />
             </button>
-          </div>
-          
-          <nav className="space-y-1.5">
-            {navItems.map((item) => (
+
+            <div className="hidden min-w-0 items-center gap-1.5 text-[11px] sm:flex">
+              <span className="text-slate-600">Console</span>
+              <ChevronRight className="h-3 w-3 text-slate-700" />
+              <span className="truncate font-bold text-slate-300">{TAB_LABELS[activeTab]}</span>
+            </div>
+
+            <div className="ml-auto flex items-center gap-2">
               <button
-                key={item.id}
-                onClick={() => { setActiveTab(item.id as Tab); setMobileSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${
-                  activeTab === item.id
-                    ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/5 text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
-                }`}
+                type="button"
+                onClick={() => setPaletteOpen(true)}
+                className="flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2.5 py-2 text-slate-500 transition-colors hover:border-white/15 hover:text-slate-200"
+                aria-label="Search the console"
               >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!sidebarCollapsed && item.label}
+                <Search className="h-3.5 w-3.5" />
+                <span className="hidden text-[11px] font-semibold md:inline">Search</span>
+                <kbd className="hidden items-center gap-0.5 rounded border border-white/10 px-1 py-0.5 text-[9px] font-bold lg:flex">
+                  <Command className="h-2.5 w-2.5" />K
+                </kbd>
               </button>
-            ))}
-          </nav>
 
-          {!sidebarCollapsed && (
-            <div className="absolute bottom-6 left-6 right-6">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/5 to-purple-500/5 border border-white/5">
-                <p className="text-xs text-slate-500 font-mono mb-2">System Status</p>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs text-emerald-400 font-bold">All Systems Operational</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </aside>
-
-        {/* Main Content */}
-        <main className={`${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'} flex-1 p-4 sm:p-6 lg:p-8 transition-all duration-300 min-w-0`}>
-          {/* Header */}
-          <div className="flex items-center justify-between mb-10 gap-4">
-            <div className="flex items-center gap-3 min-w-0">
               <button
-                onClick={() => setMobileSidebarOpen(true)}
-                className="lg:hidden p-2.5 bg-slate-900/50 border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all"
-                aria-label="Open sidebar"
+                type="button"
+                onClick={() => setTab('messages')}
+                className="relative rounded-lg border border-white/[0.07] bg-white/[0.02] p-2 text-slate-400 transition-colors hover:text-white"
+                aria-label={`Open inbox, ${newMessageCount} new`}
               >
-                <Menu className="h-5 w-5" />
+                <Mail className="h-3.5 w-3.5" />
+                {newMessageCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-400 px-1 text-[8px] font-black text-slate-950">
+                    {newMessageCount > 9 ? '9+' : newMessageCount}
+                  </span>
+                )}
               </button>
-              <div className="min-w-0">
-                <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight truncate">
-                  {activeTab === 'projecthub' ? 'Project Manager' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                </h1>
-                <p className="text-slate-500 text-xs sm:text-sm mt-1 font-mono">Manage your portfolio content and configuration</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <button 
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="hidden lg:flex p-2.5 bg-slate-900/50 border border-white/5 rounded-xl text-slate-500 hover:text-white hover:border-white/10 transition-all"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-              </button>
-              <Link
-                to="/"
-                className="flex items-center gap-2 px-4 py-2.5 text-slate-400 hover:text-cyan-400 transition-colors border border-white/5 hover:border-cyan-500/20 rounded-xl text-sm bg-slate-900/30"
-              >
-                <Eye className="h-4 w-4" />
-                <span className="hidden sm:inline">View Site</span>
-              </Link>
-              {isCloudConfigured() && (
+
+              {activeTab === 'projects' && (
                 <button
-                  onClick={handleLogout}
-                  className="p-2.5 bg-slate-900/50 border border-white/5 rounded-xl text-slate-500 hover:text-red-400 hover:border-red-500/20 transition-all"
-                  title="Sign out"
-                  aria-label="Sign out"
+                  type="button"
+                  onClick={openNewProject}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-400 px-2.5 py-2 text-[11px] font-bold text-slate-950 transition-colors hover:bg-cyan-300"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <Plus className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">New project</span>
                 </button>
               )}
-            </div>
-          </div>
 
-          {/* Dashboard Tab */}
-          {activeTab === 'dashboard' && (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.08 }}
-                  >
-                    <div className="card p-6 bg-[#0e1326]/80 border-white/5 hover:border-cyan-500/15 transition-all glow-border relative overflow-hidden">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                          <stat.icon className="h-5 w-5 text-white" />
-                        </div>
-                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20 flex items-center gap-1">
-                          <ArrowUpRight className="h-3 w-3" />
-                          {stat.trend}
-                        </span>
-                      </div>
-                      <h3 className="text-3xl font-black text-white mb-1">{stat.value}</h3>
-                      <p className="text-slate-500 text-xs font-mono uppercase tracking-wider">{stat.label}</p>
-                      <div className="mt-4 opacity-60">
-                        <MiniChart data={stat.chartData} color={stat.chartColor} />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Activity & Recent Projects */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 card p-6 bg-[#0e1326]/80 border-white/5 glow-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                      <Activity className="h-4 w-4 text-cyan-400" /> Recent Projects
-                    </h3>
-                    <button onClick={() => setActiveTab('projects')} className="text-xs text-cyan-400 hover:text-cyan-300 font-bold">View All →</button>
-                  </div>
-                  <div className="space-y-3">
-                    {projects.slice(0, 5).map((project) => (
-                      <div key={project.id} className="flex items-center gap-4 p-4 bg-slate-950/40 rounded-xl border border-white/5 hover:border-white/10 transition-all group">
-                        <img src={project.image} alt={project.title} className="w-14 h-14 rounded-xl object-cover border border-white/5" />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-white text-sm group-hover:text-cyan-400 transition-colors truncate">{project.title}</h4>
-                          <p className="text-xs text-slate-500 font-mono">{project.category}</p>
-                        </div>
-                        <span className="text-xs text-slate-600 font-mono flex-shrink-0">{project.year}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Stats Sidebar */}
-                <div className="card p-6 bg-[#0e1326]/80 border-white/5 glow-border">
-                  <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-purple-400" /> Quick Stats
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      { label: 'Site Visitors', value: '2.4K', trend: '+18%', color: 'text-cyan-400' },
-                      { label: 'Page Views', value: '8.1K', trend: '+32%', color: 'text-purple-400' },
-                      { label: 'Bounce Rate', value: '24%', trend: '-8%', color: 'text-emerald-400' },
-                      { label: 'Avg. Session', value: '3m 42s', trend: '+12%', color: 'text-orange-400' },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 bg-slate-950/40 rounded-xl border border-white/5">
-                        <div>
-                          <p className="text-xs text-slate-500 font-mono">{item.label}</p>
-                          <p className={`text-lg font-bold ${item.color}`}>{item.value}</p>
-                        </div>
-                        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">{item.trend}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Projects Tab */}
-          {activeTab === 'projects' && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-600" />
-                  <input
-                    type="text"
-                    placeholder="Search projects..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white"
-                  />
-                </div>
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="px-4 py-3 bg-slate-950/60 rounded-xl border border-white/5 focus:border-cyan-500/50 outline-none text-sm text-white"
-                >
-                  {['All', 'Business', 'Restaurant', 'School', 'Hospital', 'Hotel', 'Church', 'E-commerce', 'Corporate'].map(cat => (
-                    <option key={cat} value={cat} className="bg-[#0e1326]">{cat}</option>
-                  ))}
-                </select>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setIsEditing(true); setEditingProject(null); }}
-                  className="flex items-center gap-2 px-6 py-3 btn-primary rounded-xl text-sm"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Project
-                </motion.button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence>
-                  {filteredProjects.map((project) => (
-                    <motion.div
-                      key={project.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="card bg-[#0e1326]/80 border-white/5 hover:border-cyan-500/15 overflow-hidden transition-all glow-border"
-                    >
-                      <div className="relative">
-                        <img src={project.image} alt={project.title} className="w-full h-44 object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0e1326] to-transparent opacity-60" />
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-bold text-white text-sm">{project.title}</h3>
-                          <span className="px-2.5 py-0.5 bg-cyan-500/10 border border-cyan-500/20 rounded-md text-[10px] text-cyan-400 font-bold uppercase">{project.category}</span>
-                        </div>
-                        <p className="text-slate-500 text-xs mb-5 line-clamp-2">{project.description}</p>
-                        <div className="flex gap-2">
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.97 }}
-                            onClick={() => { setIsEditing(true); setEditingProject(project); }}
-                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-cyan-500/10 text-cyan-400 rounded-xl hover:bg-cyan-500 hover:text-white transition-all text-xs font-bold border border-cyan-500/20 hover:border-transparent"
-                          >
-                            <Edit className="h-3.5 w-3.5" />
-                            Edit
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.97 }}
-                            onClick={() => handleDeleteProject(project.id)}
-                            className="px-4 py-2.5 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/10 transition-all"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </motion.button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
-          )}
-
-          {/* Testimonials Tab */}
-          {activeTab === 'testimonials' && (
-            <div className="card p-8 bg-[#0e1326]/80 border-white/5 glow-border">
-              <h3 className="text-xl font-bold mb-6 text-white">Manage Testimonials</h3>
-              <p className="text-slate-400 text-sm mb-8">Add, edit, or remove client testimonials from your portfolio.</p>
-              <div className="space-y-3">
-                {testimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="flex items-center gap-4 p-4 bg-slate-950/40 rounded-xl border border-white/5 hover:border-white/10 transition-all group">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-lg">
-                      {testimonial.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-white text-sm">{testimonial.name}</h4>
-                      <p className="text-xs text-slate-500 font-mono">{testimonial.company}</p>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <span key={i} className="text-yellow-500 text-sm">{'\u2605'}</span>
-                      ))}
-                    </div>
-                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => setEditingTestimonial(testimonial)} className="p-2 text-slate-600 hover:text-cyan-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5"><Edit className="h-3.5 w-3.5" /></button>
-                      <button onClick={() => handleDeleteTestimonial(testimonial.id)} className="p-2 text-slate-600 hover:text-red-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5"><Trash2 className="h-3.5 w-3.5" /></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => { setEditingTestimonial(null); setIsAddingTestimonial(true); }}
-                className="mt-6 flex items-center gap-2 btn-primary px-6 py-3 rounded-xl text-sm"
-              >
-                <Plus className="h-4 w-4" />
-                Add Testimonial
-              </motion.button>
-            </div>
-          )}
-
-          {/* Testimonial Edit Modal */}
-          <AnimatePresence>
-            {(editingTestimonial || isAddingTestimonial) && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
-                onClick={() => { setEditingTestimonial(null); setIsAddingTestimonial(false); }}
-              >
-                <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  className="bg-[#0e1326] border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-8 shadow-2xl"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-2xl font-bold text-white">{editingTestimonial ? 'Edit Testimonial' : 'Add Testimonial'}</h3>
-                    <button onClick={() => { setEditingTestimonial(null); setIsAddingTestimonial(false); }} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-white border border-white/5">
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                  <TestimonialForm
-                    testimonial={editingTestimonial}
-                    onSave={handleSaveTestimonial}
-                    onCancel={() => { setEditingTestimonial(null); setIsAddingTestimonial(false); }}
-                  />
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Services Tab */}
-          {activeTab === 'services' && (
-            <div className="card p-8 bg-[#0e1326]/80 border-white/5 glow-border">
-              <h3 className="text-xl font-bold mb-6 text-white">Manage Services</h3>
-              <p className="text-slate-400 text-sm mb-8">Update your service offerings and descriptions.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['Website Design', 'Business Websites', 'E-commerce Stores', 'School Systems', 'Hospital Systems', 'Hotel Platforms', 'Church Websites', 'Custom Web Apps'].map((service, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 bg-slate-950/40 rounded-xl border border-white/5 hover:border-white/10 transition-all group">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-md">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-white text-sm">{service}</h4>
-                    </div>
-                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-slate-600 hover:text-cyan-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5"><Edit className="h-3.5 w-3.5" /></button>
-                      <button className="p-2 text-slate-600 hover:text-red-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5"><Trash2 className="h-3.5 w-3.5" /></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Messages Tab */}
-          {activeTab === 'messages' && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Messages</h1>
-                <p className="text-slate-500 text-sm mt-1 font-mono">{filteredMessages.length} of {messages.length} enquiries — contact & quote requests from the site</p>
-              </div>
-              <div className="card p-4 flex flex-wrap items-center gap-3 bg-[#0e1326]/80 border-white/5">
-                <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-slate-950/60 rounded-xl border border-white/5 px-3 py-2">
-                  <Search className="h-3.5 w-3.5 text-slate-500" />
-                  <input
-                    type="text"
-                    value={messagesSearch}
-                    onChange={(e) => setMessagesSearch(e.target.value)}
-                    placeholder="Search name, email, message…"
-                    className="flex-1 bg-transparent text-xs text-white placeholder-slate-600 outline-none"
-                  />
-                </div>
-                <select
-                  value={messagesStatusFilter}
-                  onChange={(e) => setMessagesStatusFilter(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-slate-950/60 border border-white/5 text-xs text-slate-300 outline-none"
-                >
-                  <option value="all">All statuses</option>
-                  <option value="new">New</option>
-                  <option value="in_progress">In progress</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="spam">Spam</option>
-                </select>
-                <button onClick={exportMessagesCsv} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-slate-400 hover:text-white text-xs font-bold transition-colors">
-                  <FileText className="h-3.5 w-3.5" /> Export CSV
-                </button>
+              {activeTab === 'testimonials' && (
                 <button
-                  onClick={() => setMessagesVersion((v) => v + 1)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-white/5 text-slate-400 hover:text-white text-xs font-bold transition-colors"
+                  type="button"
+                  onClick={openNewTestimonial}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-400 px-2.5 py-2 text-[11px] font-bold text-slate-950 transition-colors hover:bg-cyan-300"
                 >
-                  <RefreshCw className={`h-3.5 w-3.5 ${messagesLoading ? 'animate-spin' : ''}`} /> Refresh
+                  <Plus className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">New testimonial</span>
                 </button>
-              </div>
-
-              {messagesError && (
-                <div className="card p-6 border border-amber-500/20 bg-amber-500/5 flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-sm text-amber-300">{messagesError}</p>
-                </div>
               )}
 
-              {messagesLoading && !messages.length && (
-                <div className="card p-10 text-center text-slate-500 text-sm">Loading messages…</div>
-              )}
-
-              {!messagesLoading && !messagesError && messages.length === 0 && (
-                <div className="card p-10 text-center">
-                  <Mail className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400 text-sm font-bold">No messages yet</p>
-                  <p className="text-slate-600 text-xs mt-1">Submissions from the Contact and Request Quote forms will appear here.</p>
-                </div>
-              )}
-
-              {filteredMessages.length > 0 && (
-                <div className="space-y-4">
-                  {filteredMessages.map((m) => {
-                    // Columns added by later migrations may be absent on older
-                    // tables — a missing value must never blank the whole tab.
-                    const status = m.status ?? 'new';
-                    const notif = m.notification_status ?? 'pending';
-                    const stamp = m.created_at ? new Date(m.created_at) : null;
-                    const stampLabel = stamp && !Number.isNaN(stamp.getTime()) ? stamp.toLocaleString() : '—';
-                    return (
-                    <div key={m.id} className={`card p-6 bg-[#0e1326]/80 border-white/5 ${status === 'spam' ? 'opacity-60' : ''}`}>
-                      <div className="flex items-start justify-between gap-4 mb-3">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${m.form === 'quote' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'}`}>
-                            {m.form === 'quote' ? 'Quote Request' : 'Contact'}
-                          </span>
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${
-                            status === 'new' ? 'bg-white/5 text-white border-white/20'
-                            : status === 'in_progress' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                            : status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                            : 'bg-red-500/10 text-red-400 border-red-500/30'
-                          }`}>{status.replace('_', ' ')}</span>
-                          <span
-                            title={`Email delivery: ${notif}${m.notification_error ? ` — ${m.notification_error}` : ''}`}
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
-                              notif === 'sent' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
-                              : notif === 'failed' ? 'bg-red-500/10 text-red-400 border-red-500/25'
-                              : notif === 'disabled' ? 'bg-slate-700/40 text-slate-400 border-white/10'
-                              : 'bg-white/5 text-slate-400 border-white/15'
-                            }`}
-                          >
-                            {notif === 'sent' ? 'email sent' : notif === 'failed' ? 'email FAILED' : notif}
-                          </span>
-                          <span className="text-white font-bold text-sm">{m.name || 'Anonymous'}</span>
-                          <a href={`mailto:${m.email}`} className="text-cyan-400 hover:text-cyan-300 text-xs">{m.email}</a>
-                          {m.phone && <a href={`tel:${m.phone}`} className="text-slate-400 hover:text-white text-xs">{m.phone}</a>}
-                          {m.consent_marketing && <span className="text-[9px] text-violet-300 bg-violet-500/10 border border-violet-500/25 px-2 py-0.5 rounded-full">marketing OK</span>}
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <span className="text-slate-600 text-[10px] font-mono">{stampLabel}</span>
-                          <select
-                            value={status}
-                            onChange={(e) => updateMessageStatus(m.id, e.target.value)}
-                            className="px-2 py-1.5 rounded-lg bg-slate-950/70 border border-white/10 text-[10px] text-slate-300 outline-none"
-                            aria-label="Enquiry status"
-                          >
-                            <option value="new">New</option>
-                            <option value="in_progress">In progress</option>
-                            <option value="resolved">Resolved</option>
-                            <option value="spam">Spam</option>
-                          </select>
-                          <button onClick={() => deleteMessage(m.id)} className="p-2 text-slate-600 hover:text-red-400 transition-colors bg-slate-900/50 rounded-lg border border-white/5" aria-label="Delete message">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                      {m.category && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Category:</span> {m.category}</p>}
-                      {m.subject && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Subject:</span> {m.subject}</p>}
-                      {m.budget && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Budget:</span> {m.budget}</p>}
-                      {m.timeline && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Timeline:</span> {m.timeline}</p>}
-                      {m.contact_method && <p className="text-xs text-slate-400 mb-1"><span className="text-slate-600">Preferred contact:</span> {m.contact_method}</p>}
-                      {m.source_page && <p className="text-xs text-slate-400 mb-2"><span className="text-slate-600">Source page:</span> {m.source_page}</p>}
-                      {notif === 'failed' && m.notification_error && (
-                        <p className="text-xs text-red-400/80 mb-2 font-mono border border-red-500/20 bg-red-500/5 rounded-lg px-3 py-2">Delivery error: {m.notification_error}</p>
-                      )}
-                      <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line border-t border-white/5 pt-3">{m.message}</p>
-                    </div>
-                    );
-                  })}
-                </div>
-              )}
-              {filteredMessages.length === 0 && messages.length > 0 && (
-                <div className="card p-10 text-center text-slate-500 text-sm">No messages match your search/filter.</div>
-              )}
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2.5 py-2 text-[11px] font-bold text-slate-400 transition-colors hover:text-white sm:flex"
+              >
+                <ExternalLink className="h-3.5 w-3.5" /> View site
+              </a>
             </div>
-          )}
+          </header>
 
-          {/* Project Manager tab — full control over the hub board + client assignments */}
-          {activeTab === 'projecthub' && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Project Manager</h1>
-                <p className="text-slate-500 text-sm mt-1 font-mono">Delivery board, phases, projects and client portal assignments — total control</p>
-              </div>
-              <HaritechProjectManager />
-              <HaritechClientProjectsManager />
-              <HaritechPortalManager />
-            </div>
-          )}
+          <main className="min-w-0 flex-1">
+            <div className="mx-auto w-full max-w-[1480px] px-3 py-5 sm:px-5 lg:px-8 lg:py-7">
+              {intro && (
+                <div className="mb-5">
+                  <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                    {intro.title}
+                  </h1>
+                  <p className="mt-1 text-xs text-slate-500">{intro.description}</p>
+                </div>
+              )}
 
-          {/* Haritech Tab */}
-          {activeTab === 'haritech' && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Haritech Management</h1>
-                <p className="text-slate-500 text-sm mt-1 font-mono">Manage all Haritech Exclusive Business content</p>
-              </div>
+              {activeTab === 'dashboard' && (
+                <DashboardOverview
+                  projects={projects}
+                  testimonials={testimonials}
+                  messages={messages}
+                  applications={applications}
+                  settings={settings}
+                  logo={logo}
+                  cloudConfigured={cloudConfigured}
+                  sessionEmail={sessionEmail}
+                  syncing={syncing}
+                  syncedAt={syncedAt}
+                  onNavigate={setTab}
+                  onAddProject={openNewProject}
+                  onEditProject={openEditProject}
+                  onAddTestimonial={openNewTestimonial}
+                  onRefresh={refreshMessages}
+                  onSync={() => void syncNow()}
+                />
+              )}
 
-              {/* Sub-tabs */}
-              <div className="flex flex-wrap gap-2 border-b border-white/5 pb-4">
-                {[
-                  { id: 'content', label: 'Content' },
-                  { id: 'services', label: 'Services' },
-                  { id: 'team', label: 'Team' },
-                  { id: 'whatwedo', label: 'What We Do' },
-                  { id: 'solar', label: 'Solar Energy' },
-                  { id: 'solaradvisor', label: 'Solar Advisor' },
-                  { id: 'import', label: 'Importation' },
-                  { id: 'projects', label: 'Project Management' },
-                  { id: 'epoxy', label: 'Epoxy & Décor' },
-                  { id: 'industries', label: 'Industries' },
-                  { id: 'faq', label: 'FAQ' },
-                  { id: 'blog', label: 'Blog' },
-                  { id: 'cac', label: 'CAC Info' },
-                  { id: 'cacapplications', label: 'CAC Applications' },
-                  { id: 'contact', label: 'Contact' },
-                  { id: 'logo', label: 'Logo' },
-                ].map(sub => (
-                  <button key={sub.id} onClick={() => setHaritechSubTab(sub.id)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${haritechSubTab === sub.id ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white bg-[#0e1326]/50 border border-white/5 hover:border-white/10'}`}>
-                    {sub.label}
-                  </button>
-                ))}
-              </div>
+              {activeTab === 'projects' && (
+                <ProjectsPanel
+                  projects={projects}
+                  onAdd={openNewProject}
+                  onEdit={openEditProject}
+                  onDelete={handleDeleteProjects}
+                  notify={notify}
+                />
+              )}
 
-              {haritechSubTab === 'content' && <HaritechContentManager />}
-              {haritechSubTab === 'services' && <HaritechServicesManager />}
-              {haritechSubTab === 'team' && <HaritechTeamManager />}
-              {haritechSubTab === 'whatwedo' && <HaritechWhatWeDoManager />}
-              {haritechSubTab === 'solar' && <HaritechSolarManager />}
-              {haritechSubTab === 'solaradvisor' && <HaritechSolarAdvisorManager />}
-              {haritechSubTab === 'import' && <HaritechImportationManager />}
-              {haritechSubTab === 'projects' && (
-                <div className="space-y-6">
+              {activeTab === 'projecthub' && (
+                <div className="space-y-5">
                   <HaritechProjectManager />
                   <HaritechClientProjectsManager />
+                  <HaritechPortalManager />
                 </div>
               )}
-              {haritechSubTab === 'epoxy' && <HaritechEpoxyManager />}
-              {haritechSubTab === 'industries' && <HaritechIndustriesManager />}
-              {haritechSubTab === 'faq' && <HaritechFAQManager />}
-              {haritechSubTab === 'blog' && <HaritechBlogManager />}
-              {haritechSubTab === 'cac' && <HaritechCACManager />}
-              {haritechSubTab === 'cacapplications' && <HaritechCacApplicationsManager />}
-              {haritechSubTab === 'contact' && <HaritechContactManager />}
-              {haritechSubTab === 'logo' && <HaritechLogoManager />}
-            </div>
-          )}
 
-          {/* Design Tab (fonts + accent colour) */}
-          {activeTab === 'design' && <HaritechDesignManager />}
+              {activeTab === 'testimonials' && (
+                <TestimonialsPanel
+                  testimonials={testimonials}
+                  onAdd={openNewTestimonial}
+                  onEdit={openEditTestimonial}
+                  onDelete={handleDeleteTestimonial}
+                  notify={notify}
+                />
+              )}
 
-          {/* Settings Tab */}
-          {activeTab === 'settings' && (
-            <div className="space-y-8">
-              {/* Logo & Brand Identity Card */}
-              <div className="card p-8 bg-[#0e1326]/80 border-white/5 glow-border">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-cyan-400" /> Logo & Brand Identity
-                    </h3>
-                    <p className="text-slate-400 text-xs mt-1">Upload or change the primary website logo, dark/light variations, and brand emblem.</p>
-                  </div>
-                </div>
+              {activeTab === 'services' && <HaritechServicesManager />}
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Current Logo Preview Box */}
-                  <div className="p-6 bg-slate-950/50 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Active Logo Preview</p>
-                    
-                    <div className="w-full h-32 rounded-xl bg-slate-900/80 border border-white/10 flex items-center justify-center p-4 relative overflow-hidden group">
-                      {logoPreview || logoUrl ? (
-                        <img src={logoPreview || logoUrl} alt="Website Logo" className="max-h-full max-w-full object-contain" />
-                      ) : (
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 shadow-md">
-                            <Code2 className="h-7 w-7 text-white" />
-                          </div>
-                          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                            HARITECH
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <p className="text-[11px] text-slate-500 font-mono mt-4">Recommended format: PNG, SVG, or WebP (transparent background)</p>
-                  </div>
-
-                  {/* Logo Upload Form */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">
-                        Upload New Logo File
-                      </label>
-                      <div className="relative border-2 border-dashed border-white/10 hover:border-cyan-500/40 rounded-xl p-6 text-center transition-all bg-slate-950/30 cursor-pointer group">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              fileToSizedDataUrl(file, 640)
-                                .then(setLogoPreview)
-                                .catch(() => showNotification('error', 'Could not read that image file. Try a smaller file.'));
-                            }
-                          }}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                        />
-                        <Upload className="h-8 w-8 text-cyan-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                        <p className="text-xs text-slate-300 font-medium">Click or drag & drop image file</p>
-                        <p className="text-[10px] text-slate-500 mt-1">SVG, PNG, JPG up to 5MB</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">
-                        Or Enter Logo Image URL
-                      </label>
-                      <input
-                        type="url"
-                        placeholder="https://example.com/logo.png"
-                        value={logoUrl}
-                        onChange={(e) => {
-                          setLogoUrl(e.target.value);
-                          setLogoPreview(null);
-                        }}
-                        className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white"
-                      />
-                    </div>
-
-                    <div className="flex gap-3 pt-2">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          const logo = logoPreview || logoUrl;
-                          if (!logo) {
-                            showNotification('error', 'Choose a logo file or enter an image URL first');
-                            return;
-                          }
-
-                          if (!setStoredBrandLogo(logo)) {
-                            showNotification('error', 'Could not save logo — browser storage is full. Try a smaller file, or use a URL.');
-                            return;
-                          }
-
-                          setLogoUrl(logo);
-                          setLogoPreview(null);
-                          showNotification('success', 'Logo updated successfully!');
-                        }}
-                        className="flex-1 btn-primary py-2.5 px-4 rounded-xl text-xs font-bold"
-                      >
-                        <Save className="h-4 w-4" /> Save Logo
-                      </motion.button>
-                      
-                      {(logoPreview || logoUrl) && (
-                        <button
-                          onClick={() => {
-                            setLogoPreview(null);
-                            setLogoUrl('');
-                            setStoredBrandLogo('');
-                          }}
-                          className="px-4 py-2.5 border border-white/10 rounded-xl text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all"
-                        >
-                          Reset
-                        </button>
-                      )}
+              {activeTab === 'haritech' && (
+                <div className="space-y-5">
+                  <div className="-mx-1 overflow-x-auto pb-1">
+                    <div className="flex min-w-max items-center gap-1 border-b border-white/[0.06] px-1">
+                      {HARITECH_SUBTABS.map((subtab) => {
+                        const active = haritechSubTab === subtab.id;
+                        return (
+                          <button
+                            key={subtab.id}
+                            type="button"
+                            onClick={() => setHaritechSubTab(subtab.id)}
+                            aria-pressed={active}
+                            className={cx(
+                              'relative whitespace-nowrap px-3 py-2.5 text-[11px] font-bold transition-colors',
+                              active ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                            )}
+                          >
+                            {subtab.label}
+                            {active && (
+                              <span className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-cyan-400" />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* General Configuration */}
-              <div className="card p-8 bg-[#0e1326]/80 border-white/5 glow-border">
-                <h3 className="text-xl font-bold mb-6 text-white">General Configuration</h3>
-              <div className="space-y-6 max-w-2xl">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Company Name</label>
-                  <input type="text" value={settings.companyName} onChange={(e) => setSettings({ ...settings, companyName: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
+                  {haritechSubTab === 'content' && <HaritechContentManager />}
+                  {haritechSubTab === 'services' && <HaritechServicesManager />}
+                  {haritechSubTab === 'team' && <HaritechTeamManager />}
+                  {haritechSubTab === 'whatwedo' && <HaritechWhatWeDoManager />}
+                  {haritechSubTab === 'solar' && <HaritechSolarManager />}
+                  {haritechSubTab === 'solaradvisor' && <HaritechSolarAdvisorManager />}
+                  {haritechSubTab === 'import' && <HaritechImportationManager />}
+                  {haritechSubTab === 'projects' && (
+                    <div className="space-y-5">
+                      <HaritechProjectManager />
+                      <HaritechClientProjectsManager />
+                    </div>
+                  )}
+                  {haritechSubTab === 'epoxy' && <HaritechEpoxyManager />}
+                  {haritechSubTab === 'industries' && <HaritechIndustriesManager />}
+                  {haritechSubTab === 'faq' && <HaritechFAQManager />}
+                  {haritechSubTab === 'blog' && <HaritechBlogManager />}
+                  {haritechSubTab === 'cac' && <HaritechCACManager />}
+                  {haritechSubTab === 'cacapplications' && <HaritechCacApplicationsManager />}
+                  {haritechSubTab === 'contact' && <HaritechContactManager />}
+                  {haritechSubTab === 'logo' && <HaritechLogoManager />}
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Tagline</label>
-                  <input type="text" value={settings.tagline} onChange={(e) => setSettings({ ...settings, tagline: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Contact Email</label>
-                  <input type="email" value={settings.contactEmail} onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Phone Number</label>
-                  <input type="tel" value={settings.phoneNumber} onChange={(e) => setSettings({ ...settings, phoneNumber: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">WhatsApp Number</label>
-                  <input type="tel" value={settings.whatsappNumber} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Address</label>
-                  <input type="text" value={settings.address} onChange={(e) => setSettings({ ...settings, address: e.target.value })} className="w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white" />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    setStoredSettings(settings);
-                    window.dispatchEvent(new Event('haritech-settings-updated'));
-                    showNotification('success', 'Configuration saved successfully!');
-                  }}
-                  className="flex items-center gap-2 btn-primary px-6 py-3 rounded-xl text-sm"
-                >
-                  <Save className="h-4 w-4" />
-                  Save Configuration
-                </motion.button>
-              </div>
+              )}
+
+              {activeTab === 'design' && <HaritechDesignManager />}
+
+              {activeTab === 'messages' && (
+                <MessagesPanel
+                  messages={messages}
+                  loading={messagesLoading}
+                  error={messagesError}
+                  onRefresh={refreshMessages}
+                  onUpdateStatus={updateMessageStatus}
+                  onDelete={deleteMessages}
+                  notify={notify}
+                />
+              )}
+
+              {activeTab === 'settings' && (
+                <SettingsPanel
+                  settings={settings}
+                  logo={logo}
+                  cloudConfigured={cloudConfigured}
+                  sessionEmail={sessionEmail}
+                  onSaveSettings={saveSettings}
+                  onSaveLogo={saveLogo}
+                  notify={notify}
+                />
+              )}
             </div>
-            </div>
-          )}
-        </main>
+          </main>
+        </div>
       </div>
 
-      {/* Project Edit Modal */}
-      <AnimatePresence>
-        {isEditing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
-            onClick={() => setIsEditing(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative bg-[#0e1326] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Corner glow */}
-              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-cyan-500/10 blur-2xl pointer-events-none" />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} items={paletteItems} />
 
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-white">{editingProject ? 'Edit Project' : 'Add New Project'}</h3>
-                <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-white border border-white/5">
-                  <X className="h-5 w-5" />
-                </button>
+      {projectModalOpen && (
+        <div
+          className="fixed inset-0 z-[75] flex items-start justify-center overflow-y-auto bg-[#03060d]/85 p-4 backdrop-blur-sm sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label={editingProject ? 'Edit project' : 'New project'}
+          onClick={() => {
+            setProjectModalOpen(false);
+            setEditingProject(null);
+          }}
+        >
+          <div
+            className="w-full max-w-3xl rounded-xl border border-white/10 bg-[#080d18] p-5 shadow-2xl sm:p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-5 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black tracking-tight text-white">
+                  {editingProject ? 'Edit project' : 'New project'}
+                </h2>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  Published immediately to the portfolio and cloud copy.
+                </p>
               </div>
-              
-              <ProjectForm
-                project={editingProject}
-                onSave={handleSaveProject}
-                onCancel={() => setIsEditing(false)}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <button
+                type="button"
+                onClick={() => {
+                  setProjectModalOpen(false);
+                  setEditingProject(null);
+                }}
+                className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"
+                aria-label="Close project form"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <ProjectForm
+              key={editingProject?.id ?? 'new'}
+              project={editingProject}
+              onSave={(project) => void handleSaveProject(project)}
+              onCancel={() => {
+                setProjectModalOpen(false);
+                setEditingProject(null);
+              }}
+              notify={notify}
+            />
+          </div>
+        </div>
+      )}
+
+      {testimonialModalOpen && (
+        <div
+          className="fixed inset-0 z-[75] flex items-start justify-center overflow-y-auto bg-[#03060d]/85 p-4 backdrop-blur-sm sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label={editingTestimonial ? 'Edit testimonial' : 'New testimonial'}
+          onClick={() => {
+            setTestimonialModalOpen(false);
+            setEditingTestimonial(null);
+          }}
+        >
+          <div
+            className="w-full max-w-xl rounded-xl border border-white/10 bg-[#080d18] p-5 shadow-2xl sm:p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-5 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black tracking-tight text-white">
+                  {editingTestimonial ? 'Edit testimonial' : 'New testimonial'}
+                </h2>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  Use only feedback the client gave you permission to publish.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setTestimonialModalOpen(false);
+                  setEditingTestimonial(null);
+                }}
+                className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"
+                aria-label="Close testimonial form"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <TestimonialForm
+              key={editingTestimonial?.id ?? 'new'}
+              testimonial={editingTestimonial}
+              onSave={(testimonial) => void handleSaveTestimonial(testimonial)}
+              onCancel={() => {
+                setTestimonialModalOpen(false);
+                setEditingTestimonial(null);
+              }}
+              notify={notify}
+            />
+          </div>
+        </div>
+      )}
+
+      {notification && (
+        <div
+          role="status"
+          className={cx(
+            'fixed bottom-4 right-4 z-[95] flex max-w-sm items-start gap-2.5 rounded-lg border p-3.5 shadow-2xl backdrop-blur-xl',
+            notification.type === 'success'
+              ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200'
+              : 'border-red-400/25 bg-red-400/10 text-red-200'
+          )}
+        >
+          {notification.type === 'success' ? (
+            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          ) : (
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          )}
+          <p className="text-[11px] font-semibold leading-relaxed">{notification.message}</p>
+          <button
+            type="button"
+            onClick={() => setNotification(null)}
+            className="ml-1 rounded p-0.5 text-current/70 hover:text-current"
+            aria-label="Dismiss notification"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      )}
     </div>
-  );
-};
-
-const ProjectForm: React.FC<{ project: any; onSave: (p: any) => void; onCancel: () => void }> = ({ project, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(project || {
-    title: '',
-    category: 'Business',
-    description: '',
-    image: '',
-    tags: [],
-    year: new Date().getFullYear().toString(),
-    liveDemo: '',
-    challenges: '',
-    solutions: '',
-    features: [''],
-    technology: [''],
-    metrics: { loadTime: '1.5s', performanceScore: 95, mobileScore: 98 }
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  const inputClass = "w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white";
-  const labelClass = "block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide";
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className={labelClass}>Project Title *</label>
-        <input
-          type="text"
-          required
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className={inputClass}
-          placeholder="Elegant Bistro"
-        />
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>Category *</label>
-          <select
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className={`${inputClass} bg-slate-950/60`}
-          >
-            {['Business', 'Restaurant', 'School', 'Hospital', 'Hotel', 'Church', 'E-commerce', 'Corporate', 'Real Estate', 'Portfolio'].map(cat => (
-              <option key={cat} value={cat} className="bg-[#0e1326] text-white">{cat}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={labelClass}>Year</label>
-          <input
-            type="text"
-            value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-            className={inputClass}
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className={labelClass}>Description *</label>
-        <textarea
-          required
-          rows={3}
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          className={`${inputClass} resize-none`}
-          placeholder="A modern restaurant website..."
-        />
-      </div>
-      
-      <div>
-        <label className={labelClass}>Image URL *</label>
-        <input
-          type="url"
-          required
-          value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-          className={inputClass}
-          placeholder="https://..."
-        />
-      </div>
-      
-      <div>
-        <label className={labelClass}>Live Demo URL</label>
-        <input
-          type="url"
-          value={formData.liveDemo}
-          onChange={(e) => setFormData({ ...formData, liveDemo: e.target.value })}
-          className={inputClass}
-          placeholder="https://..."
-        />
-      </div>
-      
-      <div>
-        <label className={labelClass}>Technologies (comma-separated)</label>
-        <input
-          type="text"
-          value={formData.technology.join(', ')}
-          onChange={(e) => setFormData({ ...formData, technology: e.target.value.split(',').map((t: string) => t.trim()) })}
-          className={inputClass}
-          placeholder="React, Node.js, MongoDB"
-        />
-      </div>
-      
-      <div>
-        <label className={labelClass}>Tags (comma-separated)</label>
-        <input
-          type="text"
-          value={formData.tags.join(', ')}
-          onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(',').map((t: string) => t.trim()) })}
-          className={inputClass}
-          placeholder="Modern, Responsive, Fast"
-        />
-      </div>
-      
-      <div className="flex gap-4 pt-4">
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex-1 btn-primary px-6 py-3 rounded-xl text-sm"
-        >
-          <Save className="h-4 w-4" />
-          {project ? 'Update Project' : 'Add Project'}
-        </motion.button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-3 border border-white/5 rounded-xl hover:bg-white/5 transition-colors text-sm text-slate-400"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-};
-
-const TestimonialForm: React.FC<{ testimonial: Testimonial | null; onSave: (t: Testimonial) => void; onCancel: () => void }> = ({ testimonial, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(testimonial || {
-    id: 0, name: '', company: '', position: '', content: '', rating: 5, image: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData as Testimonial);
-  };
-
-  const inputClass = "w-full px-4 py-3 bg-slate-950/40 rounded-xl border border-white/5 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none text-sm text-white";
-  const labelClass = "block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide";
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label className={labelClass}>Name *</label>
-        <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputClass} placeholder="John Anderson" />
-      </div>
-      <div>
-        <label className={labelClass}>Company *</label>
-        <input type="text" required value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} className={inputClass} placeholder="TechFlow Solutions" />
-      </div>
-      <div>
-        <label className={labelClass}>Position</label>
-        <input type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} className={inputClass} placeholder="CEO &amp; Founder" />
-      </div>
-      <div>
-        <label className={labelClass}>Testimonial *</label>
-        <textarea required rows={4} value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className={`${inputClass} resize-none`} placeholder="Working with HARITECH was..." />
-      </div>
-      <div>
-        <label className={labelClass}>Image URL</label>
-        <input type="url" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className={inputClass} placeholder="https://..." />
-      </div>
-      <div>
-        <label className={labelClass}>Rating</label>
-        <select value={formData.rating} onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) })} className={`${inputClass} bg-slate-950/60`}>
-          {[5, 4, 3, 2, 1].map(r => <option key={r} value={r} className="bg-[#0e1326]">{r} Star{r > 1 ? 's' : ''}</option>)}
-        </select>
-      </div>
-      <div className="flex gap-4 pt-4">
-        <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1 btn-primary px-6 py-3 rounded-xl text-sm">
-          <Save className="h-4 w-4" />
-          {testimonial ? 'Update' : 'Add'} Testimonial
-        </motion.button>
-        <button type="button" onClick={onCancel} className="px-6 py-3 border border-white/5 rounded-xl hover:bg-white/5 transition-colors text-sm text-slate-400">Cancel</button>
-      </div>
-    </form>
   );
 };
 

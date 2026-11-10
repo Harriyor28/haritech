@@ -32,9 +32,11 @@ export const getStoredSettings = (): SiteSettings => {
 
 export const SETTINGS_UPDATED_EVENT = 'haritech-settings-updated';
 
-export const setStoredSettings = (settings: SiteSettings): void => {
-  if (typeof window === 'undefined') return;
+/** Resolves true when the copy reached Supabase, false when it only lives in
+    this browser (for example, an expired admin session). */
+export const setStoredSettings = async (settings: SiteSettings): Promise<boolean> => {
+  if (typeof window === 'undefined') return false;
   window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-  void pushToCloud(SETTINGS_STORAGE_KEY, settings);
   window.dispatchEvent(new Event(SETTINGS_UPDATED_EVENT));
+  return pushToCloud(SETTINGS_STORAGE_KEY, settings);
 };
