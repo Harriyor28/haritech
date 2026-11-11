@@ -2,6 +2,9 @@ import { pushToCloud } from './cloudSync';
 
 const HARITECH_LOGO_KEY = 'haritech-brand-logo';
 
+/** The shipped Haritech logo, used until an owner uploads a custom one. */
+export const DEFAULT_BRAND_LOGO = '/haritech-logo.svg';
+
 /**
  * An older sync path stored string values JSON-stringified, so localStorage
  * could end up holding a quoted value like '"https://…/logo.png"'. Strip
@@ -23,7 +26,7 @@ export const normalizeStoredLogo = (raw: string | null): string => {
 
 export const getHaritechBrandLogo = (): string => {
   if (typeof window === 'undefined') return '';
-  return normalizeStoredLogo(window.localStorage.getItem(HARITECH_LOGO_KEY));
+  return normalizeStoredLogo(window.localStorage.getItem(HARITECH_LOGO_KEY)) || DEFAULT_BRAND_LOGO;
 };
 
 /** Returns false when localStorage rejects the write (usually quota exceeded). */

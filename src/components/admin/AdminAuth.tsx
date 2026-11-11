@@ -21,13 +21,11 @@ const inputClass =
 
 const BrandMark: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
   <div className="flex items-center gap-3">
-    <span
-      className={`flex items-center justify-center rounded-xl border border-cyan-400/25 bg-gradient-to-br from-cyan-400/25 to-violet-500/25 font-black text-cyan-200 ${
-        compact ? 'h-9 w-9 text-[12px]' : 'h-11 w-11 text-sm'
-      }`}
-    >
-      H
-    </span>
+    <img
+      src="/brand-symbol.svg"
+      alt="Haritech"
+      className={compact ? 'h-9 w-9' : 'h-11 w-11'}
+    />
     <div>
       <p className={`font-black tracking-[0.2em] text-white ${compact ? 'text-[12px]' : 'text-sm'}`}>
         HARITECH

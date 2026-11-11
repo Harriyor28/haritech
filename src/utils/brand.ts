@@ -1,12 +1,12 @@
 import { pushToCloud } from './cloudSync';
-import { normalizeStoredLogo } from './haritechBrand';
+import { DEFAULT_BRAND_LOGO, normalizeStoredLogo } from './haritechBrand';
 
 export const BRAND_LOGO_STORAGE_KEY = 'haritech-brand-logo';
 export const BRAND_LOGO_EVENT = 'haritech-logo-updated';
 
 export const getStoredBrandLogo = (): string => {
   if (typeof window === 'undefined') return '';
-  return normalizeStoredLogo(window.localStorage.getItem(BRAND_LOGO_STORAGE_KEY));
+  return normalizeStoredLogo(window.localStorage.getItem(BRAND_LOGO_STORAGE_KEY)) || DEFAULT_BRAND_LOGO;
 };
 
 /** Returns false when localStorage rejects the write (usually quota exceeded). */

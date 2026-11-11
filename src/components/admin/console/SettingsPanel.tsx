@@ -202,9 +202,7 @@ const SettingsPanel: React.FC<{
                   <img src={displayedLogo} alt="Current site logo" className="relative max-h-full max-w-full object-contain" />
                 ) : (
                   <div className="relative flex items-center gap-2.5">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 text-[11px] font-black text-slate-950">
-                      H
-                    </span>
+                    <img src="/brand-symbol.svg" alt="" className="relative h-8 w-8" />
                     <span className="text-lg font-black tracking-[0.18em] text-slate-300">HARITECH</span>
                   </div>
                 )}
