@@ -5,7 +5,7 @@ import {
   ArrowUp, Briefcase
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getWhatsAppUrl } from '../../utils/haritechContent';
+import { leadWhatsAppUrl } from '../../utils/haritechContent';
 import { scrollToTop as smoothScrollToTop } from '../../utils/smoothScroll';
 
 interface PremierFloatingDockProps {
@@ -51,7 +51,7 @@ export const PremierFloatingDock: React.FC<PremierFloatingDockProps> = ({
 
       {/* WhatsApp Button */}
       <a
-        href={getWhatsAppUrl('Hello Haritech, I would like to ask about one of your services.')}
+        href={leadWhatsAppUrl('I would like to ask about one of your services.')}
         target="_blank"
         rel="noopener noreferrer"
         className="ht-tap flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold transition-all duration-200 border border-white/15"

@@ -140,6 +140,7 @@ export const buildWhatsAppFallbackUrl = (msg: ContactMessage): string => {
     `Name: ${msg.name}`,
     `Email: ${msg.email}`,
     msg.phone ? `Phone: ${msg.phone}` : '',
+    msg.sourcePage ? `Sent from: ${msg.sourcePage}` : '',
     msg.category ? `Enquiry type: ${msg.category}` : '',
     msg.subject ? `Subject: ${msg.subject}` : '',
     msg.budget ? `Budget: ${msg.budget}` : '',

@@ -6,7 +6,7 @@ import {
   ShieldCheck, Warehouse, BadgeCheck, Clock, Anchor, ChevronDown,
   CheckCircle, Zap, Boxes, Scale, Receipt, LucideIcon,
 } from 'lucide-react';
-import { getWhatsAppUrl, getImportationContent } from '../../utils/haritechContent';
+import { getWhatsAppUrl, leadWhatsAppUrl, getImportationContent } from '../../utils/haritechContent';
 import ImportLandedCostEstimator from '../../components/haritech/ImportLandedCostEstimator';
 import ImportGoodsSegments from '../../components/haritech/ImportGoodsSegments';
 import ImportPreOrderGroups from '../../components/haritech/ImportPreOrderGroups';
@@ -73,7 +73,7 @@ const Importation: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Zap className="h-4 w-4" /> Start an Importation</Link>
                 <a href="#import-preorder" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Package className="h-4 w-4 text-cyan-400" /> Join a Pre-order Group</a>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Ship className="h-4 w-4 text-slate-300" /> Free Trade Consultation</a>
+                <a href={leadWhatsAppUrl('I would like to discuss importation, clearing and warehousing.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><Ship className="h-4 w-4 text-slate-300" /> Trade Consultation</a>
               </div>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-mono text-slate-500">
                 <a href="#import-segments" className="hover:text-cyan-300 transition-colors">Goods segments →</a>

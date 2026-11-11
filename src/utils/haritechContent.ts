@@ -14,6 +14,7 @@ const HARITECH_PM_KEY = 'haritech-pm';
 
 import { pushToCloud } from './cloudSync';
 import { getSupabase } from './supabaseClient';
+import { buildLeadWhatsAppUrl } from './whatsappLead';
 
 /**
  * One-time retirement of content seeded by earlier versions of the site.
@@ -671,6 +672,15 @@ export function getWhatsAppUrl(text?: string): string {
     return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
   }
   return `https://wa.me/${num}`;
+}
+
+export { getLeadPageLabel } from './whatsappLead';
+
+/** WhatsApp opener that carries the page context with it, so the desk can see
+    where the visitor came from (e.g. "Sent from the solar energy page."). */
+export function leadWhatsAppUrl(subject?: string): string {
+  const num = getHaritechContent().whatsapp.replace(/[^0-9]/g, '');
+  return buildLeadWhatsAppUrl(num, subject);
 }
 
 const defaultFAQ: FAQCategory[] = [

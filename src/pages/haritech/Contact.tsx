@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, MessageCircle, Clock, Send, ArrowRight, Zap, CheckCircle, AlertCircle, Loader2, Twitter, Linkedin, Facebook, Instagram, FileText } from 'lucide-react';
-import { getWhatsAppUrl, getHaritechContent, getSocialLinks } from '../../utils/haritechContent';
+import { getWhatsAppUrl, leadWhatsAppUrl, getHaritechContent, getSocialLinks } from '../../utils/haritechContent';
 import { submitContactMessage, buildWhatsAppFallbackUrl, ContactMessage } from '../../utils/contactMessages';
 import { trackEvent } from '../../utils/analytics';
 
@@ -153,7 +153,7 @@ const Contact: React.FC = () => {
                     </p>
                     <p className="text-xs text-slate-600 mt-3 flex items-center justify-center gap-1.5"><FileText className="h-3 w-3" /> Keep this page — it confirms your submission was accepted.</p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                      <a href={getWhatsAppUrl('Hello! I just submitted an enquiry on your website.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs px-5 py-2.5"><MessageCircle className="h-4 w-4 text-emerald-400" /> Follow up on WhatsApp</a>
+                      <a href={leadWhatsAppUrl('I just submitted an enquiry on your website.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs px-5 py-2.5"><MessageCircle className="h-4 w-4 text-emerald-400" /> Follow up on WhatsApp</a>
                       <Link to="/haritech" className="btn-primary text-xs px-5 py-2.5 flex items-center justify-center">Back to Home</Link>
                     </div>
                   </motion.div>
@@ -236,7 +236,7 @@ const Contact: React.FC = () => {
               <div className="space-y-6">
                 <div className="card p-6 flex items-start gap-4 glow-border">
                   <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0"><MessageCircle className="h-5 w-5 text-cyan-400" /></div>
-                  <div><h3 className="text-sm font-bold text-white mb-1">WhatsApp</h3><p className="text-sm text-slate-400">+{getWhatsAppUrl().replace('https://wa.me/', '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 XXX XXX XXXX')}</p><a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('whatsapp_click', 'contact_info')} className="text-xs text-cyan-400 hover:underline mt-1 inline-block">Chat with us</a></div>
+                  <div><h3 className="text-sm font-bold text-white mb-1">WhatsApp</h3><p className="text-sm text-slate-400">+{getWhatsAppUrl().replace('https://wa.me/', '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 XXX XXX XXXX')}</p><a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('whatsapp_click', 'contact_info')} className="text-xs text-cyan-400 hover:underline mt-1 inline-block">Chat with us</a></div>
                 </div>
                 <div className="card p-6 flex items-start gap-4 glow-border">
                   <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0"><Mail className="h-5 w-5 text-purple-400" /></div>

@@ -386,7 +386,7 @@ const EpoxyCoverageCalculator: React.FC = () => {
 
                       {/* Quality badges */}
                       <div className="rounded-xl bg-slate-800/40 border border-white/10 p-3">
-                        {['Premium Italian resin compounds', 'Certified epoxy technicians', 'Free design consultation'].map((b, i) => (
+                        {['Premium Italian resin compounds', 'Certified epoxy technicians', 'Design consultation'].map((b, i) => (
                           <div key={i} className="flex items-center gap-2 text-xs text-slate-400 mb-1">
                             <CheckCircle className="h-3.5 w-3.5 text-teal-400 flex-shrink-0" />
                             {b}
@@ -431,7 +431,7 @@ const EpoxyCoverageCalculator: React.FC = () => {
                       <div className="flex flex-col gap-1.5 text-xs text-slate-500 text-center">
                         <span className="flex items-center gap-2 justify-center"><span className="text-teal-400">✓</span> All finishes available</span>
                         <span className="flex items-center gap-2 justify-center"><span className="text-teal-400">✓</span> Includes surface prep</span>
-                        <span className="flex items-center gap-2 justify-center"><span className="text-teal-400">✓</span> Free design consultation</span>
+                        <span className="flex items-center gap-2 justify-center"><span className="text-teal-400">✓</span> Design consultation</span>
                       </div>
                     </motion.div>
                   )}

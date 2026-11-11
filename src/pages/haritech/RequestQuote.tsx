@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Zap, Send, CheckCircle, AlertCircle, Loader2, MessageCircle, Mail, Phone, ClipboardList, FileText } from 'lucide-react';
-import { getWhatsAppUrl, getHaritechContent } from '../../utils/haritechContent';
+import { getWhatsAppUrl, leadWhatsAppUrl, getHaritechContent } from '../../utils/haritechContent';
 import { submitContactMessage, buildWhatsAppFallbackUrl, ContactMessage } from '../../utils/contactMessages';
 import { trackEvent } from '../../utils/analytics';
 
@@ -190,7 +190,7 @@ const RequestQuote: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/haritech" className="btn-primary text-base px-8 py-4"><Zap className="h-5 w-5" /> Back to Home</Link>
-                <a href={getWhatsAppUrl('Hello! I just submitted a quote request on your website.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-base px-8 py-4"><MessageCircle className="h-5 w-5 text-green-400" /> Chat on WhatsApp</a>
+                <a href={leadWhatsAppUrl('I just submitted a quote request on your website.')} target="_blank" rel="noopener noreferrer" className="btn-secondary text-base px-8 py-4"><MessageCircle className="h-5 w-5 text-green-400" /> Chat on WhatsApp</a>
               </div>
             </motion.div>
           ) : (

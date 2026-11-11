@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { HelpCircle, ChevronDown, ArrowRight, MessageCircle, Mail } from 'lucide-react';
-import { getWhatsAppUrl, getHaritechContent, getFAQCategories, FAQCategory } from '../../utils/haritechContent';
+import { leadWhatsAppUrl, getHaritechContent, getFAQCategories, FAQCategory } from '../../utils/haritechContent';
 
 const FadeInView: React.FC<{ children: React.ReactNode; delay?: number }> = ({ children, delay = 0 }) => (
   <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay }}>
@@ -101,7 +101,7 @@ const FAQ: React.FC = () => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">Still Have Questions?</h2>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">We're here to help. Reach out to us directly and we'll get back to you promptly.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-primary text-base px-10 py-4"><MessageCircle className="h-5 w-5" /> WhatsApp Us</a>
+              <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-primary text-base px-10 py-4"><MessageCircle className="h-5 w-5" /> WhatsApp Us</a>
               <Link to="/haritech/contact" className="btn-secondary text-base px-10 py-4">Contact Page <ArrowRight className="h-4 w-4 text-cyan-400" /></Link>
               <a href={`mailto:${content.email}`} className="btn-secondary text-base px-10 py-4"><Mail className="h-5 w-5 text-cyan-400" /> Email Us</a>
             </div>

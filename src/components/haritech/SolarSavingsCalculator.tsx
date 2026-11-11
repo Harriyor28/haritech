@@ -351,7 +351,7 @@ const SolarSavingsCalculator: React.FC = () => {
                       <div className="flex flex-col gap-2 text-xs text-slate-500 text-center">
                         <span className="flex items-center gap-2"><span className="text-yellow-400">✓</span> No signup required</span>
                         <span className="flex items-center gap-2"><span className="text-yellow-400">✓</span> Instant results</span>
-                        <span className="flex items-center gap-2"><span className="text-yellow-400">✓</span> Free quote on WhatsApp</span>
+                        <span className="flex items-center gap-2"><span className="text-yellow-400">✓</span> Quote on WhatsApp</span>
                       </div>
                     </motion.div>
                   )}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Landmark, Scale, BadgeCheck, FileCheck, ClipboardList, ShieldCheck, ChevronDown, ArrowRight, Check, Clock } from 'lucide-react';
-import { getCACInfo, CACInfo, getWhatsAppUrl } from '../../utils/haritechContent';
+import { getCACInfo, CACInfo, getWhatsAppUrl, leadWhatsAppUrl } from '../../utils/haritechContent';
 import CACFeeEstimator from '../../components/haritech/CACFeeEstimator';
 import CacApplicationWizard from '../../components/haritech/CacApplicationWizard';
 import CacStatusTracker from '../../components/haritech/CacStatusTracker';
@@ -205,7 +205,7 @@ const CACRegistration: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-5 text-sm font-medium">
-                    <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="text-[#0B6B3B] hover:text-[#074D2A] underline underline-offset-4 decoration-[#B08D2E]/60">Register</a>
+                    <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="text-[#0B6B3B] hover:text-[#074D2A] underline underline-offset-4 decoration-[#B08D2E]/60">Register</a>
                     <Link to="/haritech/request-quote" className="text-[#5F6B5C] hover:text-[#1E2B20] underline underline-offset-4 decoration-transparent hover:decoration-[#C6B98F]">Enquire</Link>
                   </div>
                 </div>

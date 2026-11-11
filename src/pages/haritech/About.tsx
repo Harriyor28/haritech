@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Target, Eye, Heart, Shield, Award, Users, Zap, CheckCircle, ArrowRight, Sparkles, Quote, Mail, MessageCircle } from 'lucide-react';
-import { getHaritechContent, getTeamMembers, getWhatsAppUrl, HaritechSiteContent, TeamMember } from '../../utils/haritechContent';
+import { getHaritechContent, getTeamMembers, leadWhatsAppUrl, HaritechSiteContent, TeamMember } from '../../utils/haritechContent';
 
 /* Working principles rather than slogans: each one describes a habit a
    customer can actually notice, not a claim about scale or awards.      */
@@ -198,7 +198,7 @@ const About: React.FC = () => {
                   <p className="text-xs text-slate-400 leading-relaxed">{member.bio}</p>
                   <div className="flex gap-2 justify-center mt-4">
                     <a href={`mailto:${content.email}`} className="w-8 h-8 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30 transition-all"><Mail className="h-3.5 w-3.5" /></a>
-                    <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center text-slate-500 hover:text-green-400 hover:border-green-500/30 transition-all"><MessageCircle className="h-3.5 w-3.5" /></a>
+                    <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center text-slate-500 hover:text-green-400 hover:border-green-500/30 transition-all"><MessageCircle className="h-3.5 w-3.5" /></a>
                   </div>
                 </div>
               </FadeInView>

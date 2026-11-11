@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Code2, X, Menu, ArrowLeft, ChevronDown, Building2, Globe, Monitor, Briefcase, FileText, HelpCircle, Mail, MessageCircle, Layout, Sun, Paintbrush, Zap, Ship, Calculator, Kanban, Lock } from 'lucide-react';
 import { getHaritechBrandLogo, subscribeToHaritechLogo } from '../utils/haritechBrand';
-import { getWhatsAppUrl, getHaritechContent } from '../utils/haritechContent';
+import { leadWhatsAppUrl, getHaritechContent } from '../utils/haritechContent';
 import Underground3DBackground from '../components/Underground3DBackground';
 import Ambient3DLayer from '../components/haritech/Ambient3DLayer';
 import { HaritechCostEstimator } from '../components/haritech/HaritechCostEstimator';
@@ -264,7 +264,7 @@ const HaritechLayout: React.FC = () => {
               </Link>
 
               <a 
-                href={getWhatsAppUrl('Hello Haritech Exclusive Business, I would like to consult with your team.')} 
+                href={leadWhatsAppUrl('I would like to consult with your team.')} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="ht-tap p-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-colors flex items-center justify-center"
@@ -322,7 +322,7 @@ const HaritechLayout: React.FC = () => {
                   <Link to="/haritech/request-quote" onClick={() => setSidebarOpen(false)} className="btn-primary text-xs py-2.5 px-2 rounded-xl justify-center">
                     <FileText className="h-3.5 w-3.5" /> Get Quote
                   </Link>
-                  <a href={getWhatsAppUrl('Hello Haritech Exclusive Business, I would like to consult with your team.')} target="_blank" rel="noopener noreferrer" onClick={() => setSidebarOpen(false)} className="btn-secondary text-xs py-2.5 px-2 rounded-xl justify-center">
+                  <a href={leadWhatsAppUrl('I would like to consult with your team.')} target="_blank" rel="noopener noreferrer" onClick={() => setSidebarOpen(false)} className="btn-secondary text-xs py-2.5 px-2 rounded-xl justify-center">
                     <MessageCircle className="h-3.5 w-3.5 text-green-400" /> WhatsApp
                   </a>
                 </div>
@@ -447,7 +447,7 @@ const HaritechLayout: React.FC = () => {
                 A Nigerian multi-service business: laptop and tech accessories, cyber café and online registration assistance, printing and branding, importation consultation, 3D epoxy and interior décor, solar energy guidance, project management and business consultation.
               </p>
               <div className="flex gap-3">
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="ht-tap w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors" title="WhatsApp" aria-label="Chat on WhatsApp"><MessageCircle className="h-4 w-4" /></a>
+                <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="ht-tap w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors" title="WhatsApp" aria-label="Chat on WhatsApp"><MessageCircle className="h-4 w-4" /></a>
                 <a href={`mailto:${content.email}`} className="ht-tap w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center hover:bg-cyan-500/20 transition-colors" title="Email" aria-label="Email Haritech"><Mail className="h-4 w-4" /></a>
                 <button onClick={() => setCacModalOpen(true)} className="px-3 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 flex items-center gap-1.5 text-xs font-semibold hover:bg-purple-500/20 transition-colors">
                   <Building2 className="h-3.5 w-3.5" /> Business details

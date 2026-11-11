@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Paintbrush, Droplets, Gem, Sofa, Brush, Wrench, Layers, Ruler, Hammer, Camera, Waves, Gauge, Sparkles, CheckCircle, ArrowRight, MessageCircle, ChevronLeft, ChevronRight, X, Maximize2, Palette, Home, Building2, Star, Shield, Zap, Eye, Fan, Flame, Truck, LucideIcon } from 'lucide-react';
-import { getWhatsAppUrl, getEpoxyContent, EpoxyContent } from '../../utils/haritechContent';
+import { getWhatsAppUrl, leadWhatsAppUrl, getEpoxyContent, EpoxyContent } from '../../utils/haritechContent';
 import EpoxyCoverageCalculator from '../../components/haritech/EpoxyCoverageCalculator';
 import Epoxy3DRoomStudio from '../../components/haritech/Epoxy3DRoomStudio';
 import Interior3DRoomStudio from '../../components/haritech/Interior3DRoomStudio';
@@ -90,7 +90,7 @@ const ThreeDEpoxy: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/haritech/request-quote" className="btn-primary text-xs sm:text-sm px-6 py-3"><Sparkles className="h-4 w-4" /> Get an Epoxy Quote</Link>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><MessageCircle className="h-4 w-4 text-slate-300" /> Discuss Your Space</a>
+                <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs sm:text-sm px-6 py-3"><MessageCircle className="h-4 w-4 text-slate-300" /> Discuss Your Space</a>
               </div>
             </FadeInView>
           </div>
@@ -225,7 +225,7 @@ const ThreeDEpoxy: React.FC = () => {
                 <p className="text-sm text-slate-400 leading-relaxed mb-5">{active.detail}</p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link to="/haritech/request-quote" onClick={close} className="btn-primary text-xs py-2.5 px-5 rounded-lg bg-gradient-to-r from-teal-500 to-violet-600 justify-center">Request This Look</Link>
-                  <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" onClick={close} className="btn-secondary text-xs py-2.5 px-5 rounded-lg justify-center">Ask About It <ArrowRight className="h-3.5 w-3.5 text-teal-300" /></a>
+                  <a href={leadWhatsAppUrl()} target="_blank" rel="noopener noreferrer" onClick={close} className="btn-secondary text-xs py-2.5 px-5 rounded-lg justify-center">Ask About It <ArrowRight className="h-3.5 w-3.5 text-teal-300" /></a>
                 </div>
               </div>
               <div className="px-6 pb-5 text-xs text-slate-600">Project {((lightbox ?? 0) + 1)} of {works.length} — use ← → keys to browse</div>

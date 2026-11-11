@@ -96,7 +96,7 @@ const Home: React.FC = () => {
                   className="btn-secondary text-base px-8 py-4 flex items-center justify-center cursor-pointer"
                 >
                   <Play className="h-5 w-5 mr-2 text-cyan-400" />
-                  Free Consultation
+                  Trade Consultation
                 </Link>
               </motion.div>
             </motion.div>
