@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://haritech-portfolio.vercel.app/sitemap.xml
+Sitemap: https://haritechexclusive.vercel.app/sitemap.xml
